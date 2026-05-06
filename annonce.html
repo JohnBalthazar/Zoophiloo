@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Annonce — Zoophiloo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a9e6e;
+    --green-dark: #0f7a52;
+    --green-light: #e6f7f0;
+    --orange: #e8622a;
+    --blue: #2563a8;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --border: #e8e8e4;
+    --bg: #fafaf8;
+    --white: #ffffff;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo .z { color: var(--green); }
+  .logo .rest { color: var(--text); }
+  .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
+  .header-left { display: flex; align-items: center; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 6px 16px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+
+  /* BREADCRUMB */
+  .breadcrumb {
+    padding: 10px 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--green); }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  /* MAIN LAYOUT */
+  .page-content {
+    max-width: 960px;
+    width: 100%;
+    margin: 28px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* LEFT COLUMN */
+  .left-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* PHOTO GALLERY */
+  .gallery { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .gallery-main { width: 100%; aspect-ratio: 16/9; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 80px; overflow: hidden; position: relative; }
+  .gallery-main img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+  .gallery-main .no-photo { opacity: 0.35; }
+  .gallery-thumbs { display: flex; gap: 8px; padding: 10px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .gallery-thumb { width: 72px; height: 56px; border-radius: 6px; border: 2px solid transparent; overflow: hidden; cursor: pointer; flex-shrink: 0; background: var(--bg); }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-thumb.active { border-color: var(--green); }
+
+  /* INFO CARD */
+  .info-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+  .info-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .ad-title-big { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1.2; color: var(--text); }
+  .ad-price-big { font-size: 26px; font-weight: 700; color: var(--green); white-space: nowrap; }
+  .ad-price-big.don { color: var(--orange); }
+  .ad-price-big.gratuit { color: var(--blue); }
+  .ad-meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
+  .tag { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tag-vente { background: #e6f7f0; color: #0f7a52; }
+  .tag-adoption { background: #dbeafe; color: #1d4ed8; }
+  .tag-don { background: #fef3c7; color: #92400e; }
+  .tag-espece { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+  .meta-pill { font-size: 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; }
+  .meta-pill svg { opacity: 0.5; }
+  .divider-line { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  /* DESCRIPTION */
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
+  .description-text { font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; }
+
+  /* DETAILS GRID */
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .detail-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .detail-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 3px; }
+  .detail-value { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* RIGHT COLUMN — STICKY CONTACT CARD */
+  .right-col { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 16px; }
+  .contact-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .contact-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+  .contact-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; border: 2px solid var(--green); }
+  .contact-info { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .contact-name { font-size: 14px; font-weight: 500; }
+  .contact-since { font-size: 11px; color: var(--text-muted); }
+  .contact-actions { display: flex; flex-direction: column; gap: 8px; }
+  .btn-contact { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: all 0.15s; width: 100%; }
+  .btn-contact-primary { background: var(--green); color: white; border: none; }
+  .btn-contact-primary:hover { background: var(--green-dark); }
+  .btn-contact-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-contact-secondary:hover { border-color: var(--green); background: var(--green-light); }
+  .contact-email-reveal { font-size: 12px; color: var(--green); cursor: pointer; text-align: center; padding: 4px 0; }
+  .contact-email-reveal:hover { text-decoration: underline; }
+
+  /* LOCATION CARD */
+  .location-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+  .location-card-inner { display: flex; align-items: center; gap: 10px; }
+  .location-icon { font-size: 22px; }
+  .location-city { font-size: 14px; font-weight: 500; }
+  .location-cp { font-size: 12px; color: var(--text-muted); }
+
+  /* DATE BADGE */
+  .date-badge { font-size: 11px; color: var(--text-muted); text-align: center; padding: 6px 0; }
+
+  /* LOADING / ERROR */
+  .page-loading, .page-error {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 12px; padding: 80px 24px;
+    color: var(--text-muted); font-size: 14px; text-align: center;
+  }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-emoji { font-size: 40px; }
+  .error-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--text); }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .page-content { grid-template-columns: 1fr; }
+    .right-col { position: static; }
+    .tagline { display: none; }
+    .ad-title-big { font-size: 18px; }
+    .info-card-header { flex-direction: column; gap: 6px; }
+    .details-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <a href="index.html" class="logo"><span class="z">Zoo</span><span class="rest">philoo</span></a>
+    <span class="tagline">Trouvez vos animaux près de chez vous</span>
+  </div>
+  <div class="header-right">
+    <a href="index.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour aux annonces
+    </a>
+    <a href="https://airtable.com/appepwMYbNUv2k3f9/shrXXXXXX" target="_blank" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Déposer une annonce
+    </a>
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">Accueil</a>
+  <span class="sep">›</span>
+  <span id="breadcrumbText">Annonce</span>
+</div>
+
+<!-- LOADING STATE -->
+<div class="page-loading" id="loadingState">
+  <div class="loading-spinner"></div>
+  <span>Chargement de l'annonce…</span>
+</div>
+
+<!-- ERROR STATE -->
+<div class="page-error" id="errorState" style="display:none">
+  <span class="error-emoji">😿</span>
+  <strong class="error-title">Annonce introuvable</strong>
+  <span id="errorMsg">Cette annonce n'existe pas ou a été supprimée.</span>
+  <a href="index.html" class="btn-primary" style="margin-top:8px">← Retour aux annonces</a>
+</div>
+
+<!-- ANNONCE CONTENT -->
+<div class="page-content" id="pageContent" style="display:none">
+
+  <!-- LEFT -->
+  <div class="left-col">
+
+    <!-- GALLERY -->
+    <div class="gallery" id="gallery">
+      <div class="gallery-main" id="galleryMain"></div>
+      <div class="gallery-thumbs" id="galleryThumbs"></div>
+    </div>
+
+    <!-- INFO -->
+    <div class="info-card">
+      <div class="info-card-header">
+        <h1 class="ad-title-big" id="adTitle"></h1>
+        <div class="ad-price-big" id="adPrice"></div>
+      </div>
+      <div class="ad-meta-row" id="adMetaRow"></div>
+      <hr class="divider-line">
+      <p class="section-label">Description</p>
+      <p class="description-text" id="adDescription"></p>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="info-card">
+      <p class="section-label">Détails de l'annonce</p>
+      <div class="details-grid" id="detailsGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-col">
+
+    <div class="contact-card">
+      <p class="contact-card-title">Contacter l'annonceur</p>
+      <div class="contact-info">
+        <div class="contact-avatar" id="contactAvatar">🙂</div>
+        <div>
+          <div class="contact-name" id="contactName">—</div>
+          <div class="contact-since" id="adDateBadge"></div>
+        </div>
+      </div>
+      <div class="contact-actions" id="contactActions"></div>
+    </div>
+
+    <div class="location-card">
+      <div class="location-card-inner">
+        <span class="location-icon">📍</span>
+        <div>
+          <div class="location-city" id="locationCity">—</div>
+          <div class="location-cp" id="locationCp"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="date-badge" id="dateBadge"></div>
+
+  </div>
+</div>
+
+<script>
+const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
+const BASE_ID = 'appepwMYbNUv2k3f9';
+const TABLE_NAME = 'Annonces';
+
+const ESPECE_EMOJI = {
+  'Chien':'🐕','Chat':'🐈','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
+  'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
+  'Insecte':'🐛','Araignée':'🕷️','Plante':'🌿','Autre':'🔵'
+};
+
+function formatPrice(val, type) {
+  if (!val && type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
+  if (!val && type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
+  if (!val) return { text: 'Prix non précisé', cls: '' };
+  const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
+  return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  return new Date(str).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+}
+
+function showError(msg) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'flex';
+  if (msg) document.getElementById('errorMsg').textContent = msg;
+}
+
+function renderGallery(photos, emoji) {
+  const main = document.getElementById('galleryMain');
+  const thumbs = document.getElementById('galleryThumbs');
+
+  if (!photos || photos.length === 0) {
+    main.innerHTML = `<span class="no-photo">${emoji}</span>`;
+    thumbs.style.display = 'none';
+    return;
+  }
+
+  let currentIdx = 0;
+  function showPhoto(idx) {
+    currentIdx = idx;
+    main.innerHTML = `<img src="${photos[idx].url}" alt="Photo ${idx+1}">`;
+    document.querySelectorAll('.gallery-thumb').forEach((t, i) => {
+      t.classList.toggle('active', i === idx);
+    });
+  }
+
+  // Thumbnails
+  if (photos.length > 1) {
+    thumbs.innerHTML = photos.map((p, i) =>
+      `<div class="gallery-thumb ${i===0?'active':''}" data-idx="${i}">
+         <img src="${p.thumbnails?.small?.url || p.url}" alt="">
+       </div>`
+    ).join('');
+    thumbs.addEventListener('click', e => {
+      const t = e.target.closest('.gallery-thumb');
+      if (t) showPhoto(parseInt(t.dataset.idx));
+    });
+  } else {
+    thumbs.style.display = 'none';
+  }
+
+  showPhoto(0);
+}
+
+function renderPage(record) {
+  const f = record.fields;
+  const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
+  const price = formatPrice(f['Prix'], f['Type_annonce']);
+
+  // Title & SEO
+  const title = f['Titre'] || 'Sans titre';
+  document.title = `${title} — Zoophiloo`;
+  document.getElementById('breadcrumbText').textContent = title;
+
+  // Gallery
+  renderGallery(f['Photos'], emoji);
+
+  // Title + Price
+  document.getElementById('adTitle').textContent = title;
+  const priceEl = document.getElementById('adPrice');
+  priceEl.textContent = price.text;
+  priceEl.className = `ad-price-big ${price.cls}`;
+
+  // Meta row
+  const typeClass = f['Type_annonce']==='À donner'?'tag-don':f['Type_annonce']==='À adopter'?'tag-adoption':'tag-vente';
+  const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':'Vente';
+  document.getElementById('adMetaRow').innerHTML = `
+    <span class="tag ${typeClass}">${typeLabel}</span>
+    ${f['Espèce'] ? `<span class="tag tag-espece">${emoji} ${f['Espèce']}</span>` : ''}
+    ${f['Race'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${f['Race']}</span>` : ''}
+    ${f['Ville'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${f['Ville']}${f['Code_postal']?' ('+f['Code_postal']+')':''}</span>` : ''}
+  `;
+
+  // Description
+  document.getElementById('adDescription').textContent =
+    f['Description'] || 'Aucune description fournie.';
+
+  // Details grid
+  const details = [];
+  if (f['Espèce'])        details.push({ label: 'Espèce',      value: `${emoji} ${f['Espèce']}` });
+  if (f['Race'])          details.push({ label: 'Race',         value: f['Race'] });
+  if (f['Type_annonce'])  details.push({ label: "Type d'annonce", value: f['Type_annonce'] });
+  if (f['Prix'])          details.push({ label: 'Prix',         value: price.text });
+  if (f['Ville'])         details.push({ label: 'Ville',        value: f['Ville'] });
+  if (f['Code_postal'])   details.push({ label: 'Code postal',  value: f['Code_postal'] });
+  if (f['Date_creation']) details.push({ label: 'Publié le',    value: formatDate(f['Date_creation']) });
+  if (f['Statut'])        details.push({ label: 'Statut',       value: f['Statut'] });
+
+  document.getElementById('detailsGrid').innerHTML = details.map(d =>
+    `<div class="detail-item">
+       <div class="detail-label">${d.label}</div>
+       <div class="detail-value">${d.value}</div>
+     </div>`
+  ).join('');
+
+  // Contact
+  const prenom = f['Prenom_contact'] || '';
+  const nom = f['Nom_contact'] || '';
+  const fullName = [prenom, nom].filter(Boolean).join(' ') || 'Annonceur';
+  const initials = [prenom[0], nom[0]].filter(Boolean).join('').toUpperCase() || '🙂';
+  document.getElementById('contactAvatar').textContent = initials || '🙂';
+  document.getElementById('contactName').textContent = fullName;
+  document.getElementById('adDateBadge').textContent = f['Date_creation']
+    ? 'Annonce du ' + formatDate(f['Date_creation']) : '';
+
+  const actions = [];
+  if (f['Telephone']) {
+    actions.push(`<a href="tel:${f['Telephone']}" class="btn-contact btn-contact-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.1 4.17 2 2 0 015.1 2H8a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91A16 16 0 0015.09 15.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Appeler : ${f['Telephone']}
+    </a>`);
+  }
+  if (f['Email_contact']) {
+    actions.push(`<a href="mailto:${f['Email_contact']}?subject=Annonce Zoophiloo : ${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Envoyer un email
+    </a>`);
+  }
+  if (actions.length === 0) {
+    actions.push(`<p style="font-size:12px;color:var(--text-muted);text-align:center">Aucune coordonnée disponible.</p>`);
+  }
+  document.getElementById('contactActions').innerHTML = actions.join('');
+
+  // Location
+  document.getElementById('locationCity').textContent = f['Ville'] || '—';
+  document.getElementById('locationCp').textContent = f['Code_postal'] || '';
+
+  // Date badge
+  document.getElementById('dateBadge').textContent = f['Date_creation']
+    ? 'Annonce publiée le ' + formatDate(f['Date_creation']) : '';
+
+  // Show
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('pageContent').style.display = 'grid';
+}
+
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+
+  if (!id) { showError('Aucun identifiant d\'annonce fourni.'); return; }
+
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE_NAME)}/${id}`,
+      { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const record = await res.json();
+    if (!record || !record.fields) throw new Error('Enregistrement vide');
+    renderPage(record);
+  } catch (err) {
+    console.error(err);
+    showError('Impossible de charger cette annonce. Vérifiez l\'identifiant ou réessayez plus tard.');
+  }
+}
+
+init();
+</script>
+</body>
+</html>
