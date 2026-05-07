@@ -566,7 +566,7 @@
           <div class="geo-slider-fill" id="geoSliderFill"></div>
         </div>
         <div class="geo-slider-ticks" id="geoSliderTicks"></div>
-        <input type="range" id="geoRadiusSlider" min="0" max="8" step="1" value="0">
+        <input type="range" id="geoRadiusSlider" min="0" max="9" step="1" value="0">
         <div class="geo-slider-thumb inactive" id="geoSliderThumb"></div>
       </div>
       <div class="geo-slider-labels" id="geoSliderLabels"></div>
@@ -656,8 +656,8 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 // Slider steps: 0=off, 1=5km, 2=10km, 3=20km, 4=30km, 5=50km, 6=75km, 7=100km, 8=France entière
-const GEO_STEPS = [0, 5, 10, 20, 30, 50, 75, 100, 99999];
-const GEO_LABELS = ['0', '5', '10', '20', '30', '50', '75', '100', '🇫🇷'];
+const GEO_STEPS = [0, 1, 5, 10, 20, 30, 50, 75, 100, 99999];
+const GEO_LABELS = ['0', '1', '5', '10', '20', '30', '50', '75', '100', '🇫🇷'];
 
 function initGeoSlider() {
   const ticks = document.getElementById('geoSliderTicks');
