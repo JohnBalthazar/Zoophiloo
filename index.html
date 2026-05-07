@@ -74,6 +74,111 @@
   .chip:hover { border-color: var(--green); color: var(--green); }
   .chip.active { background: var(--green); color: white; border-color: var(--green); }
 
+  /* ADVANCED FILTERS PANEL */
+  .filters-bar-2 {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 7px 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .filters-bar-2::-webkit-scrollbar { display: none; }
+
+  /* Rayon géographique */
+  .geo-filter-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .geo-city-input {
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 4px 9px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--text);
+    width: 130px;
+    transition: border-color 0.15s;
+  }
+  .geo-city-input:focus { outline: none; border-color: var(--green); }
+  .geo-city-input.has-value { border-color: var(--green); background: var(--green-light); }
+  .geo-radius-select {
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 4px 9px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .geo-radius-select:focus { outline: none; border-color: var(--green); }
+  .geo-radius-select.active { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+  .geo-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .geo-status.loading { color: var(--green); }
+  .geo-status.error { color: var(--orange); }
+
+  /* Prix range */
+  .price-filter-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .price-input {
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 4px 9px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--text);
+    width: 76px;
+    transition: border-color 0.15s;
+  }
+  .price-input:focus { outline: none; border-color: var(--green); }
+  .price-sep { font-size: 12px; color: var(--text-muted); }
+
+  /* Active filter badge on chips */
+  .filter-reset-btn {
+    font-family: var(--font-body);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--orange);
+    background: #fff4f0;
+    color: var(--orange);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.12s;
+    flex-shrink: 0;
+    display: none;
+  }
+  .filter-reset-btn:hover { background: var(--orange); color: white; }
+  .filter-reset-btn.visible { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* Type chips enriched */
+  .chip-perdu { --chip-color: #dc2626; }
+  .chip-perdu.active { background: #dc2626; border-color: #dc2626; }
+  .chip-trouve { --chip-color: #7c3aed; }
+  .chip-trouve.active { background: #7c3aed; border-color: #7c3aed; }
+  .chip-echange { --chip-color: #0891b2; }
+  .chip-echange.active { background: #0891b2; border-color: #0891b2; }
+
+  @media (max-width: 680px) {
+    .filters-bar-2 { padding: 6px 12px; }
+    .geo-city-input { width: 100px; }
+    .price-input { width: 60px; }
+  }
+
   /* MAIN */
   .main { display: flex; flex: 1; overflow: hidden; }
 
@@ -353,10 +458,50 @@
   <span class="filter-label">Type</span>
   <div id="typeFilters" style="display:flex;gap:5px;align-items:center">
     <button class="chip active" data-val="">Tous</button>
-    <button class="chip" data-val="À vendre">Vente</button>
-    <button class="chip" data-val="À adopter">Adoption</button>
-    <button class="chip" data-val="À donner">Don</button>
+    <button class="chip" data-val="À vendre">💰 Vente</button>
+    <button class="chip" data-val="À adopter">🏠 Adoption</button>
+    <button class="chip" data-val="À donner">🎁 Don</button>
+    <button class="chip" data-val="À échanger">🔄 Échange</button>
+    <button class="chip chip-perdu" data-val="Perdu">🚨 Perdu</button>
+    <button class="chip chip-trouve" data-val="Trouvé">✅ Trouvé</button>
   </div>
+</div>
+
+<!-- BARRE FILTRES AVANCÉS -->
+<div class="filters-bar-2">
+  <span class="filter-label">📍 Rayon</span>
+  <div class="geo-filter-wrap">
+    <input class="geo-city-input" id="geoCityInput" type="text" placeholder="Ville…" autocomplete="off">
+    <select class="geo-radius-select" id="geoRadiusSelect">
+      <option value="">距 km</option>
+      <option value="10">10 km</option>
+      <option value="20">20 km</option>
+      <option value="50">50 km</option>
+      <option value="100">100 km</option>
+    </select>
+    <span class="geo-status" id="geoStatus"></span>
+  </div>
+  <div class="divider"></div>
+  <span class="filter-label">📅 Date</span>
+  <div id="dateFilters" style="display:flex;gap:5px;align-items:center">
+    <button class="chip active" data-val="">Toutes</button>
+    <button class="chip" data-val="today">Aujourd'hui</button>
+    <button class="chip" data-val="week">Cette semaine</button>
+    <button class="chip" data-val="month">Ce mois</button>
+  </div>
+  <div class="divider"></div>
+  <span class="filter-label">💶 Prix</span>
+  <div class="price-filter-wrap">
+    <input class="price-input" id="priceMin" type="number" placeholder="Min" min="0">
+    <span class="price-sep">–</span>
+    <input class="price-input" id="priceMax" type="number" placeholder="Max" min="0">
+    <span class="price-sep">€</span>
+  </div>
+  <div class="divider"></div>
+  <button class="filter-reset-btn" id="filterResetBtn" onclick="resetAdvancedFilters()">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Effacer
+  </button>
 </div>
 
 <div class="main">
@@ -406,7 +551,64 @@ const ESPECE_EMOJI = {
 
 let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
+let activeDate = '', priceMin = null, priceMax = null;
+let geoCenter = null, geoRadius = null; // {lat, lng}, km
 let markers = {}, map;
+
+/* ---- GEO HELPERS ---- */
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+let geoDebounceTimer;
+async function geocodeCity(cityName) {
+  const status = document.getElementById('geoStatus');
+  if (!cityName.trim()) {
+    geoCenter = null;
+    document.getElementById('geoRadiusSelect').classList.remove('active');
+    status.textContent = '';
+    status.className = 'geo-status';
+    applyFilters();
+    return;
+  }
+  status.textContent = '…';
+  status.className = 'geo-status loading';
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&countrycodes=fr&format=json&limit=1`);
+    const data = await res.json();
+    if (data.length === 0) {
+      geoCenter = null;
+      status.textContent = 'Ville inconnue';
+      status.className = 'geo-status error';
+      applyFilters();
+      return;
+    }
+    geoCenter = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), name: data[0].display_name.split(',')[0] };
+    document.getElementById('geoCityInput').classList.add('has-value');
+    const rad = parseInt(document.getElementById('geoRadiusSelect').value) || 50;
+    geoRadius = rad;
+    document.getElementById('geoRadiusSelect').classList.add('active');
+    status.textContent = `autour de ${geoCenter.name}`;
+    status.className = 'geo-status';
+    applyFilters();
+    updateResetBtn();
+    // Draw radius circle on map
+    if (window._geoCircle) map.removeLayer(window._geoCircle);
+    window._geoCircle = L.circle([geoCenter.lat, geoCenter.lng], {
+      radius: rad * 1000, color: '#1a9e6e', weight: 1.5,
+      fillColor: '#1a9e6e', fillOpacity: 0.06, dashArray: '5,5'
+    }).addTo(map);
+    map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(8, 12 - Math.log2(rad)), { animate: true, duration: 1 });
+  } catch(e) {
+    geoCenter = null;
+    status.textContent = 'Erreur réseau';
+    status.className = 'geo-status error';
+  }
+}
 
 /* ---- TAB SWITCHER (mobile only) ---- */
 function switchTab(tab) {
@@ -559,8 +761,14 @@ function handleCardClick(id) {
 
 function applyFilters() {
   let results = [...allRecords];
+
+  // Espèce
   if (activeEspece) results = results.filter(r => r.fields['Espèce']===activeEspece);
+
+  // Type
   if (activeType) results = results.filter(r => r.fields['Type_annonce']===activeType);
+
+  // Texte
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     results = results.filter(r => {
@@ -572,15 +780,86 @@ function applyFilters() {
           || (f['Ville']||'').toLowerCase().includes(q);
     });
   }
+
+  // Ville exacte (select legacy)
   const loc = document.getElementById('locationSelect').value;
   if (loc) results = results.filter(r => (r.fields['Ville']||'').toLowerCase().includes(loc.toLowerCase()));
+
+  // Rayon géographique
+  if (geoCenter && geoRadius) {
+    results = results.filter(r => {
+      const lat = parseFloat(r.fields['Latitude']), lng = parseFloat(r.fields['Longitude']);
+      if (isNaN(lat) || isNaN(lng)) return false;
+      return haversineKm(geoCenter.lat, geoCenter.lng, lat, lng) <= geoRadius;
+    });
+  }
+
+  // Filtre date
+  if (activeDate) {
+    const now = new Date();
+    results = results.filter(r => {
+      const d = new Date(r.fields['Date_creation']);
+      if (isNaN(d)) return false;
+      if (activeDate === 'today') {
+        return d.toDateString() === now.toDateString();
+      } else if (activeDate === 'week') {
+        const msWeek = 7*24*60*60*1000;
+        return (now - d) <= msWeek;
+      } else if (activeDate === 'month') {
+        return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+      }
+      return true;
+    });
+  }
+
+  // Filtre prix
+  if (priceMin !== null || priceMax !== null) {
+    results = results.filter(r => {
+      const raw = r.fields['Prix'];
+      // Gratuit / Adoption → inclus si min=0 ou pas de min
+      if (!raw) return priceMin === null || priceMin === 0;
+      const num = parseFloat(String(raw).replace(/[^0-9.]/g,''));
+      if (isNaN(num)) return true;
+      if (priceMin !== null && num < priceMin) return false;
+      if (priceMax !== null && num > priceMax) return false;
+      return true;
+    });
+  }
+
   const sort = document.getElementById('sortSelect').value;
   if (sort==='price_asc') results.sort((a,b)=>(parseFloat(String(a.fields['Prix']||0).replace(/[^0-9.]/g,''))||0)-(parseFloat(String(b.fields['Prix']||0).replace(/[^0-9.]/g,''))||0));
   else if (sort==='price_desc') results.sort((a,b)=>(parseFloat(String(b.fields['Prix']||0).replace(/[^0-9.]/g,''))||0)-(parseFloat(String(a.fields['Prix']||0).replace(/[^0-9.]/g,''))||0));
   else results.sort((a,b)=>new Date(b.fields['Date_creation']||0)-new Date(a.fields['Date_creation']||0));
+
   filteredRecords = results;
   renderList();
   renderMarkers();
+  updateResetBtn();
+}
+
+function updateResetBtn() {
+  const hasAdvanced = geoCenter || activeDate || priceMin !== null || priceMax !== null;
+  document.getElementById('filterResetBtn').classList.toggle('visible', !!hasAdvanced);
+}
+
+function resetAdvancedFilters() {
+  // Geo
+  geoCenter = null; geoRadius = null;
+  document.getElementById('geoCityInput').value = '';
+  document.getElementById('geoCityInput').classList.remove('has-value');
+  document.getElementById('geoRadiusSelect').value = '';
+  document.getElementById('geoRadiusSelect').classList.remove('active');
+  document.getElementById('geoStatus').textContent = '';
+  if (window._geoCircle) { map.removeLayer(window._geoCircle); window._geoCircle = null; }
+  // Date
+  activeDate = '';
+  document.querySelectorAll('#dateFilters .chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('#dateFilters .chip[data-val=""]').classList.add('active');
+  // Prix
+  priceMin = null; priceMax = null;
+  document.getElementById('priceMin').value = '';
+  document.getElementById('priceMax').value = '';
+  applyFilters();
 }
 
 document.getElementById('especeFilters').addEventListener('click', e => {
@@ -593,6 +872,11 @@ document.getElementById('typeFilters').addEventListener('click', e => {
   document.querySelectorAll('#typeFilters .chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active'); activeType = chip.dataset.val; applyFilters();
 });
+document.getElementById('dateFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.chip'); if (!chip) return;
+  document.querySelectorAll('#dateFilters .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active'); activeDate = chip.dataset.val; applyFilters();
+});
 let searchTimeout;
 document.getElementById('searchInput').addEventListener('input', e => {
   clearTimeout(searchTimeout);
@@ -600,6 +884,45 @@ document.getElementById('searchInput').addEventListener('input', e => {
 });
 document.getElementById('locationSelect').addEventListener('change', applyFilters);
 document.getElementById('sortSelect').addEventListener('change', applyFilters);
+
+// Geo filters
+document.getElementById('geoCityInput').addEventListener('input', e => {
+  clearTimeout(geoDebounceTimer);
+  const val = e.target.value.trim();
+  e.target.classList.toggle('has-value', val.length > 0);
+  geoDebounceTimer = setTimeout(() => geocodeCity(val), 700);
+});
+document.getElementById('geoRadiusSelect').addEventListener('change', e => {
+  const rad = parseInt(e.target.value);
+  if (!rad) { geoRadius = null; e.target.classList.remove('active'); }
+  else {
+    geoRadius = rad;
+    e.target.classList.add('active');
+    if (window._geoCircle && geoCenter) {
+      window._geoCircle.setRadius(rad * 1000);
+      map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(8, 12 - Math.log2(rad)), { animate: true, duration: 0.8 });
+    } else if (document.getElementById('geoCityInput').value.trim()) {
+      geocodeCity(document.getElementById('geoCityInput').value.trim());
+      return;
+    }
+  }
+  applyFilters();
+});
+
+// Prix
+let priceTimeout;
+function onPriceInput() {
+  clearTimeout(priceTimeout);
+  priceTimeout = setTimeout(() => {
+    const minVal = document.getElementById('priceMin').value;
+    const maxVal = document.getElementById('priceMax').value;
+    priceMin = minVal !== '' ? parseFloat(minVal) : null;
+    priceMax = maxVal !== '' ? parseFloat(maxVal) : null;
+    applyFilters();
+  }, 400);
+}
+document.getElementById('priceMin').addEventListener('input', onPriceInput);
+document.getElementById('priceMax').addEventListener('input', onPriceInput);
 
 async function init() {
   initMap();
