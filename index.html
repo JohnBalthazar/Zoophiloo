@@ -304,7 +304,7 @@
       <!-- Rempli dynamiquement par Firebase -->
       <button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>
     </div>
-    <a href="https://airtable.com/appepwMYbNUv2k3f9/pageXDiaAd8lLegFd/form" target="_blank" class="btn-primary">
+    <a href="login.html?next=deposer.html" class="btn-primary" id="btnDeposer">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       <span class="label">Déposer une annonce</span>
     </a>
@@ -639,6 +639,8 @@ const auth = firebase.auth();
 
 function renderHeaderAuth(user) {
   const el = document.getElementById('headerAuth');
+  const btnDep = document.getElementById('btnDeposer');
+  if (btnDep) btnDep.href = user ? 'deposer.html' : 'login.html?next=deposer.html';
   if (!user) {
     el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`;
     return;

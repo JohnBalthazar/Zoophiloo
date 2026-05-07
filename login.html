@@ -435,9 +435,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+function redirectAfterLogin() {
+  const next = new URLSearchParams(window.location.search).get('next');
+  window.location.href = (next && /^[a-z\-]+\.html$/.test(next)) ? next : 'index.html';
+}
+
 // ── Redirect if already logged in ──
 auth.onAuthStateChanged(user => {
-  if (user) window.location.href = 'index.html';
+  if (user) redirectAfterLogin();
 });
 
 // ── Panel switcher ──
@@ -501,7 +506,7 @@ async function doSignIn() {
   setLoading('btnSignin', true);
   try {
     await auth.signInWithEmailAndPassword(email, password);
-    window.location.href = 'index.html';
+    redirectAfterLogin();
   } catch(e) {
     showError('signin', firebaseError(e.code));
     setLoading('btnSignin', false);
@@ -520,7 +525,7 @@ async function doSignUp() {
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
     if (name) await cred.user.updateProfile({ displayName: name });
-    window.location.href = 'index.html';
+    redirectAfterLogin();
   } catch(e) {
     showError('signup', firebaseError(e.code));
     setLoading('btnSignup', false);
@@ -533,7 +538,7 @@ async function doGoogleSignIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     await auth.signInWithPopup(provider);
-    window.location.href = 'index.html';
+    redirectAfterLogin();
   } catch(e) {
     const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
     showError(panel, firebaseError(e.code));
