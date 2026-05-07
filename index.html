@@ -719,7 +719,7 @@ async function geocodeCity(cityName) {
     document.getElementById('geoCityInput').classList.add('has-value');
     status.textContent = geoCenter.name;
     status.className = 'geo-status';
-    const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value);
+    const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
     if (stepIdx > 0) {
       geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
       drawGeoCircle();
@@ -928,18 +928,19 @@ function applyFilters() {
   if (loc) results = results.filter(r => (r.fields['Ville']||'').toLowerCase().includes(loc.toLowerCase()));
 
   // Rayon géographique
-  const sliderStep = parseInt(document.getElementById('geoRadiusSlider').value);
-  if (geoCenter && sliderStep > 0) {
-    if (sliderStep < GEO_STEPS.length - 1) { // not "France entière"
-      const km = GEO_STEPS[sliderStep];
-      results = results.filter(r => {
-        const lat = parseFloat(r.fields['Latitude']), lng = parseFloat(r.fields['Longitude']);
-        if (isNaN(lat) || isNaN(lng)) return false;
-        return haversineKm(geoCenter.lat, geoCenter.lng, lat, lng) <= km;
-      });
-    }
-    // France entière → no geo filter, show everything
+  const sliderStep = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
+  if (geoCenter && sliderStep > 0 && sliderStep < GEO_STEPS.length - 1) {
+    const km = GEO_STEPS[sliderStep];
+    results = results.filter(r => {
+      const latRaw = r.fields['Latitude'], lngRaw = r.fields['Longitude'];
+      // Accepter coordonnées sous forme nombre ou texte
+      const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw || '').replace(',', '.'));
+      const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw || '').replace(',', '.'));
+      if (isNaN(lat) || isNaN(lng)) return false;
+      return haversineKm(geoCenter.lat, geoCenter.lng, lat, lng) <= km;
+    });
   }
+  // sliderStep === GEO_STEPS.length - 1 → France entière, pas de filtre distance
 
   // Filtre date
   if (activeDate) {
@@ -1049,11 +1050,19 @@ document.getElementById('geoRadiusSlider').addEventListener('input', e => {
   if (stepIdx === 0) {
     geoRadius = null;
     if (window._geoCircle) { map.removeLayer(window._geoCircle); window._geoCircle = null; }
-  } else {
-    geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
-    drawGeoCircle();
+    applyFilters();
+    updateResetBtn();
+    return;
   }
-  applyFilters();
+  geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
+  const cityVal = document.getElementById('geoCityInput').value.trim();
+  if (!geoCenter && cityVal) {
+    // Ville saisie mais pas encore géocodée → lancer le géocodage maintenant
+    geocodeCity(cityVal); // geocodeCity appellera applyFilters une fois terminé
+  } else {
+    drawGeoCircle();
+    applyFilters();
+  }
   updateResetBtn();
 });
 
