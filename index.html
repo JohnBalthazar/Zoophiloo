@@ -109,22 +109,106 @@
   }
   .geo-city-input:focus { outline: none; border-color: var(--green); }
   .geo-city-input.has-value { border-color: var(--green); background: var(--green-light); }
-  .geo-radius-select {
-    font-family: var(--font-body);
-    font-size: 12px;
-    padding: 4px 9px;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    background: var(--bg);
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.15s;
+  /* Radius slider */
+  .geo-slider-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-shrink: 0;
+    width: 200px;
   }
-  .geo-radius-select:focus { outline: none; border-color: var(--green); }
-  .geo-radius-select.active { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
-  .geo-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .geo-slider-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .geo-radius-label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-dark);
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .geo-radius-label.inactive { color: var(--text-muted); font-weight: 400; }
+  .geo-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; text-align: right; }
   .geo-status.loading { color: var(--green); }
   .geo-status.error { color: var(--orange); }
+  .geo-slider-track {
+    position: relative;
+    height: 18px;
+    display: flex;
+    align-items: center;
+  }
+  .geo-slider-bg {
+    position: absolute;
+    left: 0; right: 0;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .geo-slider-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.2s;
+  }
+  .geo-slider-ticks {
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    padding: 0 1px;
+  }
+  .geo-slider-tick {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--border);
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+  .geo-slider-tick.passed { background: white; }
+  input[type=range]#geoRadiusSlider {
+    position: absolute;
+    left: 0; right: 0;
+    width: 100%;
+    height: 18px;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    z-index: 2;
+  }
+  .geo-slider-thumb {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--green);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    pointer-events: none;
+    transform: translateX(-50%);
+    transition: left 0.2s, border-color 0.15s;
+    z-index: 3;
+    left: 0%;
+  }
+  .geo-slider-thumb.inactive { border-color: var(--border); }
+  .geo-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1px;
+  }
+  .geo-slider-labels span {
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .geo-slider-labels span.active-label { color: var(--green); font-weight: 600; }
 
   /* Prix range */
   .price-filter-wrap {
@@ -472,14 +556,21 @@
   <span class="filter-label">📍 Rayon</span>
   <div class="geo-filter-wrap">
     <input class="geo-city-input" id="geoCityInput" type="text" placeholder="Ville…" autocomplete="off">
-    <select class="geo-radius-select" id="geoRadiusSelect">
-      <option value="">距 km</option>
-      <option value="10">10 km</option>
-      <option value="20">20 km</option>
-      <option value="50">50 km</option>
-      <option value="100">100 km</option>
-    </select>
-    <span class="geo-status" id="geoStatus"></span>
+    <div class="geo-slider-wrap" id="geoSliderWrap">
+      <div class="geo-slider-top">
+        <span class="geo-radius-label inactive" id="geoRadiusLabel">Rayon</span>
+        <span class="geo-status" id="geoStatus"></span>
+      </div>
+      <div class="geo-slider-track">
+        <div class="geo-slider-bg">
+          <div class="geo-slider-fill" id="geoSliderFill"></div>
+        </div>
+        <div class="geo-slider-ticks" id="geoSliderTicks"></div>
+        <input type="range" id="geoRadiusSlider" min="0" max="8" step="1" value="0">
+        <div class="geo-slider-thumb inactive" id="geoSliderThumb"></div>
+      </div>
+      <div class="geo-slider-labels" id="geoSliderLabels"></div>
+    </div>
   </div>
   <div class="divider"></div>
   <span class="filter-label">📅 Date</span>
@@ -564,12 +655,49 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// Slider steps: 0=off, 1=5km, 2=10km, 3=20km, 4=30km, 5=50km, 6=75km, 7=100km, 8=France entière
+const GEO_STEPS = [0, 5, 10, 20, 30, 50, 75, 100, 99999];
+const GEO_LABELS = ['0', '5', '10', '20', '30', '50', '75', '100', '🇫🇷'];
+
+function initGeoSlider() {
+  const ticks = document.getElementById('geoSliderTicks');
+  const labels = document.getElementById('geoSliderLabels');
+  ticks.innerHTML = GEO_STEPS.map(() => `<div class="geo-slider-tick"></div>`).join('');
+  labels.innerHTML = GEO_STEPS.map((_, i) => `<span>${GEO_LABELS[i]}</span>`).join('');
+}
+
+function updateGeoSliderUI(stepIdx) {
+  const pct = stepIdx / (GEO_STEPS.length - 1) * 100;
+  document.getElementById('geoSliderFill').style.width = pct + '%';
+  document.getElementById('geoSliderThumb').style.left = pct + '%';
+  const thumb = document.getElementById('geoSliderThumb');
+  const label = document.getElementById('geoRadiusLabel');
+  const labelEls = document.querySelectorAll('#geoSliderLabels span');
+  labelEls.forEach((el, i) => el.classList.toggle('active-label', i === stepIdx));
+  if (stepIdx === 0) {
+    thumb.classList.add('inactive');
+    label.textContent = 'Rayon';
+    label.classList.add('inactive');
+  } else {
+    thumb.classList.remove('inactive');
+    label.classList.remove('inactive');
+    if (stepIdx === GEO_STEPS.length - 1) {
+      label.textContent = 'Toute la France';
+    } else {
+      label.textContent = GEO_STEPS[stepIdx] + ' km';
+    }
+  }
+  // Update ticks color
+  document.querySelectorAll('.geo-slider-tick').forEach((t, i) => {
+    t.classList.toggle('passed', i < stepIdx);
+  });
+}
+
 let geoDebounceTimer;
 async function geocodeCity(cityName) {
   const status = document.getElementById('geoStatus');
   if (!cityName.trim()) {
     geoCenter = null;
-    document.getElementById('geoRadiusSelect').classList.remove('active');
     status.textContent = '';
     status.className = 'geo-status';
     applyFilters();
@@ -582,32 +710,46 @@ async function geocodeCity(cityName) {
     const data = await res.json();
     if (data.length === 0) {
       geoCenter = null;
-      status.textContent = 'Ville inconnue';
+      status.textContent = 'Inconnue';
       status.className = 'geo-status error';
       applyFilters();
       return;
     }
     geoCenter = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), name: data[0].display_name.split(',')[0] };
     document.getElementById('geoCityInput').classList.add('has-value');
-    const rad = parseInt(document.getElementById('geoRadiusSelect').value) || 50;
-    geoRadius = rad;
-    document.getElementById('geoRadiusSelect').classList.add('active');
-    status.textContent = `autour de ${geoCenter.name}`;
+    status.textContent = geoCenter.name;
     status.className = 'geo-status';
+    const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value);
+    if (stepIdx > 0) {
+      geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
+      drawGeoCircle();
+    }
     applyFilters();
     updateResetBtn();
-    // Draw radius circle on map
-    if (window._geoCircle) map.removeLayer(window._geoCircle);
-    window._geoCircle = L.circle([geoCenter.lat, geoCenter.lng], {
-      radius: rad * 1000, color: '#1a9e6e', weight: 1.5,
-      fillColor: '#1a9e6e', fillOpacity: 0.06, dashArray: '5,5'
-    }).addTo(map);
-    map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(8, 12 - Math.log2(rad)), { animate: true, duration: 1 });
   } catch(e) {
     geoCenter = null;
     status.textContent = 'Erreur réseau';
     status.className = 'geo-status error';
   }
+}
+
+function drawGeoCircle() {
+  if (window._geoCircle) map.removeLayer(window._geoCircle);
+  window._geoCircle = null;
+  if (!geoCenter) return;
+  const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value);
+  if (stepIdx === 0) return;
+  const km = GEO_STEPS[stepIdx];
+  if (km === 99999) {
+    // France entière → juste recentrer
+    map.flyTo([46.5, 2.5], 5, { animate: true, duration: 0.8 });
+    return;
+  }
+  window._geoCircle = L.circle([geoCenter.lat, geoCenter.lng], {
+    radius: km * 1000, color: '#1a9e6e', weight: 1.5,
+    fillColor: '#1a9e6e', fillOpacity: 0.06, dashArray: '5,5'
+  }).addTo(map);
+  map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(7, 12 - Math.log2(km)), { animate: true, duration: 0.8 });
 }
 
 /* ---- TAB SWITCHER (mobile only) ---- */
@@ -786,12 +928,17 @@ function applyFilters() {
   if (loc) results = results.filter(r => (r.fields['Ville']||'').toLowerCase().includes(loc.toLowerCase()));
 
   // Rayon géographique
-  if (geoCenter && geoRadius) {
-    results = results.filter(r => {
-      const lat = parseFloat(r.fields['Latitude']), lng = parseFloat(r.fields['Longitude']);
-      if (isNaN(lat) || isNaN(lng)) return false;
-      return haversineKm(geoCenter.lat, geoCenter.lng, lat, lng) <= geoRadius;
-    });
+  const sliderStep = parseInt(document.getElementById('geoRadiusSlider').value);
+  if (geoCenter && sliderStep > 0) {
+    if (sliderStep < GEO_STEPS.length - 1) { // not "France entière"
+      const km = GEO_STEPS[sliderStep];
+      results = results.filter(r => {
+        const lat = parseFloat(r.fields['Latitude']), lng = parseFloat(r.fields['Longitude']);
+        if (isNaN(lat) || isNaN(lng)) return false;
+        return haversineKm(geoCenter.lat, geoCenter.lng, lat, lng) <= km;
+      });
+    }
+    // France entière → no geo filter, show everything
   }
 
   // Filtre date
@@ -838,7 +985,8 @@ function applyFilters() {
 }
 
 function updateResetBtn() {
-  const hasAdvanced = geoCenter || activeDate || priceMin !== null || priceMax !== null;
+  const sliderActive = parseInt(document.getElementById('geoRadiusSlider').value) > 0;
+  const hasAdvanced = (geoCenter && sliderActive) || activeDate || priceMin !== null || priceMax !== null;
   document.getElementById('filterResetBtn').classList.toggle('visible', !!hasAdvanced);
 }
 
@@ -847,8 +995,8 @@ function resetAdvancedFilters() {
   geoCenter = null; geoRadius = null;
   document.getElementById('geoCityInput').value = '';
   document.getElementById('geoCityInput').classList.remove('has-value');
-  document.getElementById('geoRadiusSelect').value = '';
-  document.getElementById('geoRadiusSelect').classList.remove('active');
+  document.getElementById('geoRadiusSlider').value = '0';
+  updateGeoSliderUI(0);
   document.getElementById('geoStatus').textContent = '';
   if (window._geoCircle) { map.removeLayer(window._geoCircle); window._geoCircle = null; }
   // Date
@@ -885,28 +1033,28 @@ document.getElementById('searchInput').addEventListener('input', e => {
 document.getElementById('locationSelect').addEventListener('change', applyFilters);
 document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
-// Geo filters
+// Geo city input
 document.getElementById('geoCityInput').addEventListener('input', e => {
   clearTimeout(geoDebounceTimer);
   const val = e.target.value.trim();
   e.target.classList.toggle('has-value', val.length > 0);
+  if (!val) { geoCenter = null; document.getElementById('geoStatus').textContent = ''; applyFilters(); return; }
   geoDebounceTimer = setTimeout(() => geocodeCity(val), 700);
 });
-document.getElementById('geoRadiusSelect').addEventListener('change', e => {
-  const rad = parseInt(e.target.value);
-  if (!rad) { geoRadius = null; e.target.classList.remove('active'); }
-  else {
-    geoRadius = rad;
-    e.target.classList.add('active');
-    if (window._geoCircle && geoCenter) {
-      window._geoCircle.setRadius(rad * 1000);
-      map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(8, 12 - Math.log2(rad)), { animate: true, duration: 0.8 });
-    } else if (document.getElementById('geoCityInput').value.trim()) {
-      geocodeCity(document.getElementById('geoCityInput').value.trim());
-      return;
-    }
+
+// Radius slider
+document.getElementById('geoRadiusSlider').addEventListener('input', e => {
+  const stepIdx = parseInt(e.target.value);
+  updateGeoSliderUI(stepIdx);
+  if (stepIdx === 0) {
+    geoRadius = null;
+    if (window._geoCircle) { map.removeLayer(window._geoCircle); window._geoCircle = null; }
+  } else {
+    geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
+    drawGeoCircle();
   }
   applyFilters();
+  updateResetBtn();
 });
 
 // Prix
@@ -926,6 +1074,7 @@ document.getElementById('priceMax').addEventListener('input', onPriceInput);
 
 async function init() {
   initMap();
+  initGeoSlider();
   try {
     allRecords = await fetchAnnonces();
     filteredRecords = allRecords;
