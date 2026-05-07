@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Déposer une annonce — Zoophiloo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a9e6e; --green-dark: #0f7a52; --green-light: #e6f7f0;
+    --orange: #e8622a; --red: #c0392b; --red-light: #fdf0ee;
+    --text: #1a1a1a; --text-muted: #6b6b6b; --border: #e8e8e4;
+    --bg: #fafaf8; --white: #ffffff;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 24px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo .z { color: var(--green); } .logo .rest { color: var(--text); }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+
+  .page { max-width: 680px; margin: 0 auto; padding: 32px 24px 64px; }
+  .page-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 6px; }
+  .page-title span { color: var(--green); }
+  .page-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+
+  /* SECTIONS */
+  .form-section { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+  .section-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .section-title .num { width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* FIELDS */
+  .form-row { display: grid; gap: 12px; margin-bottom: 14px; }
+  .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 12px; font-weight: 500; color: var(--text); }
+  label .req { color: var(--green); }
+  input[type="text"], input[type="number"], input[type="email"], input[type="tel"], textarea, select {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: var(--font-body); font-size: 14px;
+    background: var(--bg); color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,158,110,0.10); }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  select { cursor: pointer; }
+  .field-hint { font-size: 11px; color: var(--text-muted); }
+  .error-msg { font-size: 11px; color: var(--red); display: none; }
+  .form-group.has-error input, .form-group.has-error select, .form-group.has-error textarea {
+    border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,57,43,0.08);
+  }
+  .form-group.has-error .error-msg { display: block; }
+
+  /* PHOTO UPLOAD */
+  .photo-zone {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: all 0.15s; background: var(--bg);
+  }
+  .photo-zone:hover, .photo-zone.drag-over { border-color: var(--green); background: var(--green-light); }
+  .photo-zone .icon { font-size: 28px; margin-bottom: 8px; }
+  .photo-zone p { font-size: 13px; color: var(--text-muted); }
+  .photo-zone p strong { color: var(--text); }
+  .photo-zone input[type="file"] { display: none; }
+  .photo-previews { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+  .photo-thumb {
+    position: relative; aspect-ratio: 1; border-radius: 8px;
+    overflow: hidden; border: 1px solid var(--border); background: var(--bg);
+  }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-thumb .remove-photo {
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: white;
+    border: none; cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .upload-progress { margin-top: 8px; display: none; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s; border-radius: 2px; }
+  .progress-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ADDRESS */
+  .geocode-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--green); cursor: pointer;
+    background: none; border: none; font-family: var(--font-body);
+    padding: 0; margin-top: 4px;
+  }
+  .geocode-btn:hover { text-decoration: underline; }
+  .geocode-result { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* SUBMIT */
+  .submit-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .btn-submit {
+    padding: 12px 28px; border: none; border-radius: 10px;
+    background: var(--green); color: white;
+    font-family: var(--font-body); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-submit:hover { background: var(--green-dark); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .submit-note { font-size: 12px; color: var(--text-muted); }
+
+  /* ALERT */
+  .alert { display: none; padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 16px; }
+  .alert.show { display: flex; align-items: flex-start; gap: 8px; }
+  .alert-error { background: var(--red-light); color: var(--red); border: 1px solid rgba(192,57,43,0.2); }
+  .alert-success { background: var(--green-light); color: var(--green-dark); border: 1px solid rgba(26,158,110,0.25); }
+
+  /* SPINNER */
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; display: none; }
+  .btn-submit.loading .spinner { display: block; }
+  .btn-submit.loading .btn-label { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .form-row.cols-2, .form-row.cols-3 { grid-template-columns: 1fr; }
+    .photo-previews { grid-template-columns: repeat(3, 1fr); }
+    .page { padding: 20px 14px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo"><span class="z">Zoo</span><span class="rest">philoo</span></a>
+  <a href="mon-espace.html" class="btn-ghost">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Mon espace
+  </a>
+</header>
+
+<div class="page">
+  <h1 class="page-title">Déposer une <span>annonce</span></h1>
+  <p class="page-subtitle">Votre annonce sera visible après validation par notre équipe.</p>
+
+  <div class="alert alert-error" id="alertError">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="alertErrorMsg"></span>
+  </div>
+  <div class="alert alert-success" id="alertSuccess">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="alertSuccessMsg"></span>
+  </div>
+
+  <!-- 1. Animal -->
+  <div class="form-section">
+    <div class="section-title"><div class="num">1</div>L'animal</div>
+    <div class="form-row">
+      <div class="form-group" id="grp-titre">
+        <label>Titre de l'annonce <span class="req">*</span></label>
+        <input type="text" id="titre" placeholder="Ex: Labrador roux 2 ans, Chatons tigrés…" maxlength="100">
+        <span class="error-msg">Le titre est obligatoire</span>
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="form-group" id="grp-espece">
+        <label>Espèce <span class="req">*</span></label>
+        <select id="espece">
+          <option value="">Choisir…</option>
+          <option>Chien</option><option>Chat</option><option>Poisson</option>
+          <option>Oiseau</option><option>Rongeur</option><option>Reptile</option>
+          <option>Furet</option><option>Amphibien</option><option>Crustacée</option>
+          <option>Insecte</option><option>Araignée</option><option>Plante</option><option>Autre</option>
+        </select>
+        <span class="error-msg">Choisissez une espèce</span>
+      </div>
+      <div class="form-group">
+        <label>Race / variété</label>
+        <input type="text" id="race" placeholder="Ex: Golden Retriever, Persan…">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="description" placeholder="Décrivez l'animal : âge, caractère, santé, conditions de vie…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Type & prix -->
+  <div class="form-section">
+    <div class="section-title"><div class="num">2</div>Type d'annonce & prix</div>
+    <div class="form-row cols-2">
+      <div class="form-group" id="grp-type">
+        <label>Type d'annonce <span class="req">*</span></label>
+        <select id="type_annonce">
+          <option value="">Choisir…</option>
+          <option>À vendre</option><option>À donner</option>
+          <option>À adopter</option><option>À échanger</option>
+          <option>Perdu</option><option>Trouvé</option>
+        </select>
+        <span class="error-msg">Choisissez un type</span>
+      </div>
+      <div class="form-group" id="grp-prix">
+        <label>Prix (€)</label>
+        <input type="number" id="prix" placeholder="0" min="0" step="0.01">
+        <span class="field-hint">Laissez vide si don / adoption</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Photos -->
+  <div class="form-section">
+    <div class="section-title"><div class="num">3</div>Photos</div>
+    <div class="photo-zone" id="photoZone" onclick="document.getElementById('fileInput').click()">
+      <div class="icon">📷</div>
+      <p><strong>Cliquez ou glissez vos photos</strong></p>
+      <p>JPG, PNG — max 5 photos, 10 Mo chacune</p>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+    <div class="photo-previews" id="photoPreviews"></div>
+    <div class="upload-progress" id="uploadProgress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">Upload en cours…</div>
+    </div>
+  </div>
+
+  <!-- 4. Localisation -->
+  <div class="form-section">
+    <div class="section-title"><div class="num">4</div>Localisation</div>
+    <div class="form-row cols-2">
+      <div class="form-group" id="grp-ville">
+        <label>Ville <span class="req">*</span></label>
+        <input type="text" id="ville" placeholder="Ex: Lyon">
+        <span class="error-msg">La ville est obligatoire</span>
+      </div>
+      <div class="form-group">
+        <label>Code postal</label>
+        <input type="text" id="code_postal" placeholder="Ex: 69001" maxlength="10">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Adresse</label>
+        <input type="text" id="adresse" placeholder="Ex: 5 rue de la République">
+        <button type="button" class="geocode-btn" onclick="geocodeAddress()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Localiser automatiquement
+        </button>
+        <span class="geocode-result" id="geocodeResult"></span>
+      </div>
+    </div>
+    <div class="form-row cols-2" style="display:none" id="coordsRow">
+      <div class="form-group">
+        <label>Latitude</label>
+        <input type="text" id="latitude" readonly style="color:var(--text-muted)">
+      </div>
+      <div class="form-group">
+        <label>Longitude</label>
+        <input type="text" id="longitude" readonly style="color:var(--text-muted)">
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Contact -->
+  <div class="form-section">
+    <div class="section-title"><div class="num">5</div>Contact</div>
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label>Prénom <span class="req">*</span></label>
+        <input type="text" id="prenom_contact" placeholder="Votre prénom">
+      </div>
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" id="nom_contact" placeholder="Votre nom">
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label>E-mail <span class="req">*</span></label>
+        <input type="email" id="email_contact" readonly style="color:var(--text-muted)">
+        <span class="field-hint">Votre e-mail de connexion</span>
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" id="telephone" placeholder="06 00 00 00 00">
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-bar">
+    <p class="submit-note">Votre annonce sera examinée avant publication.</p>
+    <button class="btn-submit" id="btnSubmit" onclick="submitAnnonce()">
+      <div class="spinner"></div>
+      <span class="btn-label">Publier l'annonce</span>
+    </button>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "__FIREBASE_API_KEY__", authDomain: "__FIREBASE_AUTH_DOMAIN__",
+  projectId: "__FIREBASE_PROJECT_ID__", storageBucket: "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__", appId: "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
+const BASE_ID = 'appepwMYbNUv2k3f9';
+const TABLE = 'Annonces';
+const CLOUDINARY_CLOUD = 'drip4fcld';
+const CLOUDINARY_PRESET = 'zoophiloo-upload';
+
+let currentUser = null;
+let photoFiles = []; // {file, previewUrl, cloudUrl}
+
+// ── Auth guard ──
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  document.getElementById('email_contact').value = user.email;
+  if (user.displayName) {
+    const parts = user.displayName.split(' ');
+    document.getElementById('prenom_contact').value = parts[0] || '';
+    document.getElementById('nom_contact').value = parts.slice(1).join(' ') || '';
+  }
+});
+
+// ── Photo handling ──
+const fileInput = document.getElementById('fileInput');
+const photoZone = document.getElementById('photoZone');
+
+fileInput.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
+photoZone.addEventListener('dragover', e => { e.preventDefault(); photoZone.classList.add('drag-over'); });
+photoZone.addEventListener('dragleave', () => photoZone.classList.remove('drag-over'));
+photoZone.addEventListener('drop', e => {
+  e.preventDefault(); photoZone.classList.remove('drag-over');
+  handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+});
+
+function handleFiles(files) {
+  const remaining = 5 - photoFiles.length;
+  files.slice(0, remaining).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      photoFiles.push({ file, previewUrl: e.target.result, cloudUrl: null });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreviews() {
+  const container = document.getElementById('photoPreviews');
+  container.innerHTML = photoFiles.map((p, i) => `
+    <div class="photo-thumb">
+      <img src="${p.previewUrl}" alt="">
+      <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removePhoto(i) {
+  photoFiles.splice(i, 1);
+  renderPreviews();
+}
+
+// ── Upload photos to Cloudinary ──
+async function uploadPhotos() {
+  const progress = document.getElementById('uploadProgress');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+  if (photoFiles.length === 0) return [];
+
+  progress.style.display = 'block';
+  const urls = [];
+  for (let i = 0; i < photoFiles.length; i++) {
+    const pct = Math.round((i / photoFiles.length) * 100);
+    fill.style.width = pct + '%';
+    label.textContent = `Upload photo ${i+1}/${photoFiles.length}…`;
+    if (photoFiles[i].cloudUrl) { urls.push(photoFiles[i].cloudUrl); continue; }
+    const fd = new FormData();
+    fd.append('file', photoFiles[i].file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder', 'zoophiloo');
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.secure_url) { photoFiles[i].cloudUrl = data.secure_url; urls.push(data.secure_url); }
+  }
+  fill.style.width = '100%';
+  label.textContent = 'Photos uploadées ✓';
+  return urls;
+}
+
+// ── Geocoding ──
+async function geocodeAddress() {
+  const adresse = document.getElementById('adresse').value.trim();
+  const ville = document.getElementById('ville').value.trim();
+  const cp = document.getElementById('code_postal').value.trim();
+  const q = [adresse, cp, ville].filter(Boolean).join(', ');
+  if (!q) { showResult('Entrez d\'abord une adresse ou une ville', false); return; }
+
+  const btn = document.querySelector('.geocode-btn');
+  btn.textContent = 'Localisation…'; btn.disabled = true;
+
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=fr`);
+    const data = await res.json();
+    if (data.length > 0) {
+      document.getElementById('latitude').value = parseFloat(data[0].lat).toFixed(6);
+      document.getElementById('longitude').value = parseFloat(data[0].lon).toFixed(6);
+      document.getElementById('coordsRow').style.display = 'grid';
+      showResult('📍 ' + data[0].display_name.split(',').slice(0,3).join(','), true);
+    } else { showResult('Adresse introuvable — vérifiez les champs', false); }
+  } catch(e) { showResult('Erreur de géolocalisation', false); }
+  btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Localiser automatiquement`;
+  btn.disabled = false;
+}
+
+function showResult(msg, ok) {
+  const el = document.getElementById('geocodeResult');
+  el.textContent = msg;
+  el.style.color = ok ? 'var(--green-dark)' : 'var(--red)';
+}
+
+// ── Slug ──
+function makeSlug(titre, id) {
+  return titre.toLowerCase().replace(/[éèê]/g,'e').replace(/[àâ]/g,'a').replace(/[ùûü]/g,'u')
+    .replace(/[ôö]/g,'o').replace(/[ïî]/g,'i').replace(/ç/g,'c')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-' + id;
+}
+
+// ── Validation ──
+function validate() {
+  let ok = true;
+  const required = [
+    { id: 'titre', grp: 'grp-titre' },
+    { id: 'espece', grp: 'grp-espece' },
+    { id: 'type_annonce', grp: 'grp-type' },
+    { id: 'ville', grp: 'grp-ville' },
+  ];
+  required.forEach(({ id, grp }) => {
+    const val = document.getElementById(id).value.trim();
+    const grpEl = document.getElementById(grp);
+    if (!val) { grpEl.classList.add('has-error'); ok = false; }
+    else { grpEl.classList.remove('has-error'); }
+  });
+  return ok;
+}
+
+// ── Submit ──
+async function submitAnnonce() {
+  hideAlerts();
+  if (!validate()) { showError('Veuillez remplir les champs obligatoires.'); return; }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true; btn.classList.add('loading');
+
+  try {
+    // Upload photos
+    const photoUrls = await uploadPhotos();
+
+    // Build record
+    const fields = {
+      'Titre': document.getElementById('titre').value.trim(),
+      'Description': document.getElementById('description').value.trim() || undefined,
+      'Espèce': document.getElementById('espece').value,
+      'Race': document.getElementById('race').value.trim() || undefined,
+      'Type_annonce': document.getElementById('type_annonce').value,
+      'Ville': document.getElementById('ville').value.trim(),
+      'Adresse': document.getElementById('adresse').value.trim() || undefined,
+      'Nom_contact': document.getElementById('nom_contact').value.trim() || undefined,
+      'Prenom_contact': document.getElementById('prenom_contact').value.trim() || undefined,
+      'Email_contact': currentUser.email,
+      'Telephone': document.getElementById('telephone').value.trim() || undefined,
+      'Visible': false,
+    };
+
+    const cp = document.getElementById('code_postal').value.trim();
+    if (cp) fields['Code_postal'] = cp;
+
+    const prix = document.getElementById('prix').value;
+    if (prix) fields['Prix'] = parseFloat(prix);
+
+    const lat = document.getElementById('latitude').value;
+    const lng = document.getElementById('longitude').value;
+    if (lat) fields['Latitude'] = parseFloat(lat);
+    if (lng) fields['Longitude'] = parseFloat(lng);
+
+    if (photoUrls.length > 0) {
+      fields['Photos'] = photoUrls.map(url => ({ url }));
+    }
+
+    // Create in Airtable
+    const res = await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Erreur Airtable');
+
+    // Set slug
+    const slug = makeSlug(fields['Titre'], data.id);
+    await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${data.id}`,
+      {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { 'Slug': slug } })
+      }
+    );
+
+    showSuccess('Annonce déposée ! Elle sera visible après validation. Redirection…');
+    setTimeout(() => window.location.href = 'mon-espace.html', 2500);
+
+  } catch(e) {
+    showError('Erreur lors de la publication : ' + e.message);
+    btn.disabled = false; btn.classList.remove('loading');
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('alertError');
+  document.getElementById('alertErrorMsg').textContent = msg;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function showSuccess(msg) {
+  document.getElementById('alertSuccessMsg').textContent = msg;
+  document.getElementById('alertSuccess').classList.add('show');
+}
+function hideAlerts() {
+  document.getElementById('alertError').classList.remove('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+}
+</script>
+</body>
+</html>

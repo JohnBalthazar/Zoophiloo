@@ -181,12 +181,50 @@
   .dropdown-divider { height: 1px; background: var(--border); }
   #headerAuth { display: flex; align-items: center; gap: 8px; }
 
+
+  /* USER MENU */
+  .user-menu { position: relative; }
+  .user-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 10px 5px 5px;
+    border: 1px solid var(--border); border-radius: 20px;
+    background: var(--white); cursor: pointer;
+    font-family: var(--font-body); font-size: 13px; color: var(--text);
+    transition: all 0.15s;
+  }
+  .user-btn:hover { border-color: var(--green); background: var(--green-light); }
+  .user-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--green); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0; overflow: hidden;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-dropdown {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 180px; z-index: 1000; overflow: hidden;
+  }
+  .user-dropdown.open { display: block; }
+  .user-dropdown-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; font-size: 13px; color: var(--text);
+    cursor: pointer; transition: background 0.12s; border: none;
+    background: transparent; width: 100%; font-family: var(--font-body); text-align: left;
+    text-decoration: none;
+  }
+  .user-dropdown-item:hover { background: var(--green-light); color: var(--green-dark); }
+  .user-dropdown-item.danger:hover { background: #fdf0ee; color: #c0392b; }
+  .dropdown-divider { height: 1px; background: var(--border); }
+  #headerAuth { display: flex; align-items: center; gap: 8px; }
   @media (max-width: 680px) {
 
     /* Header simplifié */
     header { padding: 0 14px; height: 50px; }
     .tagline { display: none; }
     .btn-ghost { display: none; }
+    .user-name { display: none; }
     .user-name { display: none; }
     .btn-primary { font-size: 12px; padding: 6px 10px; }
     .btn-primary .label { display: none; }
@@ -581,14 +619,13 @@ async function init() {
 }
 init();
 </script>
-</body>
-</html>
+
+</script>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
-// ─── Firebase config (injectée par GitHub Actions) ───
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
   authDomain:        "__FIREBASE_AUTH_DOMAIN__",
@@ -608,9 +645,7 @@ function renderHeaderAuth(user) {
   }
   const initials = (user.displayName || user.email || '?')
     .split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-  const avatarHtml = user.photoURL
-    ? `<img src="${user.photoURL}" alt="">`
-    : initials;
+  const avatarHtml = user.photoURL ? `<img src="${user.photoURL}" alt="">` : initials;
   const displayName = user.displayName || user.email.split('@')[0];
   el.innerHTML = `
     <div class="user-menu" id="userMenu">
@@ -621,6 +656,15 @@ function renderHeaderAuth(user) {
       </button>
       <div class="user-dropdown" id="userDropdown">
         <div style="padding:10px 14px 6px;font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em">Mon compte</div>
+        <div class="dropdown-divider"></div>
+        <a href="mon-espace.html" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Mes annonces
+        </a>
+        <a href="deposer.html" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Déposer une annonce
+        </a>
         <div class="dropdown-divider"></div>
         <button class="user-dropdown-item danger" onclick="doSignOut()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -643,3 +687,5 @@ async function doSignOut() {
 }
 auth.onAuthStateChanged(user => renderHeaderAuth(user));
 </script>
+</body>
+</html>

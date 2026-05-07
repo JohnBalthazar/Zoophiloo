@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon espace — Zoophiloo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a9e6e;
+    --green-dark: #0f7a52;
+    --green-light: #e6f7f0;
+    --orange: #e8622a;
+    --blue: #2563a8;
+    --red: #c0392b;
+    --red-light: #fdf0ee;
+    --yellow: #f59e0b;
+    --yellow-light: #fef3c7;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --border: #e8e8e4;
+    --bg: #fafaf8;
+    --white: #ffffff;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 24px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo .z { color: var(--green); }
+  .logo .rest { color: var(--text); }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 6px 16px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+
+  /* PAGE */
+  .page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  /* TOP BAR */
+  .page-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .page-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .page-title span { color: var(--green); }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text); }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .stat-card.green .stat-num { color: var(--green); }
+  .stat-card.orange .stat-num { color: var(--orange); }
+  .stat-card.yellow .stat-num { color: var(--yellow); }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-chip { font-family: var(--font-body); font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--white); color: var(--text-muted); cursor: pointer; transition: all 0.12s; }
+  .filter-chip:hover { border-color: var(--green); color: var(--green); }
+  .filter-chip.active { background: var(--green); color: white; border-color: var(--green); }
+
+  /* ANNONCE CARDS */
+  .annonces-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .annonce-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    display: flex; gap: 16px; padding: 16px;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .annonce-card:hover { border-color: #ccc; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+  .annonce-img {
+    width: 100px; height: 80px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    flex-shrink: 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+  }
+  .annonce-img img { width: 100%; height: 100%; object-fit: cover; }
+
+  .annonce-body { flex: 1; min-width: 0; }
+  .annonce-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .annonce-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .annonce-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  .annonce-price { font-size: 14px; font-weight: 600; color: var(--green); }
+
+  .annonce-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .badge { font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
+  .badge-active { background: var(--green-light); color: var(--green-dark); }
+  .badge-pending { background: var(--yellow-light); color: #92400e; }
+  .badge-inactive { background: #f3f3f1; color: var(--text-muted); }
+  .badge-expired { background: var(--red-light); color: var(--red); }
+  .badge-type { background: #f0f0f0; color: #555; }
+  .badge-invisible { background: #f3f3f1; color: var(--text-muted); border: 1px dashed #ccc; }
+
+  .annonce-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .action-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--white);
+    cursor: pointer; transition: all 0.12s; color: var(--text-muted);
+    text-decoration: none;
+  }
+  .action-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .action-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+
+  /* EMPTY / LOADING */
+  .state-box { text-align: center; padding: 64px 24px; color: var(--text-muted); }
+  .state-box .icon { font-size: 40px; margin-bottom: 12px; }
+  .state-box h3 { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .state-box p { font-size: 13px; margin-bottom: 20px; }
+  .loading-spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* MODAL CONFIRM */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35); z-index: 500;
+    align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 14px; padding: 28px;
+    max-width: 380px; width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  }
+  .modal h3 { font-family: var(--font-display); font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-danger { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 8px 16px; border: none; border-radius: 8px; background: var(--red); color: white; cursor: pointer; transition: opacity 0.15s; }
+  .btn-danger:hover { opacity: 0.85; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: white; padding: 10px 18px;
+    border-radius: 20px; font-size: 13px; z-index: 999;
+    transition: transform 0.25s ease; white-space: nowrap;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--green-dark); }
+  .toast.error { background: var(--red); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .annonce-img { width: 72px; height: 60px; }
+    .annonce-title { font-size: 13px; }
+    .page { padding: 20px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo"><span class="z">Zoo</span><span class="rest">philoo</span></a>
+  <div class="header-right">
+    <a href="index.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour
+    </a>
+    <a href="deposer.html" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Déposer
+    </a>
+  </div>
+</header>
+
+<div class="page">
+  <div class="page-top">
+    <h1 class="page-title">Mon <span>espace</span></h1>
+    <div id="userInfo" style="font-size:13px;color:var(--text-muted)"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-num">—</div><div class="stat-label">Total annonces</div></div>
+    <div class="stat-card green"><div class="stat-num">—</div><div class="stat-label">Actives</div></div>
+    <div class="stat-card yellow"><div class="stat-num">—</div><div class="stat-label">En attente</div></div>
+    <div class="stat-card orange"><div class="stat-num">—</div><div class="stat-label">Expirées</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button class="filter-chip active" data-filter="">Toutes</button>
+    <button class="filter-chip" data-filter="Active">Actives</button>
+    <button class="filter-chip" data-filter="En attente">En attente</button>
+    <button class="filter-chip" data-filter="Expirée">Expirées</button>
+    <button class="filter-chip" data-filter="Inactive">Inactives</button>
+  </div>
+
+  <!-- List -->
+  <div class="annonces-list" id="annoncesList">
+    <div class="state-box">
+      <div class="loading-spinner"></div>
+      <p>Chargement de vos annonces…</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmation suppression -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Supprimer l'annonce ?</h3>
+    <p>Cette action est irréversible. L'annonce sera définitivement supprimée.</p>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeDeleteModal()">Annuler</button>
+      <button class="btn-danger" id="confirmDeleteBtn">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:            "__FIREBASE_API_KEY__",
+  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
+  projectId:         "__FIREBASE_PROJECT_ID__",
+  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:             "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
+const BASE_ID = 'appepwMYbNUv2k3f9';
+const TABLE = 'Annonces';
+
+const ESPECE_EMOJI = {
+  'Chien':'🐕','Chat':'🐈','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
+  'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
+  'Insecte':'🐛','Araignée':'🕷️','Plante':'🌿','Autre':'🔵'
+};
+
+let currentUser = null;
+let allRecords = [];
+let activeFilter = '';
+let recordToDelete = null;
+
+// ── Auth guard ──
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  document.getElementById('userInfo').textContent = user.displayName || user.email;
+  loadAnnonces();
+});
+
+// ── Load annonces ──
+async function loadAnnonces() {
+  const email = currentUser.email;
+  let records = [], offset = null;
+  const fields = ['Titre','Espèce','Race','Type_annonce','Prix','Photos',
+                  'Ville','Date_creation','Date_expiration','Statut','Visible'];
+  try {
+    do {
+      const params = new URLSearchParams({ pageSize: 100 });
+      fields.forEach(f => params.append('fields[]', f));
+      params.append('filterByFormula', `{Email_contact}="${email}"`);
+      if (offset) params.append('offset', offset);
+      const res = await fetch(
+        `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}?${params}`,
+        { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
+      );
+      const data = await res.json();
+      if (data.records) records = records.concat(data.records);
+      offset = data.offset || null;
+    } while (offset);
+
+    allRecords = records.sort((a,b) =>
+      new Date(b.fields['Date_creation']||0) - new Date(a.fields['Date_creation']||0)
+    );
+    renderStats();
+    renderList();
+  } catch(e) {
+    document.getElementById('annoncesList').innerHTML = `
+      <div class="state-box">
+        <div class="icon">⚠️</div>
+        <h3>Erreur de chargement</h3>
+        <p>Impossible de récupérer vos annonces.</p>
+      </div>`;
+  }
+}
+
+// ── Stats ──
+function renderStats() {
+  const total = allRecords.length;
+  const active = allRecords.filter(r => r.fields['Statut'] === 'Active').length;
+  const pending = allRecords.filter(r => !r.fields['Statut']).length;
+  const expired = allRecords.filter(r => {
+    const exp = r.fields['Date_expiration'];
+    return exp && new Date(exp) < new Date();
+  }).length;
+  const cells = document.querySelectorAll('#statsRow .stat-card');
+  cells[0].querySelector('.stat-num').textContent = total;
+  cells[1].querySelector('.stat-num').textContent = active;
+  cells[2].querySelector('.stat-num').textContent = pending;
+  cells[3].querySelector('.stat-num').textContent = expired;
+}
+
+// ── Render list ──
+function renderList() {
+  const list = document.getElementById('annoncesList');
+  let records = allRecords;
+  if (activeFilter === 'Expirée') {
+    records = records.filter(r => {
+      const exp = r.fields['Date_expiration'];
+      return exp && new Date(exp) < new Date();
+    });
+  } else if (activeFilter === 'En attente') {
+    records = records.filter(r => !r.fields['Statut']);
+  } else if (activeFilter) {
+    records = records.filter(r => r.fields['Statut'] === activeFilter);
+  }
+
+  if (records.length === 0) {
+    list.innerHTML = `
+      <div class="state-box">
+        <div class="icon">🐾</div>
+        <h3>${allRecords.length === 0 ? 'Aucune annonce' : 'Aucun résultat'}</h3>
+        <p>${allRecords.length === 0 ? 'Vous n\'avez pas encore déposé d\'annonce.' : 'Aucune annonce dans cette catégorie.'}</p>
+        ${allRecords.length === 0 ? '<a href="deposer.html" class="btn-primary">Déposer ma première annonce</a>' : ''}
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = records.map(r => {
+    const f = r.fields;
+    const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
+    const photoUrl = f['Photos']?.[0]?.url || null;
+    const prix = f['Prix'] ? parseFloat(String(f['Prix']).replace(/[^0-9.]/g,'')).toLocaleString('fr-FR') + ' €' : (f['Type_annonce'] === 'À donner' ? 'Don' : '—');
+    const statut = f['Statut'] || 'En attente';
+    const isExpired = f['Date_expiration'] && new Date(f['Date_expiration']) < new Date();
+    const badgeClass = isExpired ? 'badge-expired' : statut === 'Active' ? 'badge-active' : statut === 'Inactive' ? 'badge-inactive' : 'badge-pending';
+    const badgeLabel = isExpired ? 'Expirée' : statut;
+    const date = f['Date_creation'] ? new Date(f['Date_creation']).toLocaleDateString('fr-FR', {day:'numeric',month:'short',year:'numeric'}) : '';
+    const visible = f['Visible'];
+
+    return `
+    <div class="annonce-card">
+      <div class="annonce-img">${photoUrl ? `<img src="${photoUrl}" alt="">` : emoji}</div>
+      <div class="annonce-body">
+        <div class="annonce-top">
+          <div class="annonce-title">${f['Titre'] || 'Sans titre'}</div>
+          <div class="annonce-actions">
+            <a href="annonce.html?id=${r.id}" class="action-btn" title="Voir">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </a>
+            <a href="editer.html?id=${r.id}" class="action-btn" title="Modifier">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </a>
+            <button class="action-btn danger" title="Supprimer" onclick="openDeleteModal('${r.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="annonce-meta">${f['Espèce'] || ''}${f['Race'] ? ' · ' + f['Race'] : ''} · ${f['Ville'] || '—'} · ${date}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div class="annonce-price">${prix}</div>
+          <div class="annonce-badges">
+            <span class="badge badge-type">${f['Type_annonce'] || '—'}</span>
+            <span class="badge ${badgeClass}">${badgeLabel}</span>
+            ${!visible ? '<span class="badge badge-invisible">Non visible</span>' : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Filters ──
+document.querySelector('.filters').addEventListener('click', e => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  activeFilter = chip.dataset.filter;
+  renderList();
+});
+
+// ── Delete modal ──
+function openDeleteModal(id) {
+  recordToDelete = id;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeDeleteModal() {
+  recordToDelete = null;
+  document.getElementById('deleteModal').classList.remove('open');
+}
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+  if (!recordToDelete) return;
+  const btn = document.getElementById('confirmDeleteBtn');
+  btn.textContent = 'Suppression…'; btn.disabled = true;
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${recordToDelete}`,
+      { method: 'DELETE', headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
+    );
+    if (res.ok) {
+      allRecords = allRecords.filter(r => r.id !== recordToDelete);
+      renderStats(); renderList();
+      showToast('Annonce supprimée', 'success');
+    } else { showToast('Erreur lors de la suppression', 'error'); }
+  } catch(e) { showToast('Erreur réseau', 'error'); }
+  btn.textContent = 'Supprimer'; btn.disabled = false;
+  closeDeleteModal();
+});
+
+// ── Toast ──
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Fermer modal si clic extérieur
+document.getElementById('deleteModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeDeleteModal();
+});
+</script>
+</body>
+</html>
