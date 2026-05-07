@@ -33,7 +33,6 @@
   .page-title span { color: var(--green); }
   .page-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
 
-  /* Statut banner */
   .statut-banner { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; }
   .statut-banner.pending { background: var(--yellow-light); color: #92400e; border: 1px solid #fde68a; }
   .statut-banner.active { background: var(--green-light); color: var(--green-dark); border: 1px solid #a7f3d0; }
@@ -59,7 +58,6 @@
   .form-group.has-error input, .form-group.has-error select { border-color: var(--red); }
   .form-group.has-error .error-msg { display: block; }
 
-  /* PHOTOS */
   .existing-photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
   .photo-thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
   .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -78,20 +76,9 @@
   .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s; border-radius: 2px; }
   .progress-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
-  /* GEOCODE */
   .geocode-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--green); cursor: pointer; background: none; border: none; font-family: var(--font-body); padding: 0; margin-top: 4px; }
   .geocode-btn:hover { text-decoration: underline; }
   .geocode-result { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-
-  /* STATUT SELECT */
-  .statut-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .statut-option { display: none; }
-  .statut-option + label {
-    padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border);
-    font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.12s;
-    color: var(--text-muted);
-  }
-  .statut-option:checked + label { background: var(--green); color: white; border-color: var(--green); }
 
   .submit-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .btn-submit { padding: 12px 28px; border: none; border-radius: 10px; background: var(--green); color: white; font-family: var(--font-body); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 8px; }
@@ -131,11 +118,10 @@
 <div class="page" id="pageContent">
   <div class="loading-page">
     <div class="loading-spinner"></div>
-    <p style="font-size:13px;color:var(--text-muted)">Chargement  de l'annonce…</p>
+    <p style="font-size:13px;color:var(--text-muted)">Chargement de l'annonce…</p>
   </div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
@@ -155,8 +141,8 @@ const CLOUDINARY_PRESET = 'zoophiloo-upload';
 
 let currentUser = null;
 let recordId = null;
-let existingPhotos = []; // {url, markedDelete}
-let newPhotoFiles = [];  // {file, previewUrl, cloudUrl}
+let existingPhotos = [];
+let newPhotoFiles = [];
 
 const params = new URLSearchParams(window.location.search);
 recordId = params.get('id');
@@ -171,184 +157,160 @@ auth.onAuthStateChanged(user => {
 async function loadRecord() {
   try {
     const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${recordId}`,
-      { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
+      'https://api.airtable.com/v0/' + BASE_ID + '/' + encodeURIComponent(TABLE) + '/' + recordId,
+      { headers: { Authorization: 'Bearer ' + AIRTABLE_TOKEN } }
     );
     const data = await res.json();
     if (!res.ok) throw new Error('Annonce introuvable');
-    // Security: check ownership
     if (data.fields['Email_contact'] !== currentUser.email) {
       window.location.href = 'mon-espace.html'; return;
     }
     renderForm(data.fields);
   } catch(e) {
-    document.getElementById('pageContent').innerHTML = `
-      <div style="text-align:center;padding:64px 24px;color:var(--text-muted)">
-        <div style="font-size:32px;margin-bottom:12px">⚠️</div>
-        <p>Annonce introuvable ou accès refusé.</p>
-        <a href="mon-espace.html" class="btn-ghost" style="margin-top:16px;display:inline-flex">Retour</a>
-      </div>`;
+    document.getElementById('pageContent').innerHTML =
+      '<div style="text-align:center;padding:64px 24px;color:var(--text-muted)">' +
+      '<div style="font-size:32px;margin-bottom:12px">⚠️</div>' +
+      '<p>Annonce introuvable ou accès refusé.</p>' +
+      '<a href="mon-espace.html" class="btn-ghost" style="margin-top:16px;display:inline-flex">Retour</a>' +
+      '</div>';
   }
 }
 
-function renderForm(f) {
-  const statut = f['Statut'] || 'En attente';
-  const isPending = !f['Statut'];
-  existingPhotos = (f['Photos'] || []).map(p => ({ url: p.url, markedDelete: false }));
-
-  document.getElementById('pageContent').innerHTML = `
-    <h1 class="page-title">Modifier l'<span>annonce</span></h1>
-    <p class="page-subtitle">${f['Titre'] || ''}</p>
-
-    <div class="statut-banner ${isPending ? 'pending' : 'active'}">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      ${isPending ? 'Cette annonce est en attente de validation.' : 'Cette annonce est active.'}
-    </div>
-
-    <div class="alert alert-error" id="alertError"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="alertErrorMsg"></span></div>
-    <div class="alert alert-success" id="alertSuccess"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg><span id="alertSuccessMsg"></span></div>
-
-    <!-- 1. Animal -->
-    <div class="form-section">
-      <div class="section-title"><div class="num">1</div>L'animal</div>
-      <div class="form-row">
-        <div class="form-group" id="grp-titre">
-          <label>Titre <span class="req">*</span></label>
-          <input type="text" id="titre" value="${esc(f['Titre']||'')}">
-          <span class="error-msg">Obligatoire</span>
-        </div>
-      </div>
-      <div class="form-row cols-2">
-        <div class="form-group" id="grp-espece">
-          <label>Espèce <span class="req">*</span></label>
-          <select id="espece">${especeOptions(f['Espèce'])}</select>
-          <span class="error-msg">Obligatoire</span>
-        </div>
-        <div class="form-group">
-          <label>Race</label>
-          <input type="text" id="race" value="${esc(f['Race']||'')}">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="description">${esc(f['Description']||'')}</textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Type & prix -->
-    <div class="form-section">
-      <div class="section-title"><div class="num">2</div>Type & prix</div>
-      <div class="form-row cols-2">
-        <div class="form-group" id="grp-type">
-          <label>Type <span class="req">*</span></label>
-          <select id="type_annonce">${typeOptions(f['Type_annonce'])}</select>
-          <span class="error-msg">Obligatoire</span>
-        </div>
-        <div class="form-group">
-          <label>Prix (€)</label>
-          <input type="number" id="prix" value="${f['Prix']||''}" min="0" step="0.01">
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Photos -->
-    <div class="form-section">
-      <div class="section-title"><div class="num">3</div>Photos</div>
-      ${existingPhotos.length > 0 ? `
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Photos actuelles — cliquez ✕ pour supprimer</p>
-        <div class="existing-photos" id="existingPhotos">${renderExistingPhotos()}</div>
-      ` : ''}
-      <div class="photo-zone" id="photoZone" onclick="document.getElementById('fileInput').click()">
-        <p><strong>Ajouter des photos</strong> · JPG, PNG, max 5 au total</p>
-        <input type="file" id="fileInput" accept="image/*" multiple>
-      </div>
-      <div class="new-previews" id="newPreviews"></div>
-      <div class="upload-progress" id="uploadProgress">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="progress-label" id="progressLabel"></div>
-      </div>
-    </div>
-
-    <!-- 4. Localisation -->
-    <div class="form-section">
-      <div class="section-title"><div class="num">4</div>Localisation</div>
-      <div class="form-row cols-2">
-        <div class="form-group" id="grp-ville">
-          <label>Ville <span class="req">*</span></label>
-          <input type="text" id="ville" value="${esc(f['Ville']||'')}">
-          <span class="error-msg">Obligatoire</span>
-        </div>
-        <div class="form-group">
-          <label>Code postal</label>
-          <input type="text" id="code_postal" value="${esc(f['Code_postal']||'')}">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Adresse</label>
-          <input type="text" id="adresse" value="${esc(f['Adresse']||'')}">
-          <button type="button" class="geocode-btn" onclick="geocodeAddress()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Relocaliser
-          </button>
-          <span class="geocode-result" id="geocodeResult"></span>
-        </div>
-      </div>
-      <div class="form-row cols-2" id="coordsRow" style="${f['Latitude'] ? '' : 'display:none'}">
-        <div class="form-group"><label>Latitude</label><input type="text" id="latitude" value="${f['Latitude']||''}" readonly style="color:var(--text-muted)"></div>
-        <div class="form-group"><label>Longitude</label><input type="text" id="longitude" value="${f['Longitude']||''}" readonly style="color:var(--text-muted)"></div>
-      </div>
-    </div>
-
-    <!-- 5. Contact -->
-    <div class="form-section">
-      <div class="section-title"><div class="num">5</div>Contact</div>
-      <div class="form-row cols-2">
-        <div class="form-group"><label>Prénom</label><input type="text" id="prenom_contact" value="${esc(f['Prenom_contact']||'')}"></div>
-        <div class="form-group"><label>Nom</label><input type="text" id="nom_contact" value="${esc(f['Nom_contact']||'')}"></div>
-      </div>
-      <div class="form-row cols-2">
-        <div class="form-group"><label>E-mail</label><input type="email" id="email_contact" value="${esc(f['Email_contact']||'')}" readonly style="color:var(--text-muted)"></div>
-        <div class="form-group"><label>Téléphone</label><input type="tel" id="telephone" value="${esc(f['Telephone']||'')}"></div>
-      </div>
-    </div>
-
-    <div class="submit-bar">
-      <p style="font-size:12px;color:var(--text-muted)">Les modifications seront sauvegardées immédiatement.</p>
-      <button class="btn-submit" id="btnSubmit" onclick="submitEdit()">
-        <div class="spinner"></div>
-        <span class="btn-label">Enregistrer</span>
-      </button>
-    </div>
-  `;
-
-  // Bind photo events
-  document.getElementById('fileInput').addEventListener('change', e => handleNewFiles(Array.from(e.target.files)));
-  const pz = document.getElementById('photoZone');
-  pz.addEventListener('dragover', e => { e.preventDefault(); pz.classList.add('drag-over'); });
-  pz.addEventListener('dragleave', () => pz.classList.remove('drag-over'));
-  pz.addEventListener('drop', e => { e.preventDefault(); pz.classList.remove('drag-over'); handleNewFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))); });
-}
-
-function esc(str) { return String(str).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
+// ── CLEF : pas de template literals pour les options ──
 function especeOptions(selected) {
-  const opts = ['','Chien','Chat','Poisson','Oiseau','Rongeur','Reptile','Furet','Amphibien','Crustacée','Insecte','Araignée','Plante','Autre'];
-  return opts.map(o => `<option value="${o}" ${o===selected?'selected':''}>${o||'Choisir…'}</option>`).join('');
+  var opts = ['','Chien','Chat','Poisson','Oiseau','Rongeur','Reptile','Furet','Amphibien','Crustacée','Insecte','Araignée','Plante','Autre'];
+  return opts.map(function(o) {
+    var sel = o === selected ? ' selected' : '';
+    return '<option value="' + o + '"' + sel + '>' + (o || 'Choisir…') + '</option>';
+  }).join('');
 }
+
 function typeOptions(selected) {
-  const opts = ['','À vendre','À donner','À adopter','À échanger','Perdu','Trouvé'];
-  return opts.map(o => `<option value="${o}" ${o===selected?'selected':''}>${o||'Choisir…'}</option>`).join('');
+  var opts = ['','À vendre','À donner','À adopter','À échanger','Perdu','Trouvé'];
+  return opts.map(function(o) {
+    var sel = o === selected ? ' selected' : '';
+    return '<option value="' + o + '"' + sel + '>' + (o || 'Choisir…') + '</option>';
+  }).join('');
+}
+
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function renderExistingPhotos() {
-  return existingPhotos.map((p, i) => `
-    <div class="photo-thumb ${p.markedDelete?'marked-delete':''}" id="ep-${i}">
-      <img src="${p.url}" alt="">
-      <button class="remove-photo" onclick="toggleDeletePhoto(${i})">✕</button>
-    </div>`).join('');
+  return existingPhotos.map(function(p, i) {
+    return '<div class="photo-thumb ' + (p.markedDelete ? 'marked-delete' : '') + '" id="ep-' + i + '">' +
+      '<img src="' + p.url + '" alt="">' +
+      '<button class="remove-photo" onclick="toggleDeletePhoto(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+}
+
+function renderForm(f) {
+  var isPending = !f['Statut'];
+  existingPhotos = (f['Photos'] || []).map(function(p) { return { url: p.url, markedDelete: false }; });
+
+  var photosHTML = '';
+  if (existingPhotos.length > 0) {
+    photosHTML = '<p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Photos actuelles — cliquez ✕ pour supprimer</p>' +
+      '<div class="existing-photos" id="existingPhotos">' + renderExistingPhotos() + '</div>';
+  }
+
+  var coordsStyle = f['Latitude'] ? '' : 'display:none';
+
+  document.getElementById('pageContent').innerHTML =
+    '<h1 class="page-title">Modifier l\'<span>annonce</span></h1>' +
+    '<p class="page-subtitle">' + esc(f['Titre'] || '') + '</p>' +
+
+    '<div class="statut-banner ' + (isPending ? 'pending' : 'active') + '">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+    (isPending ? 'Cette annonce est en attente de validation.' : 'Cette annonce est active.') +
+    '</div>' +
+
+    '<div class="alert alert-error" id="alertError"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span id="alertErrorMsg"></span></div>' +
+    '<div class="alert alert-success" id="alertSuccess"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg><span id="alertSuccessMsg"></span></div>' +
+
+    '<div class="form-section">' +
+    '<div class="section-title"><div class="num">1</div>L\'animal</div>' +
+    '<div class="form-row"><div class="form-group" id="grp-titre">' +
+    '<label>Titre <span class="req">*</span></label>' +
+    '<input type="text" id="titre" value="' + esc(f['Titre'] || '') + '">' +
+    '<span class="error-msg">Obligatoire</span></div></div>' +
+    '<div class="form-row cols-2">' +
+    '<div class="form-group" id="grp-espece"><label>Espèce <span class="req">*</span></label>' +
+    '<select id="espece">' + especeOptions(f['Espèce']) + '</select>' +
+    '<span class="error-msg">Obligatoire</span></div>' +
+    '<div class="form-group"><label>Race</label>' +
+    '<input type="text" id="race" value="' + esc(f['Race'] || '') + '"></div></div>' +
+    '<div class="form-row"><div class="form-group"><label>Description</label>' +
+    '<textarea id="description">' + esc(f['Description'] || '') + '</textarea></div></div>' +
+    '</div>' +
+
+    '<div class="form-section">' +
+    '<div class="section-title"><div class="num">2</div>Type & prix</div>' +
+    '<div class="form-row cols-2">' +
+    '<div class="form-group" id="grp-type"><label>Type <span class="req">*</span></label>' +
+    '<select id="type_annonce">' + typeOptions(f['Type_annonce']) + '</select>' +
+    '<span class="error-msg">Obligatoire</span></div>' +
+    '<div class="form-group"><label>Prix (€)</label>' +
+    '<input type="number" id="prix" value="' + (f['Prix'] || '') + '" min="0" step="0.01"></div>' +
+    '</div></div>' +
+
+    '<div class="form-section">' +
+    '<div class="section-title"><div class="num">3</div>Photos</div>' +
+    photosHTML +
+    '<div class="photo-zone" id="photoZone" onclick="document.getElementById(\'fileInput\').click()">' +
+    '<p><strong>Ajouter des photos</strong> · JPG, PNG, max 5 au total</p>' +
+    '<input type="file" id="fileInput" accept="image/*" multiple></div>' +
+    '<div class="new-previews" id="newPreviews"></div>' +
+    '<div class="upload-progress" id="uploadProgress">' +
+    '<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>' +
+    '<div class="progress-label" id="progressLabel"></div></div>' +
+    '</div>' +
+
+    '<div class="form-section">' +
+    '<div class="section-title"><div class="num">4</div>Localisation</div>' +
+    '<div class="form-row cols-2">' +
+    '<div class="form-group" id="grp-ville"><label>Ville <span class="req">*</span></label>' +
+    '<input type="text" id="ville" value="' + esc(f['Ville'] || '') + '">' +
+    '<span class="error-msg">Obligatoire</span></div>' +
+    '<div class="form-group"><label>Code postal</label>' +
+    '<input type="text" id="code_postal" value="' + esc(f['Code_postal'] || '') + '"></div></div>' +
+    '<div class="form-row"><div class="form-group"><label>Adresse</label>' +
+    '<input type="text" id="adresse" value="' + esc(f['Adresse'] || '') + '">' +
+    '<button type="button" class="geocode-btn" onclick="geocodeAddress()">' +
+    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+    'Relocaliser</button>' +
+    '<span class="geocode-result" id="geocodeResult"></span></div></div>' +
+    '<div class="form-row cols-2" id="coordsRow" style="' + coordsStyle + '">' +
+    '<div class="form-group"><label>Latitude</label><input type="text" id="latitude" value="' + (f['Latitude'] || '') + '" readonly style="color:var(--text-muted)"></div>' +
+    '<div class="form-group"><label>Longitude</label><input type="text" id="longitude" value="' + (f['Longitude'] || '') + '" readonly style="color:var(--text-muted)"></div>' +
+    '</div></div>' +
+
+    '<div class="form-section">' +
+    '<div class="section-title"><div class="num">5</div>Contact</div>' +
+    '<div class="form-row cols-2">' +
+    '<div class="form-group"><label>Prénom</label><input type="text" id="prenom_contact" value="' + esc(f['Prenom_contact'] || '') + '"></div>' +
+    '<div class="form-group"><label>Nom</label><input type="text" id="nom_contact" value="' + esc(f['Nom_contact'] || '') + '"></div></div>' +
+    '<div class="form-row cols-2">' +
+    '<div class="form-group"><label>E-mail</label><input type="email" id="email_contact" value="' + esc(f['Email_contact'] || '') + '" readonly style="color:var(--text-muted)"></div>' +
+    '<div class="form-group"><label>Téléphone</label><input type="tel" id="telephone" value="' + esc(f['Telephone'] || '') + '"></div>' +
+    '</div></div>' +
+
+    '<div class="submit-bar">' +
+    '<p style="font-size:12px;color:var(--text-muted)">Les modifications seront sauvegardées immédiatement.</p>' +
+    '<button class="btn-submit" id="btnSubmit" onclick="submitEdit()">' +
+    '<div class="spinner"></div><span class="btn-label">Enregistrer</span></button>' +
+    '</div>';
+
+  document.getElementById('fileInput').addEventListener('change', function(e) { handleNewFiles(Array.from(e.target.files)); });
+  var pz = document.getElementById('photoZone');
+  pz.addEventListener('dragover', function(e) { e.preventDefault(); pz.classList.add('drag-over'); });
+  pz.addEventListener('dragleave', function() { pz.classList.remove('drag-over'); });
+  pz.addEventListener('drop', function(e) {
+    e.preventDefault(); pz.classList.remove('drag-over');
+    handleNewFiles(Array.from(e.dataTransfer.files).filter(function(f) { return f.type.startsWith('image/'); }));
+  });
 }
 
 function toggleDeletePhoto(i) {
@@ -357,12 +319,12 @@ function toggleDeletePhoto(i) {
 }
 
 function handleNewFiles(files) {
-  const keptExisting = existingPhotos.filter(p => !p.markedDelete).length;
-  const remaining = 5 - keptExisting - newPhotoFiles.length;
-  files.slice(0, remaining).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      newPhotoFiles.push({ file, previewUrl: e.target.result, cloudUrl: null });
+  var keptExisting = existingPhotos.filter(function(p) { return !p.markedDelete; }).length;
+  var remaining = 5 - keptExisting - newPhotoFiles.length;
+  files.slice(0, remaining).forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      newPhotoFiles.push({ file: file, previewUrl: e.target.result, cloudUrl: null });
       renderNewPreviews();
     };
     reader.readAsDataURL(file);
@@ -370,31 +332,32 @@ function handleNewFiles(files) {
 }
 
 function renderNewPreviews() {
-  document.getElementById('newPreviews').innerHTML = newPhotoFiles.map((p, i) => `
-    <div class="photo-thumb">
-      <img src="${p.previewUrl}" alt="">
-      <button class="remove-photo" onclick="removeNewPhoto(${i})">✕</button>
-    </div>`).join('');
+  document.getElementById('newPreviews').innerHTML = newPhotoFiles.map(function(p, i) {
+    return '<div class="photo-thumb">' +
+      '<img src="' + p.previewUrl + '" alt="">' +
+      '<button class="remove-photo" onclick="removeNewPhoto(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
 }
 
 function removeNewPhoto(i) { newPhotoFiles.splice(i, 1); renderNewPreviews(); }
 
 async function uploadNewPhotos() {
-  if (newPhotoFiles.filter(p => !p.cloudUrl).length === 0) return;
-  const progress = document.getElementById('uploadProgress');
-  const fill = document.getElementById('progressFill');
-  const label = document.getElementById('progressLabel');
+  if (newPhotoFiles.filter(function(p) { return !p.cloudUrl; }).length === 0) return;
+  var progress = document.getElementById('uploadProgress');
+  var fill = document.getElementById('progressFill');
+  var label = document.getElementById('progressLabel');
   progress.style.display = 'block';
-  for (let i = 0; i < newPhotoFiles.length; i++) {
+  for (var i = 0; i < newPhotoFiles.length; i++) {
     if (newPhotoFiles[i].cloudUrl) continue;
     fill.style.width = Math.round((i / newPhotoFiles.length) * 100) + '%';
-    label.textContent = `Upload photo ${i+1}/${newPhotoFiles.length}…`;
-    const fd = new FormData();
+    label.textContent = 'Upload photo ' + (i+1) + '/' + newPhotoFiles.length + '…';
+    var fd = new FormData();
     fd.append('file', newPhotoFiles[i].file);
     fd.append('upload_preset', CLOUDINARY_PRESET);
     fd.append('folder', 'zoophiloo');
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
-    const data = await res.json();
+    var res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', { method:'POST', body:fd });
+    var data = await res.json();
     if (data.secure_url) newPhotoFiles[i].cloudUrl = data.secure_url;
   }
   fill.style.width = '100%';
@@ -402,14 +365,14 @@ async function uploadNewPhotos() {
 }
 
 async function geocodeAddress() {
-  const adresse = document.getElementById('adresse').value.trim();
-  const ville = document.getElementById('ville').value.trim();
-  const cp = document.getElementById('code_postal').value.trim();
-  const q = [adresse, cp, ville].filter(Boolean).join(', ');
+  var adresse = document.getElementById('adresse').value.trim();
+  var ville = document.getElementById('ville').value.trim();
+  var cp = document.getElementById('code_postal').value.trim();
+  var q = [adresse, cp, ville].filter(Boolean).join(', ');
   if (!q) return;
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=fr`);
-    const data = await res.json();
+    var res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) + '&format=json&limit=1&countrycodes=fr');
+    var data = await res.json();
     if (data.length > 0) {
       document.getElementById('latitude').value = parseFloat(data[0].lat).toFixed(6);
       document.getElementById('longitude').value = parseFloat(data[0].lon).toFixed(6);
@@ -421,12 +384,12 @@ async function geocodeAddress() {
 }
 
 function validate() {
-  let ok = true;
-  [['titre','grp-titre'],['espece','grp-espece'],['type_annonce','grp-type'],['ville','grp-ville']].forEach(([id, grp]) => {
-    const val = document.getElementById(id)?.value.trim();
-    const grpEl = document.getElementById(grp);
-    if (!val) { grpEl?.classList.add('has-error'); ok = false; }
-    else { grpEl?.classList.remove('has-error'); }
+  var ok = true;
+  [['titre','grp-titre'],['espece','grp-espece'],['type_annonce','grp-type'],['ville','grp-ville']].forEach(function(pair) {
+    var el = document.getElementById(pair[0]);
+    var grpEl = document.getElementById(pair[1]);
+    if (!el || !el.value.trim()) { if(grpEl) grpEl.classList.add('has-error'); ok = false; }
+    else { if(grpEl) grpEl.classList.remove('has-error'); }
   });
   return ok;
 }
@@ -434,20 +397,23 @@ function validate() {
 async function submitEdit() {
   document.getElementById('alertError').classList.remove('show');
   document.getElementById('alertSuccess').classList.remove('show');
-  if (!validate()) { document.getElementById('alertErrorMsg').textContent = 'Remplissez les champs obligatoires.'; document.getElementById('alertError').classList.add('show'); return; }
+  if (!validate()) {
+    document.getElementById('alertErrorMsg').textContent = 'Remplissez les champs obligatoires.';
+    document.getElementById('alertError').classList.add('show');
+    return;
+  }
 
-  const btn = document.getElementById('btnSubmit');
+  var btn = document.getElementById('btnSubmit');
   btn.disabled = true; btn.classList.add('loading');
 
   try {
     await uploadNewPhotos();
 
-    // Build final photos array
-    const keptPhotos = existingPhotos.filter(p => !p.markedDelete).map(p => ({ url: p.url }));
-    const newPhotos = newPhotoFiles.filter(p => p.cloudUrl).map(p => ({ url: p.cloudUrl }));
-    const allPhotos = [...keptPhotos, ...newPhotos];
+    var keptPhotos = existingPhotos.filter(function(p) { return !p.markedDelete; }).map(function(p) { return { url: p.url }; });
+    var newPhotos = newPhotoFiles.filter(function(p) { return p.cloudUrl; }).map(function(p) { return { url: p.cloudUrl }; });
+    var allPhotos = keptPhotos.concat(newPhotos);
 
-    const fields = {
+    var fields = {
       'Titre': document.getElementById('titre').value.trim(),
       'Description': document.getElementById('description').value.trim() || null,
       'Espèce': document.getElementById('espece').value,
@@ -457,32 +423,32 @@ async function submitEdit() {
       'Adresse': document.getElementById('adresse').value.trim() || null,
       'Nom_contact': document.getElementById('nom_contact').value.trim() || null,
       'Prenom_contact': document.getElementById('prenom_contact').value.trim() || null,
-      'Telephone': document.getElementById('telephone').value.trim() || null,
+      'Telephone': document.getElementById('telephone').value.trim() || null
     };
 
-    const cp = document.getElementById('code_postal').value.trim();
+    var cp = document.getElementById('code_postal').value.trim();
     if (cp) fields['Code_postal'] = cp;
-    const prix = document.getElementById('prix').value;
+    var prix = document.getElementById('prix').value;
     if (prix) fields['Prix'] = parseFloat(prix); else fields['Prix'] = null;
-    const lat = document.getElementById('latitude').value;
-    const lng = document.getElementById('longitude').value;
+    var lat = document.getElementById('latitude').value;
+    var lng = document.getElementById('longitude').value;
     if (lat) fields['Latitude'] = parseFloat(lat);
     if (lng) fields['Longitude'] = parseFloat(lng);
     if (allPhotos.length > 0) fields['Photos'] = allPhotos;
 
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${recordId}`,
+    var res = await fetch(
+      'https://api.airtable.com/v0/' + BASE_ID + '/' + encodeURIComponent(TABLE) + '/' + recordId,
       {
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields })
+        headers: { Authorization: 'Bearer ' + AIRTABLE_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: fields })
       }
     );
-    if (!res.ok) { const d = await res.json(); throw new Error(d.error?.message || 'Erreur Airtable'); }
+    if (!res.ok) { var d = await res.json(); throw new Error(d.error && d.error.message ? d.error.message : 'Erreur Airtable'); }
 
     document.getElementById('alertSuccessMsg').textContent = 'Annonce mise à jour ! Redirection…';
     document.getElementById('alertSuccess').classList.add('show');
-    setTimeout(() => window.location.href = 'mon-espace.html', 2000);
+    setTimeout(function() { window.location.href = 'mon-espace.html'; }, 2000);
   } catch(e) {
     document.getElementById('alertErrorMsg').textContent = 'Erreur : ' + e.message;
     document.getElementById('alertError').classList.add('show');
