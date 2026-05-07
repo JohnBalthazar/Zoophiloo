@@ -254,8 +254,7 @@
   .chip-perdu.active { background: #dc2626; border-color: #dc2626; }
   .chip-trouve { --chip-color: #7c3aed; }
   .chip-trouve.active { background: #7c3aed; border-color: #7c3aed; }
-  .chip-echange { --chip-color: #0891b2; }
-  .chip-echange.active { background: #0891b2; border-color: #0891b2; }
+  .tag-dist { background: #f0fdf8; color: #0d7a55; border: 1px solid #a7f3d0; font-size: 10px; }
 
   @media (max-width: 680px) {
     .filters-bar-2 { padding: 6px 12px; }
@@ -861,14 +860,25 @@ function renderList() {
     const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
     const photoUrl = f['Photos']?.[0]?.url || null;
     const typeClass = f['Type_annonce']==='À donner'?'tag-don':f['Type_annonce']==='À adopter'?'tag-adoption':'tag-vente';
-    const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':'Vente';
+    const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
+    // Distance badge
+    let distBadge = '';
+    if (geoCenter) {
+      const latRaw = f['Latitude'], lngRaw = f['Longitude'];
+      const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw||'').replace(',','.'));
+      const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw||'').replace(',','.'));
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const d = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
+        distBadge = `<span class="tag tag-dist">📍 ${d < 1 ? '<1' : Math.round(d)} km</span>`;
+      }
+    }
     return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${record.id}" onclick="handleCardClick('${record.id}')">
       <div class="ad-img">${photoUrl?`<img src="${photoUrl}" alt="">`:emoji}</div>
       <div class="ad-body">
         <div class="ad-title">${f['Titre']||'Sans titre'}</div>
         <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
         <div class="ad-price ${price.cls}">${price.text}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span></div>
+        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${distBadge}</div>
       </div>
       <span class="ad-date">${formatDate(f['Date_creation'])}</span>
     </div>`;
@@ -931,14 +941,18 @@ function applyFilters() {
   const sliderStep = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
   if (geoCenter && sliderStep > 0 && sliderStep < GEO_STEPS.length - 1) {
     const km = GEO_STEPS[sliderStep];
+    console.log(`[Geo filter] centre=${JSON.stringify(geoCenter)} rayon=${km}km sur ${results.length} annonces`);
+    const before = results.length;
     results = results.filter(r => {
       const latRaw = r.fields['Latitude'], lngRaw = r.fields['Longitude'];
-      // Accepter coordonnées sous forme nombre ou texte
       const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw || '').replace(',', '.'));
       const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw || '').replace(',', '.'));
-      if (isNaN(lat) || isNaN(lng)) return false;
-      return haversineKm(geoCenter.lat, geoCenter.lng, lat, lng) <= km;
+      // Pas de coordonnées → inclus par défaut (on ne peut pas exclure)
+      if (isNaN(lat) || isNaN(lng)) return true;
+      const dist = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
+      return dist <= km;
     });
+    console.log(`[Geo filter] → ${results.length}/${before} annonces dans le rayon`);
   }
   // sliderStep === GEO_STEPS.length - 1 → France entière, pas de filtre distance
 
@@ -1086,6 +1100,12 @@ async function init() {
   initGeoSlider();
   try {
     allRecords = await fetchAnnonces();
+    // Debug : affiche les coords des 3 premières annonces
+    console.log('[Coords sample]', allRecords.slice(0,3).map(r => ({
+      titre: r.fields['Titre'],
+      lat: r.fields['Latitude'],
+      lng: r.fields['Longitude']
+    })));
     filteredRecords = allRecords;
     renderList();
     renderMarkers();
@@ -1099,8 +1119,6 @@ async function init() {
   }
 }
 init();
-</script>
-
 </script>
 
 <!-- Firebase SDK -->
