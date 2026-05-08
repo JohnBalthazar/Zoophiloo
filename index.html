@@ -786,7 +786,7 @@ async function fetchAnnonces() {
   do {
     const params = new URLSearchParams({ pageSize: 100 });
     fields.forEach(f => params.append('fields[]', f));
-    params.append('filterByFormula', '{Visible}=1');
+    params.append('filterByFormula', '{Visible}=TRUE()');
     if (offset) params.append('offset', offset);
     const res = await fetch(
       `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE_NAME)}?${params}`,
