@@ -541,10 +541,10 @@
   <span class="filter-label">Type</span>
   <div id="typeFilters" style="display:flex;gap:5px;align-items:center">
     <button class="chip active" data-val="">Tous</button>
-    <button class="chip" data-val="A vendre">💰 Vente</button>
-    <button class="chip" data-val="A adopter">🏠 Adoption</button>
-    <button class="chip" data-val="A donner">🎁 Don</button>
-    <button class="chip" data-val="A echanger">🔄 Échange</button>
+    <button class="chip" data-val="À vendre">💰 Vente</button>
+    <button class="chip" data-val="À adopter">🏠 Adoption</button>
+    <button class="chip" data-val="À donner">🎁 Don</button>
+    <button class="chip" data-val="À échanger">🔄 Échange</button>
     <button class="chip chip-perdu" data-val="Perdu">🚨 Perdu</button>
     <button class="chip chip-trouve" data-val="Trouvé">✅ Trouvé</button>
   </div>
@@ -786,7 +786,6 @@ async function fetchAnnonces() {
   do {
     const params = new URLSearchParams({ pageSize: 100 });
     fields.forEach(f => params.append('fields[]', f));
-    params.append('filterByFormula', '{Visible}=TRUE()');
     if (offset) params.append('offset', offset);
     const res = await fetch(
       `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE_NAME)}?${params}`,
@@ -800,8 +799,8 @@ async function fetchAnnonces() {
 }
 
 function formatPrice(val, type) {
-  if (!val && type === 'A donner') return { text: 'Don gratuit', cls: 'don' };
-  if (!val && type === 'A adopter') return { text: 'Adoption', cls: 'gratuit' };
+  if (!val && type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
+  if (!val && type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
   if (!val) return { text: 'Prix non précisé', cls: '' };
   const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
   return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
@@ -816,7 +815,7 @@ function createMarker(record) {
   const f = record.fields;
   const lat = parseFloat(f['Latitude']), lng = parseFloat(f['Longitude']);
   if (isNaN(lat) || isNaN(lng)) return null;
-  const isDon = f['Type_annonce'] === 'A donner';
+  const isDon = f['Type_annonce'] === 'À donner';
   const price = formatPrice(f['Prix'], f['Type_annonce']);
   const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
 
@@ -860,8 +859,8 @@ function renderList() {
     const price = formatPrice(f['Prix'], f['Type_annonce']);
     const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
     const photoUrl = f['Photos']?.[0]?.url || null;
-    const typeClass = f['Type_annonce']==='A donner'?'tag-don':f['Type_annonce']==='A adopter'?'tag-adoption':'tag-vente';
-    const typeLabel = f['Type_annonce']==='A donner'?'Don':f['Type_annonce']==='A adopter'?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
+    const typeClass = f['Type_annonce']==='À donner'?'tag-don':f['Type_annonce']==='À adopter'?'tag-adoption':'tag-vente';
+    const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
     // Distance badge
     let distBadge = '';
     if (geoCenter) {
@@ -1107,7 +1106,7 @@ async function init() {
       lat: r.fields['Latitude'],
       lng: r.fields['Longitude']
     })));
-    filteredRecords = allRecords.filter(function(r) { return r.fields['Visible'] === true; });
+    filteredRecords = allRecords;
     renderList();
     renderMarkers();
     const coords = allRecords
