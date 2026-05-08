@@ -342,7 +342,7 @@ function renderList() {
     const f = r.fields;
     const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
     const photoUrl = f['Photos']?.[0]?.url || null;
-    const prix = f['Prix'] ? parseFloat(String(f['Prix']).replace(/[^0-9.]/g,'')).toLocaleString('fr-FR') + ' €' : (f['Type_annonce'] === 'À donner' ? 'Don' : '—');
+    const prix = f['Prix'] ? parseFloat(String(f['Prix']).replace(/[^0-9.]/g,'')).toLocaleString('fr-FR') + ' €' : (f['Type_annonce'] === 'A donner' ? 'Don' : '—');
     const statut = f['Statut'] || 'En attente';
     const isExpired = f['Date_expiration'] && new Date(f['Date_expiration']) < new Date();
     const badgeClass = isExpired ? 'badge-expired' : statut === 'Active' ? 'badge-active' : statut === 'Inactive' ? 'badge-inactive' : 'badge-pending';
