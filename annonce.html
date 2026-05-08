@@ -187,7 +187,7 @@
     <div id="headerAuth">
       <button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>
     </div>
-    <a href="login.html?next=deposer.html" class="btn-primary" id="btnDeposer">
+    <a href="deposer.html" class="btn-primary">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Déposer une annonce
     </a>
@@ -288,8 +288,8 @@ const ESPECE_EMOJI = {
 };
 
 function formatPrice(val, type) {
-  if (!val && type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
-  if (!val && type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
+  if (!val && type === 'A donner') return { text: 'Don gratuit', cls: 'don' };
+  if (!val && type === 'A adopter') return { text: 'Adoption', cls: 'gratuit' };
   if (!val) return { text: 'Prix non précisé', cls: '' };
   const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
   return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
@@ -363,8 +363,8 @@ function renderPage(record) {
   priceEl.className = `ad-price-big ${price.cls}`;
 
   // Meta row
-  const typeClass = f['Type_annonce']==='À donner'?'tag-don':f['Type_annonce']==='À adopter'?'tag-adoption':'tag-vente';
-  const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':'Vente';
+  const typeClass = f['Type_annonce']==='A donner'?'tag-don':f['Type_annonce']==='A adopter'?'tag-adoption':'tag-vente';
+  const typeLabel = f['Type_annonce']==='A donner'?'Don':f['Type_annonce']==='A adopter'?'Adoption':'Vente';
   document.getElementById('adMetaRow').innerHTML = `
     <span class="tag ${typeClass}">${typeLabel}</span>
     ${f['Espèce'] ? `<span class="tag tag-espece">${emoji} ${f['Espèce']}</span>` : ''}
@@ -496,8 +496,6 @@ document.head.appendChild(styleEl);
 function renderHeaderAuth(user) {
   const el = document.getElementById('headerAuth');
   if (!el) return;
-  const btnDep = document.getElementById('btnDeposer');
-  if (btnDep) btnDep.href = user ? 'deposer.html' : 'login.html?next=deposer.html';
   if (!user) {
     el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`;
     return;
