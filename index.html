@@ -1107,7 +1107,7 @@ async function init() {
       lat: r.fields['Latitude'],
       lng: r.fields['Longitude']
     })));
-    filteredRecords = allRecords;
+    filteredRecords = allRecords.filter(function(r) { return r.fields['Visible'] === true; });
     renderList();
     renderMarkers();
     const coords = allRecords
