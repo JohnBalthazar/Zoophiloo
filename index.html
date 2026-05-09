@@ -23,12 +23,14 @@
     --font-display: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
   }
+  html, body { height: 100%; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -263,10 +265,10 @@
   }
 
   /* MAIN */
-  .main { display: flex; flex: 1; overflow: hidden; }
+  .main { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
   /* LIST */
-  .list-panel { width: 380px; min-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
+  .list-panel { width: 380px; min-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
   .list-header { padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
   .result-count { font-size: 12px; color: var(--text-muted); }
   .result-count strong { color: var(--text); font-weight: 500; }
@@ -298,7 +300,10 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* MAP */
-  #map { flex: 1; z-index: 1; }
+  #map { flex: 1; z-index: 0; }
+
+  /* LIST — au-dessus de la carte */
+  #listPanel { z-index: 2; }
 
   /* LEAFLET POPUP */
   .leaflet-popup-content-wrapper { border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); border: 1px solid var(--border); font-family: var(--font-body); padding: 0; overflow: hidden; }
