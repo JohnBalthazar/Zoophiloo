@@ -266,12 +266,12 @@
   .main { display: flex; flex: 1; overflow: hidden; }
 
   /* LIST */
-  .list-panel { width: 35%; min-width: 280px; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
+  .list-panel { width: 380px; min-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
   .list-header { padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
   .result-count { font-size: 12px; color: var(--text-muted); }
   .result-count strong { color: var(--text); font-weight: 500; }
   .sort-select { font-family: var(--font-body); font-size: 12px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; }
-  .list-scroll { overflow-y: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .list-scroll { overflow-y: auto; flex: 1; min-height: 0; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
   /* AD CARD */
   .ad-card { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; background: var(--white); transition: background 0.12s; position: relative; }
@@ -915,6 +915,7 @@ function handleCardClick(id) {
 }
 
 function applyFilters() {
+  if (!allRecords.length) return;
   let results = [...allRecords];
 
   // Espèce
@@ -1103,19 +1104,25 @@ async function init() {
   initGeoSlider();
   try {
     allRecords = await fetchAnnonces();
-    // Debug : affiche les coords des 3 premières annonces
-    console.log('[Coords sample]', allRecords.slice(0,3).map(r => ({
+    console.log('[allRecords count]', allRecords.length);
+    console.log('[Sample fields]', allRecords.slice(0,3).map(r => ({
       titre: r.fields['Titre'],
+      visible: r.fields['Visible'],
+      type: r.fields['Type_annonce'],
       lat: r.fields['Latitude'],
       lng: r.fields['Longitude']
     })));
     filteredRecords = allRecords;
-    renderList();
-    renderMarkers();
+
+    // fitBounds AVANT renderList/renderMarkers pour éviter que Leaflet
+    // déclenche un resize qui efface la liste juste après l'avoir peuplée
     const coords = allRecords
       .filter(r => r.fields['Latitude'] && r.fields['Longitude'])
       .map(r => [parseFloat(r.fields['Latitude']), parseFloat(r.fields['Longitude'])]);
-    if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12 });
+    if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12, animate: false });
+
+    renderList();
+    renderMarkers();
   } catch(err) {
     document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Vérifiez votre clé API</span></div>`;
     console.error(err);
