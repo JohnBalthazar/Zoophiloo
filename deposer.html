@@ -346,16 +346,13 @@ auth.onAuthStateChanged(user => {
   prenomInput.value = prenom;
   nomInput.value    = nom;
 
-  // Si pré-rempli depuis le profil, signaler visuellement
-  if (prenom || nom) {
-    prenomInput.style.color = 'var(--text-muted)';
-    nomInput.style.color    = 'var(--text-muted)';
-    prenomInput.title = 'Pré-rempli depuis votre profil — modifiable';
-    nomInput.title    = 'Pré-rempli depuis votre profil — modifiable';
-    // Repasser en couleur normale dès que l'utilisateur modifie
-    prenomInput.addEventListener('input', () => prenomInput.style.color = '', { once: true });
-    nomInput.addEventListener('input',    () => nomInput.style.color    = '', { once: true });
-  }
+  // Toujours verrouiller — modifiable uniquement depuis le profil
+  prenomInput.readOnly = true;
+  nomInput.readOnly    = true;
+  prenomInput.style.color = 'var(--text-muted)';
+  nomInput.style.color    = 'var(--text-muted)';
+  prenomInput.title = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
+  nomInput.title    = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
 });
 
 // ── Photo handling ──
