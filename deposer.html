@@ -247,10 +247,6 @@
       <div class="form-group">
         <label>Adresse</label>
         <input type="text" id="adresse" placeholder="Ex: 5 rue de la République">
-        <button type="button" class="geocode-btn" onclick="geocodeAddress()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Localiser automatiquement
-        </button>
         <span class="geocode-result" id="geocodeResult"></span>
       </div>
     </div>
@@ -400,36 +396,62 @@ async function uploadPhotos() {
   return urls;
 }
 
-// ── Geocoding ──
+// ── Géocodage automatique ──
+let _geocodeTimer = null;
+
+function scheduleGeocode() {
+  clearTimeout(_geocodeTimer);
+  _geocodeTimer = setTimeout(geocodeAddress, 700);
+}
+
 async function geocodeAddress() {
   const adresse = document.getElementById('adresse').value.trim();
   const ville = document.getElementById('ville').value.trim();
   const cp = document.getElementById('code_postal').value.trim();
-  const q = [adresse, cp, ville].filter(Boolean).join(', ');
-  if (!q) { showResult('Entrez d\'abord une adresse ou une ville', false); return; }
+  const q = [adresse, cp, ville, 'France'].filter(Boolean).join(', ');
+  if (!ville && !cp) { return; } // pas assez d'info
 
-  const btn = document.querySelector('.geocode-btn');
-  btn.textContent = 'Localisation…'; btn.disabled = true;
+  showResult('📍 Localisation…', null);
 
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=fr`);
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=fr`,
+      { headers: { 'Accept-Language': 'fr', 'User-Agent': 'Zoophiloo/1.0' } }
+    );
     const data = await res.json();
     if (data.length > 0) {
       document.getElementById('latitude').value = parseFloat(data[0].lat).toFixed(6);
       document.getElementById('longitude').value = parseFloat(data[0].lon).toFixed(6);
       document.getElementById('coordsRow').style.display = 'grid';
-      showResult('📍 ' + data[0].display_name.split(',').slice(0,3).join(','), true);
-    } else { showResult('Adresse introuvable — vérifiez les champs', false); }
-  } catch(e) { showResult('Erreur de géolocalisation', false); }
-  btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Localiser automatiquement`;
-  btn.disabled = false;
+      const label = data[0].display_name.split(',').slice(0, 3).join(',');
+      showResult('📍 ' + label, true);
+      setTimeout(() => { document.getElementById('geocodeResult').textContent = ''; }, 3000);
+    } else {
+      document.getElementById('latitude').value = '';
+      document.getElementById('longitude').value = '';
+      document.getElementById('coordsRow').style.display = 'none';
+      showResult('Ville introuvable — vérifiez les champs', false);
+    }
+  } catch(e) {
+    showResult('Erreur de géolocalisation', false);
+  }
 }
 
 function showResult(msg, ok) {
   const el = document.getElementById('geocodeResult');
   el.textContent = msg;
-  el.style.color = ok ? 'var(--green-dark)' : 'var(--red)';
+  if (ok === true) el.style.color = 'var(--green-dark)';
+  else if (ok === false) el.style.color = 'var(--red)';
+  else el.style.color = 'var(--text-muted)';
 }
+
+// Déclenchement automatique sur saisie ville / cp / adresse
+document.getElementById('ville').addEventListener('input', scheduleGeocode);
+document.getElementById('code_postal').addEventListener('input', scheduleGeocode);
+document.getElementById('adresse').addEventListener('input', scheduleGeocode);
+// Aussi au blur pour attraper les autofills
+document.getElementById('ville').addEventListener('blur', () => { clearTimeout(_geocodeTimer); geocodeAddress(); });
+document.getElementById('code_postal').addEventListener('blur', () => { clearTimeout(_geocodeTimer); geocodeAddress(); });
 
 // ── Slug ──
 function makeSlug(titre, id) {
