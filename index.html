@@ -78,7 +78,7 @@
   .main { display: flex; flex: 1; overflow: hidden; }
 
   /* LIST */
-  .list-panel { width: 35%; min-width: 280px; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
+  .list-panel { width: 420px; min-width: 420px; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
   .list-header { padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
   .result-count { font-size: 12px; color: var(--text-muted); }
   .result-count strong { color: var(--text); font-weight: 500; }
@@ -133,163 +133,6 @@
   .marker-pin { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--green); margin-top: -1px; }
   .marker-pin.don { border-top-color: var(--orange); }
   .marker-pin.active { border-top-color: var(--text); }
-
-  /* ================================
-     MOBILE TAB SWITCHER (hidden  on desktop)
-  ================================ */
-  .mobile-tabs { display: none; }
-
-  /* ================================
-     RESPONSIVE — mobile ≤ 680px
-  ================================ */
-  /* USER MENU */
-  .user-menu { position: relative; }
-  .user-btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 5px 10px 5px 5px;
-    border: 1px solid var(--border); border-radius: 20px;
-    background: var(--white); cursor: pointer;
-    font-family: var(--font-body); font-size: 13px; color: var(--text);
-    transition: all 0.15s;
-  }
-  .user-btn:hover { border-color: var(--green); background: var(--green-light); }
-  .user-avatar {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--green); color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; flex-shrink: 0;
-    overflow: hidden;
-  }
-  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .user-dropdown {
-    display: none; position: absolute; top: calc(100% + 6px); right: 0;
-    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 170px; z-index: 1000;
-    overflow: hidden;
-  }
-  .user-dropdown.open { display: block; }
-  .user-dropdown-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px; font-size: 13px; color: var(--text);
-    cursor: pointer; transition: background 0.12s; border: none;
-    background: transparent; width: 100%; font-family: var(--font-body);
-    text-align: left;
-  }
-  .user-dropdown-item:hover { background: var(--green-light); color: var(--green-dark); }
-  .user-dropdown-item.danger:hover { background: #fdf0ee; color: var(--error, #c0392b); }
-  .dropdown-divider { height: 1px; background: var(--border); }
-  #headerAuth { display: flex; align-items: center; gap: 8px; }
-
-
-  /* USER MENU */
-  .user-menu { position: relative; }
-  .user-btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 5px 10px 5px 5px;
-    border: 1px solid var(--border); border-radius: 20px;
-    background: var(--white); cursor: pointer;
-    font-family: var(--font-body); font-size: 13px; color: var(--text);
-    transition: all 0.15s;
-  }
-  .user-btn:hover { border-color: var(--green); background: var(--green-light); }
-  .user-avatar {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--green); color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; flex-shrink: 0; overflow: hidden;
-  }
-  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .user-dropdown {
-    display: none; position: absolute; top: calc(100% + 6px); right: 0;
-    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 180px; z-index: 1000; overflow: hidden;
-  }
-  .user-dropdown.open { display: block; }
-  .user-dropdown-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px; font-size: 13px; color: var(--text);
-    cursor: pointer; transition: background 0.12s; border: none;
-    background: transparent; width: 100%; font-family: var(--font-body); text-align: left;
-    text-decoration: none;
-  }
-  .user-dropdown-item:hover { background: var(--green-light); color: var(--green-dark); }
-  .user-dropdown-item.danger:hover { background: #fdf0ee; color: #c0392b; }
-  .dropdown-divider { height: 1px; background: var(--border); }
-  #headerAuth { display: flex; align-items: center; gap: 8px; }
-  @media (max-width: 680px) {
-
-    /* Header simplifié */
-    header { padding: 0 14px; height: 50px; }
-    .tagline { display: none; }
-    .btn-ghost { display: none; }
-    .user-name { display: none; }
-    .user-name { display: none; }
-    .btn-primary { font-size: 12px; padding: 6px 10px; }
-    .btn-primary .label { display: none; }
-
-    /* Search bar en colonne */
-    .search-bar { padding: 8px 12px; flex-wrap: wrap; gap: 6px; }
-    .search-wrap { width: 100%; }
-    .location-select { width: 100%; min-width: unset; }
-
-    /* Filters */
-    .filters-bar { padding: 6px 12px; }
-
-    /* Main : liste et carte gérées par onglets */
-    .main { position: relative; flex-direction: column; }
-
-    .list-panel {
-      width: 100%;
-      min-width: unset;
-      border-right: none;
-      display: none;
-      height: 100%;
-    }
-    .list-panel.tab-active { display: flex; }
-
-    #map {
-      width: 100%;
-      height: 100%;
-      display: none;
-    }
-    #map.tab-active { display: block; }
-
-    /* Onglets mobiles en bas */
-    .mobile-tabs {
-      display: flex;
-      flex-shrink: 0;
-      background: var(--white);
-      border-top: 1px solid var(--border);
-      z-index: 200;
-    }
-    .mobile-tab {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      padding: 8px 0 6px;
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-muted);
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      transition: color 0.15s;
-    }
-    .mobile-tab svg { opacity: 0.45; transition: opacity 0.15s; }
-    .mobile-tab.active { color: var(--green); }
-    .mobile-tab.active svg { opacity: 1; }
-    .mobile-tab-bar {
-      width: 28px; height: 2px; border-radius: 2px;
-      background: transparent; transition: background 0.15s;
-    }
-    .mobile-tab.active .mobile-tab-bar { background: var(--green); }
-  }
 </style>
 </head>
 <body>
@@ -300,13 +143,10 @@
     <span class="tagline">Trouvez vos animaux près de chez vous</span>
   </div>
   <div class="header-right">
-    <div id="headerAuth">
-      <!-- Rempli dynamiquement par Firebase -->
-      <button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>
-    </div>
-    <a href="https://airtable.com/appepwMYbNUv2k3f9/pageXDiaAd8lLegFd/form" target="_blank" class="btn-primary">
+    <button class="btn-ghost">Se connecter</button>
+    <a href="https://airtable.com/appepwMYbNUv2k3f9/shrXXXXXX" target="_blank" class="btn-primary">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span class="label">Déposer une annonce</span>
+      Déposer une annonce
     </a>
   </div>
 </header>
@@ -360,7 +200,7 @@
 </div>
 
 <div class="main">
-  <div class="list-panel tab-active" id="listPanel">
+  <div class="list-panel">
     <div class="list-header">
       <span class="result-count" id="resultCount">Chargement…</span>
       <select class="sort-select" id="sortSelect">
@@ -379,20 +219,6 @@
   <div id="map"></div>
 </div>
 
-<!-- ONGLETS MOBILES -->
-<div class="mobile-tabs">
-  <button class="mobile-tab active" id="tabList" onclick="switchTab('list')">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    Annonces
-    <div class="mobile-tab-bar"></div>
-  </button>
-  <button class="mobile-tab" id="tabMap" onclick="switchTab('map')">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    Carte
-    <div class="mobile-tab-bar"></div>
-  </button>
-</div>
-
 <script>
 const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
 const BASE_ID = 'appepwMYbNUv2k3f9';
@@ -407,26 +233,6 @@ const ESPECE_EMOJI = {
 let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
 let markers = {}, map;
-
-/* ---- TAB SWITCHER (mobile only) ---- */
-function switchTab(tab) {
-  const listPanel = document.getElementById('listPanel');
-  const mapEl = document.getElementById('map');
-  const tabList = document.getElementById('tabList');
-  const tabMap = document.getElementById('tabMap');
-  if (tab === 'list') {
-    listPanel.classList.add('tab-active');
-    mapEl.classList.remove('tab-active');
-    tabList.classList.add('active');
-    tabMap.classList.remove('active');
-  } else {
-    mapEl.classList.add('tab-active');
-    listPanel.classList.remove('tab-active');
-    tabMap.classList.add('active');
-    tabList.classList.remove('active');
-    setTimeout(() => map.invalidateSize(), 50);
-  }
-}
 
 function initMap() {
   map = L.map('map', { zoomControl: true }).setView([46.5, 2.5], 6);
@@ -495,10 +301,7 @@ function createMarker(record) {
       <div class="popup-price">${price.text}</div>
       <a class="popup-btn" href="annonce.html?id=${record.id}">Voir l'annonce →</a>
     </div>`, { maxWidth: 220 });
-  marker.on('click', () => {
-    setActiveCard(record.id);
-    if (window.innerWidth <= 680) switchTab('list');
-  });
+  marker.on('click', () => setActiveCard(record.id));
   return marker;
 }
 
@@ -552,10 +355,7 @@ function setActiveCard(id) {
   });
 }
 
-function handleCardClick(id) {
-  setActiveCard(id);
-  if (window.innerWidth <= 680) switchTab('map');
-}
+function handleCardClick(id) { setActiveCard(id); }
 
 function applyFilters() {
   let results = [...allRecords];
@@ -618,74 +418,6 @@ async function init() {
   }
 }
 init();
-</script>
-
-</script>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script>
-const firebaseConfig = {
-  apiKey:            "__FIREBASE_API_KEY__",
-  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
-  projectId:         "__FIREBASE_PROJECT_ID__",
-  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
-  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
-  appId:             "__FIREBASE_APP_ID__"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-function renderHeaderAuth(user) {
-  const el = document.getElementById('headerAuth');
-  if (!user) {
-    el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`;
-    return;
-  }
-  const initials = (user.displayName || user.email || '?')
-    .split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-  const avatarHtml = user.photoURL ? `<img src="${user.photoURL}" alt="">` : initials;
-  const displayName = user.displayName || user.email.split('@')[0];
-  el.innerHTML = `
-    <div class="user-menu" id="userMenu">
-      <button class="user-btn" onclick="toggleDropdown()">
-        <div class="user-avatar">${avatarHtml}</div>
-        <span class="user-name">${displayName}</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="user-dropdown" id="userDropdown">
-        <div style="padding:10px 14px 6px;font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em">Mon compte</div>
-        <div class="dropdown-divider"></div>
-        <a href="mon-espace.html" class="user-dropdown-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Mes annonces
-        </a>
-        <a href="deposer.html" class="user-dropdown-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Déposer une annonce
-        </a>
-        <div class="dropdown-divider"></div>
-        <button class="user-dropdown-item danger" onclick="doSignOut()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Se déconnecter
-        </button>
-      </div>
-    </div>`;
-}
-
-function toggleDropdown() {
-  document.getElementById('userDropdown')?.classList.toggle('open');
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('#userMenu')) {
-    document.getElementById('userDropdown')?.classList.remove('open');
-  }
-});
-async function doSignOut() {
-  await auth.signOut();
-}
-auth.onAuthStateChanged(user => renderHeaderAuth(user));
 </script>
 </body>
 </html>
