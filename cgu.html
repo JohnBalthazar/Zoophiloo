@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conditions Générales d'Utilisation — Zoophiloo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a9e6e;
+    --green-dark: #0f7a52;
+    --green-light: #e6f7f0;
+    --green-mid: #c2eed9;
+    --orange: #e8622a;
+    --red: #c0392b;
+    --red-light: #fdf0ee;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --border: #e8e8e4;
+    --bg: #fafaf8;
+    --white: #ffffff;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    height: 56px; background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; gap: 12px;
+  }
+  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo .z { color: var(--green); }
+  .logo .rest { color: var(--text); }
+  .back-btn {
+    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500; color: var(--text-muted);
+    text-decoration: none; padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--border); transition: all 0.15s; background: var(--white);
+  }
+  .back-btn:hover { color: var(--green); border-color: var(--green); background: var(--green-light); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    padding: 44px 24px 36px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M20 20.5V18H0v5h5v5H0v5h20v-9.5zm-2 4.5h-1v-1h1v1zm-1-4H6v-1h11v1zm0-4H6v-1h11v1z'/%3E%3C/g%3E%3C/svg%3E") repeat;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.88);
+    letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(24px, 4.5vw, 34px);
+    font-weight: 700; color: var(--white); letter-spacing: -0.5px;
+    line-height: 1.2; margin-bottom: 8px;
+  }
+  .hero-meta { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .hero-meta strong { color: rgba(255,255,255,0.92); }
+
+  /* LAYOUT */
+  .layout {
+    max-width: 900px; margin: 0 auto;
+    padding: 40px 24px 80px;
+    display: grid; grid-template-columns: 210px 1fr;
+    gap: 40px; align-items: start;
+  }
+
+  /* TOC */
+  .toc {
+    position: sticky; top: 72px;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px;
+  }
+  .toc-title {
+    font-family: var(--font-display); font-size: 10px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .toc ol { list-style: none; display: flex; flex-direction: column; gap: 1px; }
+  .toc ol li a {
+    display: block; font-size: 12px; color: var(--text-muted);
+    text-decoration: none; padding: 5px 8px; border-radius: 6px;
+    line-height: 1.4; transition: all 0.14s;
+  }
+  .toc ol li a:hover,
+  .toc ol li a.active { color: var(--green); background: var(--green-light); }
+
+  /* CONTENT */
+  .cgu-content { min-width: 0; }
+
+  .intro-box {
+    background: var(--green-light); border: 1px solid var(--green-mid);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 32px;
+    font-size: 13.5px; color: var(--green-dark); line-height: 1.6;
+  }
+
+  section { margin-bottom: 40px; scroll-margin-top: 72px; }
+  section h2 {
+    font-family: var(--font-display); font-size: 17px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.2px; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--green-light);
+    display: flex; align-items: center; gap: 10px;
+  }
+  section h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; background: var(--green); color: white;
+    border-radius: 50%; font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  section h3 {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: 0.8px; text-transform: uppercase; margin: 16px 0 6px;
+  }
+  p { margin-bottom: 10px; }
+  p:last-child { margin-bottom: 0; }
+  ul { padding-left: 18px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+
+  .highlight-box {
+    background: var(--white); border: 1px solid var(--border);
+    border-left: 3px solid var(--green); border-radius: 8px;
+    padding: 12px 16px; margin: 12px 0; font-size: 14px;
+  }
+  .warning-box {
+    background: var(--red-light); border: 1px solid rgba(192,57,43,0.18);
+    border-left: 3px solid var(--red); border-radius: 8px;
+    padding: 12px 16px; margin: 12px 0; font-size: 13.5px;
+  }
+  .warning-box strong { color: var(--red); }
+  .warning-box ul { margin: 6px 0 0; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    font-size: 13px; border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: var(--green-light); color: var(--green-dark);
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 9px 13px; text-align: left;
+  }
+  td { padding: 9px 13px; border-top: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+  tr:hover td { background: #f5f5f3; }
+
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  strong { font-weight: 500; }
+
+  /* SIGNATURE */
+  .signature-block {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; margin-top: 40px;
+  }
+  .sig-title {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--text); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sig-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;
+  }
+  .sig-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+  .sig-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+  .sig-item .value { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  /* FOOTER */
+  .page-footer {
+    text-align: center; padding: 20px 16px 32px;
+    font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border);
+  }
+  .page-footer a { color: var(--green); }
+
+  /* RESPONSIVE */
+  @media (max-width: 680px) {
+    .layout { grid-template-columns: 1fr; padding: 20px 16px 60px; gap: 20px; }
+    .toc { position: static; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo"><span class="z">Zoo</span><span class="rest">philoo</span></a>
+  <a href="index.html" class="back-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Retour au site
+  </a>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Document légal
+  </div>
+  <h1>Conditions Générales d'Utilisation</h1>
+  <p class="hero-meta">Zoophiloo &nbsp;·&nbsp; En vigueur au <strong>1er juin 2025</strong> &nbsp;·&nbsp; Version 1.0</p>
+</div>
+
+<div class="layout">
+
+  <aside class="toc">
+    <div class="toc-title">Sommaire</div>
+    <ol>
+      <li><a href="#mentions">1. Mentions légales</a></li>
+      <li><a href="#objet">2. Objet du site</a></li>
+      <li><a href="#inscription">3. Inscription &amp; compte</a></li>
+      <li><a href="#annonces">4. Règles annonces</a></li>
+      <li><a href="#pi">5. Propriété intellectuelle</a></li>
+      <li><a href="#rgpd">6. Données personnelles</a></li>
+      <li><a href="#cookies">7. Cookies</a></li>
+      <li><a href="#responsabilite">8. Responsabilité</a></li>
+      <li><a href="#loi">9. Droit applicable</a></li>
+      <li><a href="#contact">10. Contact &amp; réclamation</a></li>
+    </ol>
+  </aside>
+
+  <main class="cgu-content">
+
+    <div class="intro-box">
+      <strong>Bienvenue sur Zoophiloo.</strong> En créant un compte ou en utilisant ce site, vous acceptez sans réserve les présentes conditions générales d'utilisation (CGU). Veuillez les lire attentivement avant toute inscription ou dépôt d'annonce.
+    </div>
+
+    <!-- 1 -->
+    <section id="mentions">
+      <h2><span class="num">1</span> Mentions légales</h2>
+
+      <h3>Éditeur</h3>
+      <div class="highlight-box">
+        <strong>Zoophiloo</strong><br>
+        Site web : <a href="https://www.zoophiloo.fr" target="_blank">www.zoophiloo.fr</a><br>
+        Contact éditeur : <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a><br>
+        Responsable de la publication : l'équipe Zoophiloo
+      </div>
+
+      <h3>Sous-traitants techniques &amp; hébergeurs</h3>
+      <p>Le site fait appel aux prestataires suivants, chacun agissant en qualité de sous-traitant au sens du RGPD. Des clauses contractuelles types (Standard Contractual Clauses) encadrent les transferts de données hors Union européenne.</p>
+      <table>
+        <thead><tr><th>Service</th><th>Rôle</th><th>Société / Siège</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>GitHub Pages</strong></td>
+            <td>Hébergement pages statiques</td>
+            <td>GitHub, Inc. — 88 Colin P Kelly Jr St, San Francisco CA 94107, USA</td>
+          </tr>
+          <tr>
+            <td><strong>Firebase Auth</strong></td>
+            <td>Authentification utilisateurs</td>
+            <td>Google LLC — 1600 Amphitheatre Pkwy, Mountain View CA 94043, USA</td>
+          </tr>
+          <tr>
+            <td><strong>Airtable</strong></td>
+            <td>Base de données des annonces</td>
+            <td>Formagrid Inc. — 799 Market St, San Francisco CA 94103, USA</td>
+          </tr>
+          <tr>
+            <td><strong>Cloudinary</strong></td>
+            <td>Hébergement &amp; transformation photos</td>
+            <td>Cloudinary Ltd. — 3 Golda Meir St, Ness Ziona 7403648, Israël</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 2 -->
+    <section id="objet">
+      <h2><span class="num">2</span> Objet du site</h2>
+      <p>Zoophiloo est une plateforme de petites annonces animalières permettant aux particuliers de publier et consulter des annonces de <strong>vente, don, adoption, échange</strong> d'animaux, ainsi que de signaler des animaux <strong>perdus ou trouvés</strong>.</p>
+      <p>Le site est accessible gratuitement à tout internaute. Zoophiloo n'est ni partie aux transactions entre utilisateurs, ni mandataire, ni courtier. Il n'intervient pas dans les négociations ou accords conclus entre annonceurs et répondants.</p>
+      <div class="warning-box">
+        <strong>Important :</strong> Zoophiloo n'est pas un refuge, une animalerie ni un élevage. Les annonces proviennent exclusivement de particuliers. Zoophiloo ne garantit pas la santé, la légalité ni la disponibilité des animaux présentés.
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="inscription">
+      <h2><span class="num">3</span> Inscription &amp; gestion du compte</h2>
+
+      <h3>Conditions d'accès</h3>
+      <p>Le dépôt d'annonce est réservé aux personnes physiques majeures (18 ans ou plus) résidant en France et disposant de la pleine capacité juridique.</p>
+
+      <h3>Création de compte</h3>
+      <ul>
+        <li>L'inscription nécessite un prénom, un nom et une adresse e-mail valide.</li>
+        <li>Le mot de passe doit comporter au moins 8 caractères, une lettre majuscule et un chiffre.</li>
+        <li>La connexion via Google OAuth est également acceptée.</li>
+        <li><strong>Un seul compte par personne</strong> : la création de comptes multiples est interdite.</li>
+        <li>Les informations fournies doivent être exactes, complètes et tenues à jour.</li>
+      </ul>
+
+      <h3>Acceptation des CGU</h3>
+      <p>L'inscription vaut acceptation sans réserve des présentes CGU. La case dédiée doit obligatoirement être cochée lors de la création du compte. La date et l'heure d'acceptation sont conservées à des fins de preuve.</p>
+
+      <h3>Suspension et résiliation</h3>
+      <p>Zoophiloo se réserve le droit de <strong>suspendre ou supprimer tout compte</strong>, sans préavis ni indemnité, en cas de :</p>
+      <ul>
+        <li>violation des présentes CGU ;</li>
+        <li>publication d'annonces illicites (espèces protégées, trafic, maltraitance…) ;</li>
+        <li>fourniture d'informations fausses ou frauduleuses ;</li>
+        <li>comportement abusif envers d'autres utilisateurs ou envers l'équipe Zoophiloo.</li>
+      </ul>
+      <p>L'utilisateur peut supprimer son compte à tout moment depuis « Mon espace » ou en écrivant à <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a>.</p>
+    </section>
+
+    <!-- 4 -->
+    <section id="annonces">
+      <h2><span class="num">4</span> Règles relatives aux annonces</h2>
+
+      <h3>Contenu autorisé</h3>
+      <p>Seules les annonces portant sur des <strong>animaux de compagnie domestiques</strong> légalement détenus et cessibles sont autorisées. Chaque annonce doit comporter des informations véridiques, précises et à jour.</p>
+
+      <h3>Contenus strictement interdits</h3>
+      <div class="warning-box">
+        <strong>Sont formellement interdites les annonces portant sur :</strong>
+        <ul>
+          <li>les espèces protégées (listes CITES, arrêtés ministériels du 8 octobre 2018 et textes subséquents) ;</li>
+          <li>les animaux sauvages capturés dans la nature ;</li>
+          <li>les animaux dont la détention est réglementée, sans mention des certificats de capacité obligatoires ;</li>
+          <li>tout contenu promouvant le trafic, la maltraitance, le combat ou l'abandon d'animaux ;</li>
+          <li>les annonces de professionnels (éleveurs, animaleries) non déclarés en tant que tels ;</li>
+          <li>tout contenu contraire aux lois et règlements français en vigueur.</li>
+        </ul>
+      </div>
+
+      <h3>Modération</h3>
+      <p>Zoophiloo se réserve le droit de <strong>refuser, modifier ou supprimer</strong> toute annonce, à tout moment et sans justification préalable, si elle contrevient aux présentes CGU ou à la réglementation applicable. L'utilisateur reste <strong>seul responsable</strong> du contenu qu'il publie.</p>
+
+      <h3>Conformité loi 2021 (animaux de compagnie)</h3>
+      <p>Conformément à la loi n° 2021-1539 du 30 novembre 2021 visant à lutter contre la maltraitance animale, les annonces de vente de chiens et de chats doivent mentionner le numéro d'identification de l'animal (puce ou tatouage) et, le cas échéant, un certificat vétérinaire. L'utilisateur publie sous sa seule responsabilité.</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="pi">
+      <h2><span class="num">5</span> Propriété intellectuelle</h2>
+
+      <h3>Contenu de Zoophiloo</h3>
+      <p>La marque « Zoophiloo », le logo, la charte graphique, l'architecture et le code source du site sont la propriété exclusive de l'éditeur. Toute reproduction, représentation ou exploitation non autorisée est interdite et constitue une contrefaçon au sens du Code de la propriété intellectuelle.</p>
+
+      <h3>Contenu publié par les utilisateurs</h3>
+      <p>En publiant une annonce (texte, photos, etc.), l'utilisateur :</p>
+      <ul>
+        <li>déclare être l'auteur ou titulaire des droits sur les contenus publiés ;</li>
+        <li>accorde à Zoophiloo une <strong>licence non exclusive, mondiale et gratuite</strong> d'utilisation, de reproduction, d'affichage et de rediffusion de ces contenus dans le cadre strict du service ;</li>
+        <li>reste seul propriétaire de ses contenus ; cette licence ne constitue pas un transfert de propriété.</li>
+      </ul>
+      <p>La suppression d'une annonce ou d'un compte entraîne la révocation de cette licence. L'utilisateur peut demander la suppression des photos hébergées sur Cloudinary via <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a>.</p>
+    </section>
+
+    <!-- 6 -->
+    <section id="rgpd">
+      <h2><span class="num">6</span> Données personnelles (RGPD)</h2>
+
+      <h3>Responsable de traitement</h3>
+      <p>Zoophiloo, joignable à <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a>, est le responsable de traitement au sens du Règlement (UE) 2016/679 (RGPD).</p>
+
+      <h3>Données collectées et finalités</h3>
+      <table>
+        <thead><tr><th>Donnée</th><th>Finalité</th><th>Base légale</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Prénom, nom</td>
+            <td>Identification, pré-remplissage formulaires</td>
+            <td>Exécution du contrat</td>
+          </tr>
+          <tr>
+            <td>Adresse e-mail</td>
+            <td>Authentification, contact entre utilisateurs</td>
+            <td>Exécution du contrat</td>
+          </tr>
+          <tr>
+            <td>Numéro de téléphone</td>
+            <td>Contact optionnel affiché dans l'annonce</td>
+            <td>Consentement (champ facultatif)</td>
+          </tr>
+          <tr>
+            <td>Photos des animaux</td>
+            <td>Illustration des annonces</td>
+            <td>Exécution du contrat</td>
+          </tr>
+          <tr>
+            <td>Ville, adresse, code postal</td>
+            <td>Localisation de l'annonce et affichage carte</td>
+            <td>Exécution du contrat</td>
+          </tr>
+          <tr>
+            <td>Coordonnées GPS (lat/lon)</td>
+            <td>Affichage cartographique</td>
+            <td>Consentement (géocodage explicite)</td>
+          </tr>
+          <tr>
+            <td>Date/heure acceptation CGU</td>
+            <td>Preuve de consentement</td>
+            <td>Obligation légale</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Durée de conservation</h3>
+      <ul>
+        <li><strong>Compte actif :</strong> données conservées tant que le compte est actif.</li>
+        <li><strong>Après suppression du compte :</strong> suppression effective sous 30 jours, sauf obligation légale de conservation.</li>
+        <li><strong>Logs de connexion :</strong> 12 mois (obligation légale — art. R. 10-13 CPCE).</li>
+        <li><strong>Horodatage d'acceptation CGU :</strong> conservé 5 ans à des fins de preuve.</li>
+      </ul>
+
+      <h3>Transferts hors UE</h3>
+      <p>Les sous-traitants listés à l'article 1 sont établis hors de l'Union européenne. Les transferts sont encadrés par des Clauses Contractuelles Types approuvées par la Commission européenne, conformément à l'article 46 du RGPD.</p>
+
+      <h3>Droits des utilisateurs</h3>
+      <p>Conformément aux articles 15 à 22 du RGPD, vous disposez d'un droit d'accès, de rectification, d'effacement, de portabilité, de limitation et d'opposition au traitement de vos données. Pour exercer ces droits : <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a>.</p>
+      <p>En cas de réponse insatisfaisante, vous pouvez introduire une réclamation auprès de la <strong>CNIL</strong> : <a href="https://www.cnil.fr" target="_blank">www.cnil.fr</a> — 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07.</p>
+
+      <h3>Pas de profilage ni de décision automatisée</h3>
+      <p>Zoophiloo ne procède à aucun profilage automatisé ni à aucune décision automatisée susceptible de produire des effets juridiques à l'égard des utilisateurs.</p>
+    </section>
+
+    <!-- 7 -->
+    <section id="cookies">
+      <h2><span class="num">7</span> Cookies</h2>
+      <p>Zoophiloo utilise exclusivement des cookies et stockages locaux <strong>techniques et strictement nécessaires</strong> au fonctionnement du service :</p>
+      <ul>
+        <li><strong>Firebase Auth :</strong> cookie de session maintenant l'état de connexion de l'utilisateur ;</li>
+        <li><strong>localStorage :</strong> prénom, nom, préférences de formulaire et acceptation des CGU stockés côté navigateur pour le confort de navigation.</li>
+      </ul>
+      <p>Aucun cookie publicitaire, de traçage ou d'analyse tiers n'est déposé. Conformément à l'article 82 de la loi Informatique et Libertés et aux recommandations CNIL, <strong>aucun bandeau de consentement aux cookies n'est requis</strong>.</p>
+    </section>
+
+    <!-- 8 -->
+    <section id="responsabilite">
+      <h2><span class="num">8</span> Responsabilité</h2>
+
+      <h3>Responsabilité de l'éditeur</h3>
+      <p>Zoophiloo agit en qualité d'hébergeur au sens de l'article 6-I-2 de la loi n° 2004-575 du 21 juin 2004 (LCEN) pour les contenus publiés par les utilisateurs. À ce titre, sa responsabilité ne peut être engagée que s'il n'a pas agi promptement pour retirer un contenu manifestement illicite dont il aurait eu connaissance.</p>
+      <p>Zoophiloo s'efforce d'assurer la disponibilité du service mais ne garantit pas un accès ininterrompu. Il décline toute responsabilité en cas d'indisponibilité due à des opérations de maintenance ou à des événements indépendants de sa volonté.</p>
+
+      <h3>Responsabilité des utilisateurs</h3>
+      <p>Chaque utilisateur est <strong>seul responsable</strong> des contenus qu'il publie et des transactions qu'il conclut via la plateforme. Il garantit Zoophiloo contre toute réclamation de tiers résultant de la publication de ses annonces.</p>
+
+      <h3>Signalement de contenu illicite</h3>
+      <p>Tout contenu manifestement illicite peut être signalé à <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a>. Zoophiloo traitera les signalements dans les meilleurs délais.</p>
+    </section>
+
+    <!-- 9 -->
+    <section id="loi">
+      <h2><span class="num">9</span> Droit applicable &amp; juridiction</h2>
+      <p>Les présentes CGU sont régies par le <strong>droit français</strong>. En cas de litige, les parties s'efforceront de trouver une solution amiable. À défaut, le litige sera soumis aux <strong>tribunaux français compétents</strong> du ressort du siège social de Zoophiloo, sauf disposition impérative contraire applicable au consommateur.</p>
+      <p>Conformément à l'article L. 612-1 du Code de la consommation, les utilisateurs peuvent recourir gratuitement à un médiateur de la consommation agréé pour tout litige non résolu à l'amiable.</p>
+    </section>
+
+    <!-- 10 -->
+    <section id="contact">
+      <h2><span class="num">10</span> Contact &amp; réclamations</h2>
+      <p>Pour toute question relative aux présentes CGU, à vos données personnelles ou au fonctionnement du site :</p>
+      <div class="highlight-box">
+        <strong>Zoophiloo — Service utilisateurs</strong><br>
+        E-mail : <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a><br>
+        Site : <a href="https://www.zoophiloo.fr" target="_blank">www.zoophiloo.fr</a>
+      </div>
+      <p>Nous nous engageons à répondre à toute demande dans un délai maximum de <strong>30 jours</strong>.</p>
+    </section>
+
+    <!-- SIGNATURE -->
+    <div class="signature-block">
+      <div class="sig-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Signature des CGU
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Ces conditions sont acceptées lors de la création du compte et l'horodatage est conservé à des fins de preuve.</p>
+      <div class="sig-grid">
+        <div class="sig-item"><div class="label">Document</div><div class="value">CGU Zoophiloo v1.0</div></div>
+        <div class="sig-item"><div class="label">En vigueur depuis</div><div class="value">1er juin 2025</div></div>
+        <div class="sig-item"><div class="label">Droit applicable</div><div class="value">Droit français</div></div>
+        <div class="sig-item"><div class="label">Contact</div><div class="value">contact@zoophiloo.fr</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="page-footer">
+  © 2025 Zoophiloo &nbsp;·&nbsp; <a href="index.html">Retour aux annonces</a> &nbsp;·&nbsp; <a href="mailto:contact@zoophiloo.fr">contact@zoophiloo.fr</a>
+</footer>
+
+<script>
+  // Highlight active TOC section on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const tocLinks = document.querySelectorAll('.toc ol li a');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.toc a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-60px 0px -70% 0px' });
+  sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>
