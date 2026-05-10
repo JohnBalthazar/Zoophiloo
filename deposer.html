@@ -323,11 +323,38 @@ let photoFiles = []; // {file, previewUrl, cloudUrl}
 auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
   currentUser = user;
+
+  // Email (toujours disponible)
   document.getElementById('email_contact').value = user.email;
+
+  // Prénom / Nom : priorité displayName Firebase, sinon localStorage
+  let prenom = '', nom = '';
+
   if (user.displayName) {
-    const parts = user.displayName.split(' ');
-    document.getElementById('prenom_contact').value = parts[0] || '';
-    document.getElementById('nom_contact').value = parts.slice(1).join(' ') || '';
+    const parts = user.displayName.trim().split(/\s+/);
+    prenom = parts[0] || '';
+    nom    = parts.slice(1).join(' ') || '';
+  } else {
+    // Fallback : données sauvegardées lors de l'inscription
+    prenom = localStorage.getItem('zph_prenom') || '';
+    nom    = localStorage.getItem('zph_nom')    || '';
+  }
+
+  const prenomInput = document.getElementById('prenom_contact');
+  const nomInput    = document.getElementById('nom_contact');
+
+  prenomInput.value = prenom;
+  nomInput.value    = nom;
+
+  // Si pré-rempli depuis le profil, signaler visuellement
+  if (prenom || nom) {
+    prenomInput.style.color = 'var(--text-muted)';
+    nomInput.style.color    = 'var(--text-muted)';
+    prenomInput.title = 'Pré-rempli depuis votre profil — modifiable';
+    nomInput.title    = 'Pré-rempli depuis votre profil — modifiable';
+    // Repasser en couleur normale dès que l'utilisateur modifie
+    prenomInput.addEventListener('input', () => prenomInput.style.color = '', { once: true });
+    nomInput.addEventListener('input',    () => nomInput.style.color    = '', { once: true });
   }
 });
 

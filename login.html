@@ -354,9 +354,15 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><polyline points="20 6 9 17 4 12"/></svg>
           <span id="signupSuccessMsg"></span>
         </div>
-        <div class="form-group">
-          <label>Prénom (optionnel)</label>
-          <input type="text" id="signupName" placeholder="Votre prénom" autocomplete="given-name">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Prénom <span style="color:var(--green)">*</span></label>
+            <input type="text" id="signupPrenom" placeholder="Votre prénom" autocomplete="given-name">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Nom</label>
+            <input type="text" id="signupNom" placeholder="Votre nom" autocomplete="family-name">
+          </div>
         </div>
         <div class="form-group">
           <label>Adresse e-mail</label>
@@ -516,15 +522,21 @@ async function doSignIn() {
 // ── Sign Up ──
 async function doSignUp() {
   clearAlerts();
-  const name = document.getElementById('signupName').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
+  const prenom   = document.getElementById('signupPrenom').value.trim();
+  const nom      = document.getElementById('signupNom').value.trim();
+  const email    = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
-  if (!email) { showError('signup', 'Entrez votre adresse e-mail.'); return; }
+  if (!prenom) { showError('signup', 'Le prénom est obligatoire.'); return; }
+  if (!email)  { showError('signup', 'Entrez votre adresse e-mail.'); return; }
   if (password.length < 8) { showError('signup', 'Le mot de passe doit contenir au moins 8 caractères.'); return; }
   setLoading('btnSignup', true);
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
-    if (name) await cred.user.updateProfile({ displayName: name });
+    const displayName = [prenom, nom].filter(Boolean).join(' ');
+    await cred.user.updateProfile({ displayName });
+    // Sauvegarde locale pour pré-remplissage des formulaires d'annonce
+    localStorage.setItem('zph_prenom', prenom);
+    localStorage.setItem('zph_nom',    nom);
     redirectAfterLogin();
   } catch(e) {
     showError('signup', firebaseError(e.code));
@@ -537,7 +549,13 @@ async function doGoogleSignIn() {
   clearAlerts();
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    await auth.signInWithPopup(provider);
+    const cred = await auth.signInWithPopup(provider);
+    // Sauvegarder prénom/nom depuis le displayName Google
+    if (cred.user.displayName) {
+      const parts = cred.user.displayName.trim().split(/\s+/);
+      localStorage.setItem('zph_prenom', parts[0] || '');
+      localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
+    }
     redirectAfterLogin();
   } catch(e) {
     const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
