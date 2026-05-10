@@ -23,12 +23,14 @@
     --font-display: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
   }
+  html, body { height: 100%; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -74,16 +76,204 @@
   .chip:hover { border-color: var(--green); color: var(--green); }
   .chip.active { background: var(--green); color: white; border-color: var(--green); }
 
+  /* ADVANCED FILTERS PANEL */
+  .filters-bar-2 {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 7px 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .filters-bar-2::-webkit-scrollbar { display: none; }
+
+  /* Rayon géographique */
+  .geo-filter-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .geo-city-input {
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 4px 9px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--text);
+    width: 130px;
+    transition: border-color 0.15s;
+  }
+  .geo-city-input:focus { outline: none; border-color: var(--green); }
+  .geo-city-input.has-value { border-color: var(--green); background: var(--green-light); }
+  /* Radius slider */
+  .geo-slider-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-shrink: 0;
+    width: 200px;
+  }
+  .geo-slider-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .geo-radius-label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-dark);
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .geo-radius-label.inactive { color: var(--text-muted); font-weight: 400; }
+  .geo-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; text-align: right; }
+  .geo-status.loading { color: var(--green); }
+  .geo-status.error { color: var(--orange); }
+  .geo-slider-track {
+    position: relative;
+    height: 18px;
+    display: flex;
+    align-items: center;
+  }
+  .geo-slider-bg {
+    position: absolute;
+    left: 0; right: 0;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .geo-slider-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.2s;
+  }
+  .geo-slider-ticks {
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    padding: 0 1px;
+  }
+  .geo-slider-tick {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--border);
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+  .geo-slider-tick.passed { background: white; }
+  input[type=range]#geoRadiusSlider {
+    position: absolute;
+    left: 0; right: 0;
+    width: 100%;
+    height: 18px;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    z-index: 2;
+  }
+  .geo-slider-thumb {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--green);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    pointer-events: none;
+    transform: translateX(-50%);
+    transition: left 0.2s, border-color 0.15s;
+    z-index: 3;
+    left: 0%;
+  }
+  .geo-slider-thumb.inactive { border-color: var(--border); }
+  .geo-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1px;
+  }
+  .geo-slider-labels span {
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .geo-slider-labels span.active-label { color: var(--green); font-weight: 600; }
+
+  /* Prix range */
+  .price-filter-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .price-input {
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 4px 9px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--text);
+    width: 76px;
+    transition: border-color 0.15s;
+  }
+  .price-input:focus { outline: none; border-color: var(--green); }
+  .price-sep { font-size: 12px; color: var(--text-muted); }
+
+  /* Active filter badge on chips */
+  .filter-reset-btn {
+    font-family: var(--font-body);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--orange);
+    background: #fff4f0;
+    color: var(--orange);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.12s;
+    flex-shrink: 0;
+    display: none;
+  }
+  .filter-reset-btn:hover { background: var(--orange); color: white; }
+  .filter-reset-btn.visible { display: inline-flex; align-items: center; gap: 4px; }
+
+  /* Type chips enriched */
+  .chip-perdu { --chip-color: #dc2626; }
+  .chip-perdu.active { background: #dc2626; border-color: #dc2626; }
+  .chip-trouve { --chip-color: #7c3aed; }
+  .chip-trouve.active { background: #7c3aed; border-color: #7c3aed; }
+  .tag-dist { background: #f0fdf8; color: #0d7a55; border: 1px solid #a7f3d0; font-size: 10px; }
+
+  @media (max-width: 680px) {
+    .filters-bar-2 { padding: 6px 12px; }
+    .geo-city-input { width: 100px; }
+    .price-input { width: 60px; }
+  }
+
   /* MAIN */
-  .main { display: flex; flex: 1; overflow: hidden; }
+  .main { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
   /* LIST */
-  .list-panel { width: 420px; min-width: 420px; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
+  .list-panel { width: 380px; min-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
   .list-header { padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
   .result-count { font-size: 12px; color: var(--text-muted); }
   .result-count strong { color: var(--text); font-weight: 500; }
   .sort-select { font-family: var(--font-body); font-size: 12px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; }
-  .list-scroll { overflow-y: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .list-scroll { overflow-y: auto; flex: 1; min-height: 0; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
   /* AD CARD */
   .ad-card { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; background: var(--white); transition: background 0.12s; position: relative; }
@@ -110,7 +300,10 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* MAP */
-  #map { flex: 1; z-index: 1; }
+  #map { flex: 1; z-index: 0; }
+
+  /* LIST — au-dessus de la carte */
+  #listPanel { z-index: 2; }
 
   /* LEAFLET POPUP */
   .leaflet-popup-content-wrapper { border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); border: 1px solid var(--border); font-family: var(--font-body); padding: 0; overflow: hidden; }
@@ -133,6 +326,163 @@
   .marker-pin { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--green); margin-top: -1px; }
   .marker-pin.don { border-top-color: var(--orange); }
   .marker-pin.active { border-top-color: var(--text); }
+
+  /* ================================
+     MOBILE TAB SWITCHER (hidden  on desktop)
+  ================================ */
+  .mobile-tabs { display: none; }
+
+  /* ================================
+     RESPONSIVE — mobile ≤ 680px
+  ================================ */
+  /* USER MENU */
+  .user-menu { position: relative; }
+  .user-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 10px 5px 5px;
+    border: 1px solid var(--border); border-radius: 20px;
+    background: var(--white); cursor: pointer;
+    font-family: var(--font-body); font-size: 13px; color: var(--text);
+    transition: all 0.15s;
+  }
+  .user-btn:hover { border-color: var(--green); background: var(--green-light); }
+  .user-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--green); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+    overflow: hidden;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-dropdown {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 170px; z-index: 1000;
+    overflow: hidden;
+  }
+  .user-dropdown.open { display: block; }
+  .user-dropdown-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; font-size: 13px; color: var(--text);
+    cursor: pointer; transition: background 0.12s; border: none;
+    background: transparent; width: 100%; font-family: var(--font-body);
+    text-align: left;
+  }
+  .user-dropdown-item:hover { background: var(--green-light); color: var(--green-dark); }
+  .user-dropdown-item.danger:hover { background: #fdf0ee; color: var(--error, #c0392b); }
+  .dropdown-divider { height: 1px; background: var(--border); }
+  #headerAuth { display: flex; align-items: center; gap: 8px; }
+
+
+  /* USER MENU */
+  .user-menu { position: relative; }
+  .user-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 10px 5px 5px;
+    border: 1px solid var(--border); border-radius: 20px;
+    background: var(--white); cursor: pointer;
+    font-family: var(--font-body); font-size: 13px; color: var(--text);
+    transition: all 0.15s;
+  }
+  .user-btn:hover { border-color: var(--green); background: var(--green-light); }
+  .user-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--green); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0; overflow: hidden;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-dropdown {
+    display: none; position: absolute; top: calc(100% + 6px); right: 0;
+    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 180px; z-index: 1000; overflow: hidden;
+  }
+  .user-dropdown.open { display: block; }
+  .user-dropdown-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; font-size: 13px; color: var(--text);
+    cursor: pointer; transition: background 0.12s; border: none;
+    background: transparent; width: 100%; font-family: var(--font-body); text-align: left;
+    text-decoration: none;
+  }
+  .user-dropdown-item:hover { background: var(--green-light); color: var(--green-dark); }
+  .user-dropdown-item.danger:hover { background: #fdf0ee; color: #c0392b; }
+  .dropdown-divider { height: 1px; background: var(--border); }
+  #headerAuth { display: flex; align-items: center; gap: 8px; }
+  @media (max-width: 680px) {
+
+    /* Header simplifié */
+    header { padding: 0 14px; height: 50px; }
+    .tagline { display: none; }
+    .btn-ghost { display: none; }
+    .user-name { display: none; }
+    .user-name { display: none; }
+    .btn-primary { font-size: 12px; padding: 6px 10px; }
+    .btn-primary .label { display: none; }
+
+    /* Search bar en colonne */
+    .search-bar { padding: 8px 12px; flex-wrap: wrap; gap: 6px; }
+    .search-wrap { width: 100%; }
+    .location-select { width: 100%; min-width: unset; }
+
+    /* Filters */
+    .filters-bar { padding: 6px 12px; }
+
+    /* Main : liste et carte gérées par onglets */
+    .main { position: relative; flex-direction: column; }
+
+    .list-panel {
+      width: 100%;
+      min-width: unset;
+      border-right: none;
+      display: none;
+      height: 100%;
+    }
+    .list-panel.tab-active { display: flex; }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+    #map.tab-active { display: block; }
+
+    /* Onglets mobiles en bas */
+    .mobile-tabs {
+      display: flex;
+      flex-shrink: 0;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      z-index: 200;
+    }
+    .mobile-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 0 6px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: color 0.15s;
+    }
+    .mobile-tab svg { opacity: 0.45; transition: opacity 0.15s; }
+    .mobile-tab.active { color: var(--green); }
+    .mobile-tab.active svg { opacity: 1; }
+    .mobile-tab-bar {
+      width: 28px; height: 2px; border-radius: 2px;
+      background: transparent; transition: background 0.15s;
+    }
+    .mobile-tab.active .mobile-tab-bar { background: var(--green); }
+  }
 </style>
 </head>
 <body>
@@ -143,10 +493,13 @@
     <span class="tagline">Trouvez vos animaux près de chez vous</span>
   </div>
   <div class="header-right">
-    <button class="btn-ghost">Se connecter</button>
-    <a href="https://airtable.com/appepwMYbNUv2k3f9/shrXXXXXX" target="_blank" class="btn-primary">
+    <div id="headerAuth">
+      <!-- Rempli dynamiquement par Firebase -->
+      <button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>
+    </div>
+    <a href="login.html?next=deposer.html" class="btn-primary" id="btnDeposer">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Déposer une annonce
+      <span class="label">Déposer une annonce</span>
     </a>
   </div>
 </header>
@@ -193,14 +546,61 @@
   <span class="filter-label">Type</span>
   <div id="typeFilters" style="display:flex;gap:5px;align-items:center">
     <button class="chip active" data-val="">Tous</button>
-    <button class="chip" data-val="À vendre">Vente</button>
-    <button class="chip" data-val="À adopter">Adoption</button>
-    <button class="chip" data-val="À donner">Don</button>
+    <button class="chip" data-val="A vendre">💰 Vente</button>
+    <button class="chip" data-val="A adopter">🏠 Adoption</button>
+    <button class="chip" data-val="A donner">🎁 Don</button>
+    <button class="chip" data-val="A echanger">🔄 Échange</button>
+    <button class="chip chip-perdu" data-val="Perdu">🚨 Perdu</button>
+    <button class="chip chip-trouve" data-val="Trouvé">✅ Trouvé</button>
   </div>
 </div>
 
+<!-- BARRE FILTRES AVANCÉS -->
+<div class="filters-bar-2">
+  <span class="filter-label">📍 Rayon</span>
+  <div class="geo-filter-wrap">
+    <input class="geo-city-input" id="geoCityInput" type="text" placeholder="Ville…" autocomplete="off">
+    <div class="geo-slider-wrap" id="geoSliderWrap">
+      <div class="geo-slider-top">
+        <span class="geo-radius-label inactive" id="geoRadiusLabel">Rayon</span>
+        <span class="geo-status" id="geoStatus"></span>
+      </div>
+      <div class="geo-slider-track">
+        <div class="geo-slider-bg">
+          <div class="geo-slider-fill" id="geoSliderFill"></div>
+        </div>
+        <div class="geo-slider-ticks" id="geoSliderTicks"></div>
+        <input type="range" id="geoRadiusSlider" min="0" max="9" step="1" value="0">
+        <div class="geo-slider-thumb inactive" id="geoSliderThumb"></div>
+      </div>
+      <div class="geo-slider-labels" id="geoSliderLabels"></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <span class="filter-label">📅 Date</span>
+  <div id="dateFilters" style="display:flex;gap:5px;align-items:center">
+    <button class="chip active" data-val="">Toutes</button>
+    <button class="chip" data-val="today">Aujourd'hui</button>
+    <button class="chip" data-val="week">Cette semaine</button>
+    <button class="chip" data-val="month">Ce mois</button>
+  </div>
+  <div class="divider"></div>
+  <span class="filter-label">💶 Prix</span>
+  <div class="price-filter-wrap">
+    <input class="price-input" id="priceMin" type="number" placeholder="Min" min="0">
+    <span class="price-sep">–</span>
+    <input class="price-input" id="priceMax" type="number" placeholder="Max" min="0">
+    <span class="price-sep">€</span>
+  </div>
+  <div class="divider"></div>
+  <button class="filter-reset-btn" id="filterResetBtn" onclick="resetAdvancedFilters()">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Effacer
+  </button>
+</div>
+
 <div class="main">
-  <div class="list-panel">
+  <div class="list-panel tab-active" id="listPanel">
     <div class="list-header">
       <span class="result-count" id="resultCount">Chargement…</span>
       <select class="sort-select" id="sortSelect">
@@ -219,6 +619,20 @@
   <div id="map"></div>
 </div>
 
+<!-- ONGLETS MOBILES -->
+<div class="mobile-tabs">
+  <button class="mobile-tab active" id="tabList" onclick="switchTab('list')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    Annonces
+    <div class="mobile-tab-bar"></div>
+  </button>
+  <button class="mobile-tab" id="tabMap" onclick="switchTab('map')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Carte
+    <div class="mobile-tab-bar"></div>
+  </button>
+</div>
+
 <script>
 const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
 const BASE_ID = 'appepwMYbNUv2k3f9';
@@ -232,7 +646,135 @@ const ESPECE_EMOJI = {
 
 let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
+let activeDate = '', priceMin = null, priceMax = null;
+let geoCenter = null, geoRadius = null; // {lat, lng}, km
 let markers = {}, map;
+
+/* ---- GEO HELPERS ---- */
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2-lat1)*Math.PI/180;
+  const dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// Slider steps: 0=off, 1=5km, 2=10km, 3=20km, 4=30km, 5=50km, 6=75km, 7=100km, 8=France entière
+const GEO_STEPS = [0, 1, 5, 10, 20, 30, 50, 75, 100, 99999];
+const GEO_LABELS = ['0', '1', '5', '10', '20', '30', '50', '75', '100', '🇫🇷'];
+
+function initGeoSlider() {
+  const ticks = document.getElementById('geoSliderTicks');
+  const labels = document.getElementById('geoSliderLabels');
+  ticks.innerHTML = GEO_STEPS.map(() => `<div class="geo-slider-tick"></div>`).join('');
+  labels.innerHTML = GEO_STEPS.map((_, i) => `<span>${GEO_LABELS[i]}</span>`).join('');
+}
+
+function updateGeoSliderUI(stepIdx) {
+  const pct = stepIdx / (GEO_STEPS.length - 1) * 100;
+  document.getElementById('geoSliderFill').style.width = pct + '%';
+  document.getElementById('geoSliderThumb').style.left = pct + '%';
+  const thumb = document.getElementById('geoSliderThumb');
+  const label = document.getElementById('geoRadiusLabel');
+  const labelEls = document.querySelectorAll('#geoSliderLabels span');
+  labelEls.forEach((el, i) => el.classList.toggle('active-label', i === stepIdx));
+  if (stepIdx === 0) {
+    thumb.classList.add('inactive');
+    label.textContent = 'Rayon';
+    label.classList.add('inactive');
+  } else {
+    thumb.classList.remove('inactive');
+    label.classList.remove('inactive');
+    if (stepIdx === GEO_STEPS.length - 1) {
+      label.textContent = 'Toute la France';
+    } else {
+      label.textContent = GEO_STEPS[stepIdx] + ' km';
+    }
+  }
+  // Update ticks color
+  document.querySelectorAll('.geo-slider-tick').forEach((t, i) => {
+    t.classList.toggle('passed', i < stepIdx);
+  });
+}
+
+let geoDebounceTimer;
+async function geocodeCity(cityName) {
+  const status = document.getElementById('geoStatus');
+  if (!cityName.trim()) {
+    geoCenter = null;
+    status.textContent = '';
+    status.className = 'geo-status';
+    applyFilters();
+    return;
+  }
+  status.textContent = '…';
+  status.className = 'geo-status loading';
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&countrycodes=fr&format=json&limit=1`);
+    const data = await res.json();
+    if (data.length === 0) {
+      geoCenter = null;
+      status.textContent = 'Inconnue';
+      status.className = 'geo-status error';
+      applyFilters();
+      return;
+    }
+    geoCenter = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), name: data[0].display_name.split(',')[0] };
+    document.getElementById('geoCityInput').classList.add('has-value');
+    status.textContent = geoCenter.name;
+    status.className = 'geo-status';
+    const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
+    if (stepIdx > 0) {
+      geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
+      drawGeoCircle();
+    }
+    applyFilters();
+    updateResetBtn();
+  } catch(e) {
+    geoCenter = null;
+    status.textContent = 'Erreur réseau';
+    status.className = 'geo-status error';
+  }
+}
+
+function drawGeoCircle() {
+  if (window._geoCircle) map.removeLayer(window._geoCircle);
+  window._geoCircle = null;
+  if (!geoCenter) return;
+  const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value);
+  if (stepIdx === 0) return;
+  const km = GEO_STEPS[stepIdx];
+  if (km === 99999) {
+    // France entière → juste recentrer
+    map.flyTo([46.5, 2.5], 5, { animate: true, duration: 0.8 });
+    return;
+  }
+  window._geoCircle = L.circle([geoCenter.lat, geoCenter.lng], {
+    radius: km * 1000, color: '#1a9e6e', weight: 1.5,
+    fillColor: '#1a9e6e', fillOpacity: 0.06, dashArray: '5,5'
+  }).addTo(map);
+  map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(7, 12 - Math.log2(km)), { animate: true, duration: 0.8 });
+}
+
+/* ---- TAB SWITCHER (mobile only) ---- */
+function switchTab(tab) {
+  const listPanel = document.getElementById('listPanel');
+  const mapEl = document.getElementById('map');
+  const tabList = document.getElementById('tabList');
+  const tabMap = document.getElementById('tabMap');
+  if (tab === 'list') {
+    listPanel.classList.add('tab-active');
+    mapEl.classList.remove('tab-active');
+    tabList.classList.add('active');
+    tabMap.classList.remove('active');
+  } else {
+    mapEl.classList.add('tab-active');
+    listPanel.classList.remove('tab-active');
+    tabMap.classList.add('active');
+    tabList.classList.remove('active');
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+}
 
 function initMap() {
   map = L.map('map', { zoomControl: true }).setView([46.5, 2.5], 6);
@@ -247,7 +789,7 @@ async function fetchAnnonces() {
                   'Ville','Code_postal','Latitude','Longitude','Nom_contact','Prenom_contact',
                   'Email_contact','Telephone','Date_creation','Statut','Visible','Slug'];
   do {
-    const params = new URLSearchParams({ pageSize: 100 });
+    const params = new URLSearchParams({ pageSize: 100, filterByFormula: '{Visible}=TRUE()' });
     fields.forEach(f => params.append('fields[]', f));
     if (offset) params.append('offset', offset);
     const res = await fetch(
@@ -258,12 +800,13 @@ async function fetchAnnonces() {
     if (data.records) records = records.concat(data.records);
     offset = data.offset || null;
   } while (offset);
-  return records;
+  // Double sécurité côté JS : Airtable n'inclut pas les champs checkbox à false
+  return records.filter(r => r.fields['Visible'] === true);
 }
 
 function formatPrice(val, type) {
-  if (!val && type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
-  if (!val && type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
+  if (!val && (type === 'A donner' || type === 'À donner')) return { text: 'Don gratuit', cls: 'don' };
+  if (!val && (type === 'A adopter' || type === 'À adopter')) return { text: 'Adoption', cls: 'gratuit' };
   if (!val) return { text: 'Prix non précisé', cls: '' };
   const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
   return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
@@ -278,7 +821,7 @@ function createMarker(record) {
   const f = record.fields;
   const lat = parseFloat(f['Latitude']), lng = parseFloat(f['Longitude']);
   if (isNaN(lat) || isNaN(lng)) return null;
-  const isDon = f['Type_annonce'] === 'À donner';
+  const isDon = f['Type_annonce'] === 'A donner' || f['Type_annonce'] === 'À donner';
   const price = formatPrice(f['Prix'], f['Type_annonce']);
   const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
 
@@ -301,7 +844,10 @@ function createMarker(record) {
       <div class="popup-price">${price.text}</div>
       <a class="popup-btn" href="annonce.html?id=${record.id}">Voir l'annonce →</a>
     </div>`, { maxWidth: 220 });
-  marker.on('click', () => setActiveCard(record.id));
+  marker.on('click', () => {
+    setActiveCard(record.id);
+    if (window.innerWidth <= 680) switchTab('list');
+  });
   return marker;
 }
 
@@ -319,15 +865,28 @@ function renderList() {
     const price = formatPrice(f['Prix'], f['Type_annonce']);
     const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
     const photoUrl = f['Photos']?.[0]?.url || null;
-    const typeClass = f['Type_annonce']==='À donner'?'tag-don':f['Type_annonce']==='À adopter'?'tag-adoption':'tag-vente';
-    const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':'Vente';
+    const isDonType = f['Type_annonce']==='A donner' || f['Type_annonce']==='À donner';
+    const isAdopterType = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
+    const typeClass = isDonType?'tag-don':isAdopterType?'tag-adoption':'tag-vente';
+    const typeLabel = isDonType?'Don':isAdopterType?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
+    // Distance badge
+    let distBadge = '';
+    if (geoCenter) {
+      const latRaw = f['Latitude'], lngRaw = f['Longitude'];
+      const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw||'').replace(',','.'));
+      const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw||'').replace(',','.'));
+      if (!isNaN(lat) && !isNaN(lng)) {
+        const d = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
+        distBadge = `<span class="tag tag-dist">📍 ${d < 1 ? '<1' : Math.round(d)} km</span>`;
+      }
+    }
     return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${record.id}" onclick="handleCardClick('${record.id}')">
       <div class="ad-img">${photoUrl?`<img src="${photoUrl}" alt="">`:emoji}</div>
       <div class="ad-body">
         <div class="ad-title">${f['Titre']||'Sans titre'}</div>
         <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
         <div class="ad-price ${price.cls}">${price.text}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span></div>
+        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${distBadge}</div>
       </div>
       <span class="ad-date">${formatDate(f['Date_creation'])}</span>
     </div>`;
@@ -355,12 +914,22 @@ function setActiveCard(id) {
   });
 }
 
-function handleCardClick(id) { setActiveCard(id); }
+function handleCardClick(id) {
+  setActiveCard(id);
+  if (window.innerWidth <= 680) switchTab('map');
+}
 
 function applyFilters() {
+  if (!allRecords.length) return;
   let results = [...allRecords];
+
+  // Espèce
   if (activeEspece) results = results.filter(r => r.fields['Espèce']===activeEspece);
+
+  // Type
   if (activeType) results = results.filter(r => r.fields['Type_annonce']===activeType);
+
+  // Texte
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     results = results.filter(r => {
@@ -372,15 +941,97 @@ function applyFilters() {
           || (f['Ville']||'').toLowerCase().includes(q);
     });
   }
+
+  // Ville exacte (select legacy)
   const loc = document.getElementById('locationSelect').value;
   if (loc) results = results.filter(r => (r.fields['Ville']||'').toLowerCase().includes(loc.toLowerCase()));
+
+  // Rayon géographique
+  const sliderStep = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
+  if (geoCenter && sliderStep > 0 && sliderStep < GEO_STEPS.length - 1) {
+    const km = GEO_STEPS[sliderStep];
+    console.log(`[Geo filter] centre=${JSON.stringify(geoCenter)} rayon=${km}km sur ${results.length} annonces`);
+    const before = results.length;
+    results = results.filter(r => {
+      const latRaw = r.fields['Latitude'], lngRaw = r.fields['Longitude'];
+      const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw || '').replace(',', '.'));
+      const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw || '').replace(',', '.'));
+      // Pas de coordonnées → inclus par défaut (on ne peut pas exclure)
+      if (isNaN(lat) || isNaN(lng)) return true;
+      const dist = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
+      return dist <= km;
+    });
+    console.log(`[Geo filter] → ${results.length}/${before} annonces dans le rayon`);
+  }
+  // sliderStep === GEO_STEPS.length - 1 → France entière, pas de filtre distance
+
+  // Filtre date
+  if (activeDate) {
+    const now = new Date();
+    results = results.filter(r => {
+      const d = new Date(r.fields['Date_creation']);
+      if (isNaN(d)) return false;
+      if (activeDate === 'today') {
+        return d.toDateString() === now.toDateString();
+      } else if (activeDate === 'week') {
+        const msWeek = 7*24*60*60*1000;
+        return (now - d) <= msWeek;
+      } else if (activeDate === 'month') {
+        return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+      }
+      return true;
+    });
+  }
+
+  // Filtre prix
+  if (priceMin !== null || priceMax !== null) {
+    results = results.filter(r => {
+      const raw = r.fields['Prix'];
+      // Gratuit / Adoption → inclus si min=0 ou pas de min
+      if (!raw) return priceMin === null || priceMin === 0;
+      const num = parseFloat(String(raw).replace(/[^0-9.]/g,''));
+      if (isNaN(num)) return true;
+      if (priceMin !== null && num < priceMin) return false;
+      if (priceMax !== null && num > priceMax) return false;
+      return true;
+    });
+  }
+
   const sort = document.getElementById('sortSelect').value;
   if (sort==='price_asc') results.sort((a,b)=>(parseFloat(String(a.fields['Prix']||0).replace(/[^0-9.]/g,''))||0)-(parseFloat(String(b.fields['Prix']||0).replace(/[^0-9.]/g,''))||0));
   else if (sort==='price_desc') results.sort((a,b)=>(parseFloat(String(b.fields['Prix']||0).replace(/[^0-9.]/g,''))||0)-(parseFloat(String(a.fields['Prix']||0).replace(/[^0-9.]/g,''))||0));
   else results.sort((a,b)=>new Date(b.fields['Date_creation']||0)-new Date(a.fields['Date_creation']||0));
+
   filteredRecords = results;
   renderList();
   renderMarkers();
+  updateResetBtn();
+}
+
+function updateResetBtn() {
+  const sliderActive = parseInt(document.getElementById('geoRadiusSlider').value) > 0;
+  const hasAdvanced = (geoCenter && sliderActive) || activeDate || priceMin !== null || priceMax !== null;
+  document.getElementById('filterResetBtn').classList.toggle('visible', !!hasAdvanced);
+}
+
+function resetAdvancedFilters() {
+  // Geo
+  geoCenter = null; geoRadius = null;
+  document.getElementById('geoCityInput').value = '';
+  document.getElementById('geoCityInput').classList.remove('has-value');
+  document.getElementById('geoRadiusSlider').value = '0';
+  updateGeoSliderUI(0);
+  document.getElementById('geoStatus').textContent = '';
+  if (window._geoCircle) { map.removeLayer(window._geoCircle); window._geoCircle = null; }
+  // Date
+  activeDate = '';
+  document.querySelectorAll('#dateFilters .chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('#dateFilters .chip[data-val=""]').classList.add('active');
+  // Prix
+  priceMin = null; priceMax = null;
+  document.getElementById('priceMin').value = '';
+  document.getElementById('priceMax').value = '';
+  applyFilters();
 }
 
 document.getElementById('especeFilters').addEventListener('click', e => {
@@ -393,6 +1044,11 @@ document.getElementById('typeFilters').addEventListener('click', e => {
   document.querySelectorAll('#typeFilters .chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active'); activeType = chip.dataset.val; applyFilters();
 });
+document.getElementById('dateFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.chip'); if (!chip) return;
+  document.querySelectorAll('#dateFilters .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active'); activeDate = chip.dataset.val; applyFilters();
+});
 let searchTimeout;
 document.getElementById('searchInput').addEventListener('input', e => {
   clearTimeout(searchTimeout);
@@ -401,23 +1057,151 @@ document.getElementById('searchInput').addEventListener('input', e => {
 document.getElementById('locationSelect').addEventListener('change', applyFilters);
 document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
+// Geo city input
+document.getElementById('geoCityInput').addEventListener('input', e => {
+  clearTimeout(geoDebounceTimer);
+  const val = e.target.value.trim();
+  e.target.classList.toggle('has-value', val.length > 0);
+  if (!val) { geoCenter = null; document.getElementById('geoStatus').textContent = ''; applyFilters(); return; }
+  geoDebounceTimer = setTimeout(() => geocodeCity(val), 700);
+});
+
+// Radius slider
+document.getElementById('geoRadiusSlider').addEventListener('input', e => {
+  const stepIdx = parseInt(e.target.value);
+  updateGeoSliderUI(stepIdx);
+  if (stepIdx === 0) {
+    geoRadius = null;
+    if (window._geoCircle) { map.removeLayer(window._geoCircle); window._geoCircle = null; }
+    applyFilters();
+    updateResetBtn();
+    return;
+  }
+  geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
+  const cityVal = document.getElementById('geoCityInput').value.trim();
+  if (!geoCenter && cityVal) {
+    // Ville saisie mais pas encore géocodée → lancer le géocodage maintenant
+    geocodeCity(cityVal); // geocodeCity appellera applyFilters une fois terminé
+  } else {
+    drawGeoCircle();
+    applyFilters();
+  }
+  updateResetBtn();
+});
+
+// Prix
+let priceTimeout;
+function onPriceInput() {
+  clearTimeout(priceTimeout);
+  priceTimeout = setTimeout(() => {
+    const minVal = document.getElementById('priceMin').value;
+    const maxVal = document.getElementById('priceMax').value;
+    priceMin = minVal !== '' ? parseFloat(minVal) : null;
+    priceMax = maxVal !== '' ? parseFloat(maxVal) : null;
+    applyFilters();
+  }, 400);
+}
+document.getElementById('priceMin').addEventListener('input', onPriceInput);
+document.getElementById('priceMax').addEventListener('input', onPriceInput);
+
 async function init() {
   initMap();
+  initGeoSlider();
   try {
     allRecords = await fetchAnnonces();
+    console.log('[allRecords count]', allRecords.length);
+    console.log('[Sample fields]', allRecords.slice(0,3).map(r => ({
+      titre: r.fields['Titre'],
+      visible: r.fields['Visible'],
+      type: r.fields['Type_annonce'],
+      lat: r.fields['Latitude'],
+      lng: r.fields['Longitude']
+    })));
     filteredRecords = allRecords;
-    renderList();
-    renderMarkers();
+
+    // fitBounds AVANT renderList/renderMarkers pour éviter que Leaflet
+    // déclenche un resize qui efface la liste juste après l'avoir peuplée
     const coords = allRecords
       .filter(r => r.fields['Latitude'] && r.fields['Longitude'])
       .map(r => [parseFloat(r.fields['Latitude']), parseFloat(r.fields['Longitude'])]);
-    if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12 });
+    if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12, animate: false });
+
+    renderList();
+    renderMarkers();
   } catch(err) {
     document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Vérifiez votre clé API</span></div>`;
     console.error(err);
   }
 }
 init();
+</script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:            "__FIREBASE_API_KEY__",
+  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
+  projectId:         "__FIREBASE_PROJECT_ID__",
+  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:             "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+function renderHeaderAuth(user) {
+  const el = document.getElementById('headerAuth');
+  const btnDep = document.getElementById('btnDeposer');
+  if (btnDep) btnDep.href = user ? 'deposer.html' : 'login.html?next=deposer.html';
+  if (!user) {
+    el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`;
+    return;
+  }
+  const initials = (user.displayName || user.email || '?')
+    .split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const avatarHtml = user.photoURL ? `<img src="${user.photoURL}" alt="">` : initials;
+  const displayName = user.displayName || user.email.split('@')[0];
+  el.innerHTML = `
+    <div class="user-menu" id="userMenu">
+      <button class="user-btn" onclick="toggleDropdown()">
+        <div class="user-avatar">${avatarHtml}</div>
+        <span class="user-name">${displayName}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="opacity:.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <div style="padding:10px 14px 6px;font-size:11px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em">Mon compte</div>
+        <div class="dropdown-divider"></div>
+        <a href="mon-espace.html" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Mes annonces
+        </a>
+        <a href="deposer.html" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Déposer une annonce
+        </a>
+        <div class="dropdown-divider"></div>
+        <button class="user-dropdown-item danger" onclick="doSignOut()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Se déconnecter
+        </button>
+      </div>
+    </div>`;
+}
+
+function toggleDropdown() {
+  document.getElementById('userDropdown')?.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#userMenu')) {
+    document.getElementById('userDropdown')?.classList.remove('open');
+  }
+});
+async function doSignOut() {
+  await auth.signOut();
+}
+auth.onAuthStateChanged(user => renderHeaderAuth(user));
 </script>
 </body>
 </html>
