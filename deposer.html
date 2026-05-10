@@ -145,7 +145,7 @@
 
 <div class="page">
   <h1 class="page-title">Déposer une <span>annonce</span></h1>
-  <p class="page-subtitle">Votre annonce sera visible après validation par notre équipe.</p>
+  <p class="page-subtitle">Votre annonce sera publiée et visible immédiatement.</p>
 
   <div class="alert alert-error" id="alertError">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -290,7 +290,7 @@
 
   <!-- Submit -->
   <div class="submit-bar">
-    <p class="submit-note">Votre annonce sera examinée avant publication.</p>
+    <p class="submit-note">Votre annonce sera publiée immédiatement.</p>
     <button class="btn-submit" id="btnSubmit" onclick="submitAnnonce()">
       <div class="spinner"></div>
       <span class="btn-label">Publier l'annonce</span>
@@ -503,7 +503,8 @@ async function submitAnnonce() {
       'Prenom_contact': document.getElementById('prenom_contact').value.trim() || undefined,
       'Email_contact': currentUser.email,
       'Telephone': document.getElementById('telephone').value.trim() || undefined,
-      'Visible': false,
+      'Visible': true,
+      'Statut': 'Active',
     };
 
     const cp = document.getElementById('code_postal').value.trim();
@@ -544,7 +545,7 @@ async function submitAnnonce() {
       }
     );
 
-    showSuccess('Annonce déposée ! Elle sera visible après validation. Redirection…');
+    showSuccess('Annonce publiée ! Elle est maintenant visible. Redirection…');
     setTimeout(() => window.location.href = 'mon-espace.html', 2500);
 
   } catch(e) {
