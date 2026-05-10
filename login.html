@@ -365,12 +365,23 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Adresse e-mail</label>
+          <label>Adresse e-mail <span style="color:var(--green)">*</span></label>
           <input type="email" id="signupEmail" placeholder="vous@exemple.fr" autocomplete="email">
         </div>
         <div class="form-group">
-          <label>Mot de passe</label>
-          <input type="password" id="signupPassword" placeholder="8 caractères minimum" autocomplete="new-password">
+          <label>Mot de passe <span style="color:var(--green)">*</span></label>
+          <input type="password" id="signupPassword" placeholder="8 car. min., majuscule, chiffre" autocomplete="new-password" oninput="checkPasswordStrength(this.value)">
+          <div id="pwStrengthBar" style="display:none;margin-top:5px">
+            <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+              <div id="pwStrengthFill" style="height:100%;width:0%;border-radius:2px;transition:width 0.3s,background 0.3s"></div>
+            </div>
+            <div id="pwStrengthLabel" style="font-size:11px;margin-top:3px;color:var(--text-muted)"></div>
+          </div>
+          <div id="pwRules" style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.7;display:none">
+            <span id="rule-len">○ 8 caractères minimum</span><br>
+            <span id="rule-upper">○ 1 majuscule</span><br>
+            <span id="rule-digit">○ 1 chiffre</span>
+          </div>
         </div>
         <button class="btn-submit" id="btnSignup" onclick="doSignUp()">
           <div class="spinner"></div>
@@ -502,6 +513,55 @@ function firebaseError(code) {
   return map[code] || 'Une erreur est survenue. Réessayez.';
 }
 
+// ── Password strength ──
+function validatePassword(pw) {
+  if (pw.length < 8)          return { ok: false, msg: 'Le mot de passe doit contenir au moins 8 caractères.' };
+  if (!/[A-Z]/.test(pw))      return { ok: false, msg: 'Ajoutez au moins une lettre majuscule.' };
+  if (!/[0-9]/.test(pw))      return { ok: false, msg: 'Ajoutez au moins un chiffre.' };
+  return { ok: true };
+}
+
+function checkPasswordStrength(pw) {
+  const bar   = document.getElementById('pwStrengthBar');
+  const fill  = document.getElementById('pwStrengthFill');
+  const label = document.getElementById('pwStrengthLabel');
+  const rules = document.getElementById('pwRules');
+  if (!bar) return;
+
+  if (!pw) { bar.style.display = 'none'; rules.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  rules.style.display = 'block';
+
+  // Rule indicators
+  const hasLen   = pw.length >= 8;
+  const hasUpper = /[A-Z]/.test(pw);
+  const hasDigit = /[0-9]/.test(pw);
+  const hasSpec  = /[^A-Za-z0-9]/.test(pw);
+
+  document.getElementById('rule-len').textContent   = (hasLen   ? '✓' : '○') + ' 8 caractères minimum';
+  document.getElementById('rule-upper').textContent = (hasUpper ? '✓' : '○') + ' 1 majuscule';
+  document.getElementById('rule-digit').textContent = (hasDigit ? '✓' : '○') + ' 1 chiffre';
+
+  document.getElementById('rule-len').style.color   = hasLen   ? 'var(--green-dark)' : 'var(--text-muted)';
+  document.getElementById('rule-upper').style.color = hasUpper ? 'var(--green-dark)' : 'var(--text-muted)';
+  document.getElementById('rule-digit').style.color = hasDigit ? 'var(--green-dark)' : 'var(--text-muted)';
+
+  // Score: 0-4
+  const score = [hasLen, hasUpper, hasDigit, hasSpec, pw.length >= 12].filter(Boolean).length;
+  const levels = [
+    { w: '20%', bg: '#e74c3c', txt: 'Très faible' },
+    { w: '40%', bg: '#e67e22', txt: 'Faible' },
+    { w: '60%', bg: '#f1c40f', txt: 'Moyen' },
+    { w: '80%', bg: '#2ecc71', txt: 'Fort' },
+    { w: '100%', bg: '#1a9e6e', txt: 'Très fort' },
+  ];
+  const lvl = levels[Math.max(0, score - 1)] || levels[0];
+  fill.style.width = lvl.w;
+  fill.style.background = lvl.bg;
+  label.textContent = lvl.txt;
+  label.style.color = lvl.bg;
+}
+
 // ── Sign In ──
 async function doSignIn() {
   clearAlerts();
@@ -529,7 +589,8 @@ async function doSignUp() {
   if (!prenom) { showError('signup', 'Le prénom est obligatoire.'); return; }
   if (!nom)    { showError('signup', 'Le nom est obligatoire.'); return; }
   if (!email)  { showError('signup', 'Entrez votre adresse e-mail.'); return; }
-  if (password.length < 8) { showError('signup', 'Le mot de passe doit contenir au moins 8 caractères.'); return; }
+  const pwCheck = validatePassword(password);
+  if (!pwCheck.ok) { showError('signup', pwCheck.msg); return; }
   setLoading('btnSignup', true);
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
