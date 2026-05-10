@@ -23,14 +23,12 @@
     --font-display: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
   }
-  html, body { height: 100%; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--font-body);
     background: var(--bg);
     color: var(--text);
     height: 100vh;
-    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -265,15 +263,15 @@
   }
 
   /* MAIN */
-  .main { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+  .main { display: flex; flex: 1; overflow: hidden; }
 
   /* LIST */
-  .list-panel { width: 380px; min-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
+  .list-panel { width: 35%; min-width: 280px; display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; background: var(--bg); }
   .list-header { padding: 10px 16px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
   .result-count { font-size: 12px; color: var(--text-muted); }
   .result-count strong { color: var(--text); font-weight: 500; }
   .sort-select { font-family: var(--font-body); font-size: 12px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; }
-  .list-scroll { overflow-y: auto; flex: 1; min-height: 0; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .list-scroll { overflow-y: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
   /* AD CARD */
   .ad-card { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; background: var(--white); transition: background 0.12s; position: relative; }
@@ -300,10 +298,7 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* MAP */
-  #map { flex: 1; z-index: 0; }
-
-  /* LIST — au-dessus de la carte */
-  #listPanel { z-index: 2; }
+  #map { flex: 1; z-index: 1; }
 
   /* LEAFLET POPUP */
   .leaflet-popup-content-wrapper { border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); border: 1px solid var(--border); font-family: var(--font-body); padding: 0; overflow: hidden; }
@@ -546,10 +541,10 @@
   <span class="filter-label">Type</span>
   <div id="typeFilters" style="display:flex;gap:5px;align-items:center">
     <button class="chip active" data-val="">Tous</button>
-    <button class="chip" data-val="A vendre">💰 Vente</button>
-    <button class="chip" data-val="A adopter">🏠 Adoption</button>
-    <button class="chip" data-val="A donner">🎁 Don</button>
-    <button class="chip" data-val="A echanger">🔄 Échange</button>
+    <button class="chip" data-val="À vendre">💰 Vente</button>
+    <button class="chip" data-val="À adopter">🏠 Adoption</button>
+    <button class="chip" data-val="À donner">🎁 Don</button>
+    <button class="chip" data-val="À échanger">🔄 Échange</button>
     <button class="chip chip-perdu" data-val="Perdu">🚨 Perdu</button>
     <button class="chip chip-trouve" data-val="Trouvé">✅ Trouvé</button>
   </div>
@@ -789,7 +784,7 @@ async function fetchAnnonces() {
                   'Ville','Code_postal','Latitude','Longitude','Nom_contact','Prenom_contact',
                   'Email_contact','Telephone','Date_creation','Statut','Visible','Slug'];
   do {
-    const params = new URLSearchParams({ pageSize: 100, filterByFormula: '{Visible}=TRUE()' });
+    const params = new URLSearchParams({ pageSize: 100 });
     fields.forEach(f => params.append('fields[]', f));
     if (offset) params.append('offset', offset);
     const res = await fetch(
@@ -800,13 +795,12 @@ async function fetchAnnonces() {
     if (data.records) records = records.concat(data.records);
     offset = data.offset || null;
   } while (offset);
-  // Double sécurité côté JS : Airtable n'inclut pas les champs checkbox à false
-  return records.filter(r => r.fields['Visible'] === true);
+  return records;
 }
 
 function formatPrice(val, type) {
-  if (!val && (type === 'A donner' || type === 'À donner')) return { text: 'Don gratuit', cls: 'don' };
-  if (!val && (type === 'A adopter' || type === 'À adopter')) return { text: 'Adoption', cls: 'gratuit' };
+  if (!val && type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
+  if (!val && type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
   if (!val) return { text: 'Prix non précisé', cls: '' };
   const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
   return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
@@ -821,7 +815,7 @@ function createMarker(record) {
   const f = record.fields;
   const lat = parseFloat(f['Latitude']), lng = parseFloat(f['Longitude']);
   if (isNaN(lat) || isNaN(lng)) return null;
-  const isDon = f['Type_annonce'] === 'A donner' || f['Type_annonce'] === 'À donner';
+  const isDon = f['Type_annonce'] === 'À donner';
   const price = formatPrice(f['Prix'], f['Type_annonce']);
   const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
 
@@ -865,10 +859,8 @@ function renderList() {
     const price = formatPrice(f['Prix'], f['Type_annonce']);
     const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
     const photoUrl = f['Photos']?.[0]?.url || null;
-    const isDonType = f['Type_annonce']==='A donner' || f['Type_annonce']==='À donner';
-    const isAdopterType = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
-    const typeClass = isDonType?'tag-don':isAdopterType?'tag-adoption':'tag-vente';
-    const typeLabel = isDonType?'Don':isAdopterType?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
+    const typeClass = f['Type_annonce']==='À donner'?'tag-don':f['Type_annonce']==='À adopter'?'tag-adoption':'tag-vente';
+    const typeLabel = f['Type_annonce']==='À donner'?'Don':f['Type_annonce']==='À adopter'?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
     // Distance badge
     let distBadge = '';
     if (geoCenter) {
@@ -920,7 +912,6 @@ function handleCardClick(id) {
 }
 
 function applyFilters() {
-  if (!allRecords.length) return;
   let results = [...allRecords];
 
   // Espèce
@@ -1109,25 +1100,19 @@ async function init() {
   initGeoSlider();
   try {
     allRecords = await fetchAnnonces();
-    console.log('[allRecords count]', allRecords.length);
-    console.log('[Sample fields]', allRecords.slice(0,3).map(r => ({
+    // Debug : affiche les coords des 3 premières annonces
+    console.log('[Coords sample]', allRecords.slice(0,3).map(r => ({
       titre: r.fields['Titre'],
-      visible: r.fields['Visible'],
-      type: r.fields['Type_annonce'],
       lat: r.fields['Latitude'],
       lng: r.fields['Longitude']
     })));
     filteredRecords = allRecords;
-
-    // fitBounds AVANT renderList/renderMarkers pour éviter que Leaflet
-    // déclenche un resize qui efface la liste juste après l'avoir peuplée
+    renderList();
+    renderMarkers();
     const coords = allRecords
       .filter(r => r.fields['Latitude'] && r.fields['Longitude'])
       .map(r => [parseFloat(r.fields['Latitude']), parseFloat(r.fields['Longitude'])]);
-    if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12, animate: false });
-
-    renderList();
-    renderMarkers();
+    if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12 });
   } catch(err) {
     document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Vérifiez votre clé API</span></div>`;
     console.error(err);
