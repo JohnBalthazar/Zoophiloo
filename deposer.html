@@ -386,41 +386,17 @@ async function uploadPhotos() {
     const pct = Math.round((i / photoFiles.length) * 100);
     fill.style.width = pct + '%';
     label.textContent = `Upload photo ${i+1}/${photoFiles.length}…`;
-
-    // Photo déjà uploadée lors d'une tentative précédente
     if (photoFiles[i].cloudUrl) { urls.push(photoFiles[i].cloudUrl); continue; }
-
     const fd = new FormData();
     fd.append('file', photoFiles[i].file);
     fd.append('upload_preset', CLOUDINARY_PRESET);
     fd.append('folder', 'zoophiloo');
-
-    let res, data;
-    try {
-      res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
-        { method: 'POST', body: fd }
-      );
-      data = await res.json();
-    } catch (networkErr) {
-      throw new Error(`Photo ${i+1} : erreur réseau lors de l'upload — ${networkErr.message}`);
-    }
-
-    // Cloudinary renvoie une erreur (ex: preset non unsigned, quota dépassé…)
-    if (!res.ok || data.error) {
-      const msg = data.error?.message || `HTTP ${res.status}`;
-      throw new Error(`Photo ${i+1} refusée par Cloudinary : ${msg}. Vérifiez que le preset « ${CLOUDINARY_PRESET} » est bien en mode "Unsigned" dans votre dashboard Cloudinary.`);
-    }
-
-    if (!data.secure_url) {
-      throw new Error(`Photo ${i+1} : réponse Cloudinary inattendue (pas de secure_url).`);
-    }
-
-    photoFiles[i].cloudUrl = data.secure_url;
-    urls.push(data.secure_url);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.secure_url) { photoFiles[i].cloudUrl = data.secure_url; urls.push(data.secure_url); }
   }
   fill.style.width = '100%';
-  label.textContent = `${urls.length} photo${urls.length > 1 ? 's' : ''} uploadée${urls.length > 1 ? 's' : ''} ✓`;
+  label.textContent = 'Photos uploadées ✓';
   return urls;
 }
 
@@ -492,28 +468,21 @@ async function submitAnnonce() {
     // Upload photos
     const photoUrls = await uploadPhotos();
 
-    // Build record — on n'inclut que les champs non vides (Airtable rejette les champs undefined)
+    // Build record
     const fields = {
       'Titre': document.getElementById('titre').value.trim(),
+      'Description': document.getElementById('description').value.trim() || undefined,
       'Espèce': document.getElementById('espece').value,
+      'Race': document.getElementById('race').value.trim() || undefined,
       'Type_annonce': document.getElementById('type_annonce').value,
       'Ville': document.getElementById('ville').value.trim(),
+      'Adresse': document.getElementById('adresse').value.trim() || undefined,
+      'Nom_contact': document.getElementById('nom_contact').value.trim() || undefined,
+      'Prenom_contact': document.getElementById('prenom_contact').value.trim() || undefined,
       'Email_contact': currentUser.email,
+      'Telephone': document.getElementById('telephone').value.trim() || undefined,
       'Visible': false,
     };
-
-    const optionalText = [
-      ['Description', 'description'],
-      ['Race', 'race'],
-      ['Adresse', 'adresse'],
-      ['Nom_contact', 'nom_contact'],
-      ['Prenom_contact', 'prenom_contact'],
-      ['Telephone', 'telephone'],
-    ];
-    optionalText.forEach(([field, id]) => {
-      const val = document.getElementById(id).value.trim();
-      if (val) fields[field] = val;
-    });
 
     const cp = document.getElementById('code_postal').value.trim();
     if (cp) fields['Code_postal'] = cp;
