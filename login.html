@@ -715,15 +715,19 @@ async function doSignUp() {
     const displayName = [prenom, nom].filter(Boolean).join(' ');
     await cred.user.updateProfile({ displayName });
 
-    // ── Sauvegarde Firestore : document users/{uid} ──
-    await db.collection('users').doc(cred.user.uid).set({
-      prenom,
-      nom,
-      email,
-      cgu_accepted: true,
-      cgu_date:     firebase.firestore.Timestamp.fromDate(new Date()),
-      created_at:   firebase.firestore.Timestamp.fromDate(new Date())
-    });
+    // ── Sauvegarde Firestore : document users/{uid} (non-bloquant) ──
+    try {
+      await db.collection('users').doc(cred.user.uid).set({
+        prenom,
+        nom,
+        email,
+        cgu_accepted: true,
+        cgu_date:     firebase.firestore.Timestamp.fromDate(new Date()),
+        created_at:   firebase.firestore.Timestamp.fromDate(new Date())
+      });
+    } catch(firestoreErr) {
+      console.warn('Firestore non disponible, données sauvegardées en local uniquement.', firestoreErr);
+    }
 
     // Sauvegarde locale pour pré-remplissage des formulaires d'annonce
     localStorage.setItem('zph_prenom',       prenom);
@@ -761,14 +765,18 @@ async function doGoogleSignIn() {
     // Créer le document Firestore si c'est la première connexion Google
     if (cred.additionalUserInfo && cred.additionalUserInfo.isNewUser) {
       const parts = (cred.user.displayName || '').trim().split(/\s+/);
-      await db.collection('users').doc(cred.user.uid).set({
-        prenom:       parts[0] || '',
-        nom:          parts.slice(1).join(' ') || '',
-        email:        cred.user.email,
-        cgu_accepted: false, // Google OAuth : CGU non explicitement acceptées
-        cgu_date:     null,
-        created_at:   firebase.firestore.Timestamp.fromDate(new Date())
-      });
+      try {
+        await db.collection('users').doc(cred.user.uid).set({
+          prenom:       parts[0] || '',
+          nom:          parts.slice(1).join(' ') || '',
+          email:        cred.user.email,
+          cgu_accepted: false,
+          cgu_date:     null,
+          created_at:   firebase.firestore.Timestamp.fromDate(new Date())
+        });
+      } catch(firestoreErr) {
+        console.warn('Firestore non disponible.', firestoreErr);
+      }
     }
     redirectAfterLogin();
   } catch(e) {
