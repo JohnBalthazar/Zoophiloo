@@ -321,26 +321,6 @@
   }
   .back-link:hover { color: var(--green); }
 
-  /* VERIFY EMAIL SCREEN */
-  .verify-screen { text-align: center; padding: 12px 0 4px; }
-  .verify-icon { font-size: 40px; margin-bottom: 12px; }
-  .verify-screen h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .verify-screen p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-  .verify-screen .email-badge { display: inline-block; background: var(--green-light); color: var(--green-dark); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; margin-bottom: 16px; }
-  .btn-resend { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 9px 18px; font-family: var(--font-body); font-size: 13px; color: var(--text); cursor: pointer; transition: all 0.15s; }
-  .btn-resend:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
-  .btn-resend:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* VERIFY EMAIL SCREEN */
-  .verify-screen { text-align: center; padding: 12px 0 4px; }
-  .verify-icon { font-size: 40px; margin-bottom: 12px; }
-  .verify-screen h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .verify-screen p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-  .email-badge { display: inline-block; background: var(--green-light); color: var(--green-dark); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; margin-bottom: 16px; }
-  .btn-resend { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 9px 18px; font-family: var(--font-body); font-size: 13px; color: var(--text); cursor: pointer; transition: all 0.15s; }
-  .btn-resend:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
-  .btn-resend:disabled { opacity: 0.5; cursor: not-allowed; }
-
   /* FOOTER */
   footer {
     text-align: center;
@@ -490,16 +470,14 @@
 
       <!-- ── VERIFY EMAIL ── -->
       <div class="panel" id="panelVerify">
-        <div class="verify-screen">
-          <div class="verify-icon">📬</div>
-          <h2>Vérifiez votre e-mail</h2>
-          <p>Un lien de confirmation a été envoyé à :</p>
-          <div class="email-badge" id="verifyEmailBadge"></div>
-          <p>Cliquez sur le lien dans l'e-mail pour activer votre compte, puis revenez vous connecter.</p>
-          <button class="btn-resend" id="btnResend" onclick="resendVerification()">Renvoyer l'e-mail</button>
-          <p style="margin-top:16px;font-size:12px">
-            <a style="color:var(--green);cursor:pointer;text-decoration:none" onclick="showPanel('signin')">← Retour à la connexion</a>
-          </p>
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:42px;margin-bottom:14px">📬</div>
+          <div style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:10px">Vérifiez votre e-mail</div>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:12px">Un lien de confirmation a été envoyé à :</p>
+          <div id="verifyEmailBadge" style="display:inline-block;background:var(--green-light);color:var(--green-dark);padding:4px 14px;border-radius:20px;font-size:13px;font-weight:500;margin-bottom:16px"></div>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:20px">Cliquez sur le lien dans l'e-mail pour activer votre compte, puis revenez vous connecter.</p>
+          <button onclick="showPanel('signin')" style="width:100%;padding:11px;border:none;border-radius:8px;background:var(--green);color:white;font-family:var(--font-body);font-size:14px;font-weight:500;cursor:pointer">← Retour à la connexion</button>
+          <p style="margin-top:14px;font-size:12px;color:var(--text-muted)">Vous n'avez pas reçu l'e-mail ? Vérifiez vos spams ou <a onclick="resendVerification()" style="color:var(--green);cursor:pointer;text-decoration:none;font-weight:500">renvoyer</a>.</p>
         </div>
       </div>
 
@@ -534,31 +512,29 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
+// ── Bannière si redirigé depuis une page protégée sans vérification ──
+(function() {
+  if (new URLSearchParams(window.location.search).get('unverified') === '1') {
+    window.addEventListener('DOMContentLoaded', () => {
+      const el = document.getElementById('signinError');
+      if (el) { el.classList.add('show'); el.querySelector('span').textContent = 'Veuillez valider votre adresse e-mail avant d'accéder à cette page.'; }
+    });
+  }
+})();
+
 function redirectAfterLogin() {
   const next = new URLSearchParams(window.location.search).get('next');
   window.location.href = (next && /^[a-z\-]+\.html$/.test(next)) ? next : 'index.html';
 }
 
-// ── Show unverified warning if redirected from a protected page ──
-if (new URLSearchParams(window.location.search).get('unverified') === '1') {
-  window.addEventListener('DOMContentLoaded', () => {
-    const el = document.getElementById('signinError');
-    if (el) {
-      el.classList.add('show');
-      el.querySelector('span').textContent = 'Vous devez valider votre adresse e-mail avant d'accéder à cette page.';
-    }
-  });
-}
-
 // ── Redirect if already logged in ──
 auth.onAuthStateChanged(user => {
   if (user && user.emailVerified) redirectAfterLogin();
-  // Si connecté mais non vérifié : ne pas rediriger
 });
 
 // ── Panel switcher ──
 function showPanel(name) {
-  ['signin','signup','reset'].forEach(p => {
+  ['signin','signup','reset','verify'].forEach(p => {
     document.getElementById('panel' + p.charAt(0).toUpperCase() + p.slice(1)).classList.remove('active');
     const tab = document.getElementById('tab' + p.charAt(0).toUpperCase() + p.slice(1));
     if (tab) tab.classList.remove('active');
@@ -669,8 +645,8 @@ async function doSignIn() {
   try {
     const cred = await auth.signInWithEmailAndPassword(email, password);
     if (!cred.user.emailVerified) {
-      // Bloquer la connexion et afficher l'écran de vérification
-      document.getElementById('verifyEmailBadge').textContent = cred.user.email;
+      await auth.signOut();
+      document.getElementById('verifyEmailBadge').textContent = email;
       showPanel('verify');
       setLoading('btnSignin', false);
       return;
@@ -715,32 +691,29 @@ async function doSignUp() {
     const displayName = [prenom, nom].filter(Boolean).join(' ');
     await cred.user.updateProfile({ displayName });
 
-    // ── Sauvegarde Firestore : document users/{uid} (non-bloquant) ──
-    try {
-      await db.collection('users').doc(cred.user.uid).set({
-        prenom,
-        nom,
-        email,
-        cgu_accepted: true,
-        cgu_date:     firebase.firestore.Timestamp.fromDate(new Date()),
-        created_at:   firebase.firestore.Timestamp.fromDate(new Date())
-      });
-    } catch(firestoreErr) {
-      console.warn('Firestore non disponible, données sauvegardées en local uniquement.', firestoreErr);
-    }
-
     // Sauvegarde locale pour pré-remplissage des formulaires d'annonce
     localStorage.setItem('zph_prenom',       prenom);
     localStorage.setItem('zph_nom',          nom);
-    // Horodatage acceptation CGU (cache local en complément de Firestore)
     localStorage.setItem('zph_cgu_accepted', 'true');
     localStorage.setItem('zph_cgu_date',     cguDate);
 
-    // Envoyer l'e-mail de vérification
-    await cred.user.sendEmailVerification();
+    // Sauvegarde Firestore (non-bloquant : fonctionne même si Firestore non activé)
+    try {
+      await db.collection('users').doc(cred.user.uid).set({
+        prenom, nom, email,
+        cgu_accepted: true,
+        cgu_date:   firebase.firestore.Timestamp.fromDate(new Date()),
+        created_at: firebase.firestore.Timestamp.fromDate(new Date())
+      });
+    } catch(fsErr) {
+      console.warn('Firestore indisponible', fsErr);
+    }
 
-    // Déconnecter et afficher l'écran de confirmation
+    // Envoyer l'e-mail de vérification puis déconnecter
+    await cred.user.sendEmailVerification();
     await auth.signOut();
+
+    // Afficher l'écran de confirmation
     document.getElementById('verifyEmailBadge').textContent = email;
     showPanel('verify');
     setLoading('btnSignup', false);
@@ -762,7 +735,7 @@ async function doGoogleSignIn() {
       localStorage.setItem('zph_prenom', parts[0] || '');
       localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
     }
-    // Créer le document Firestore si c'est la première connexion Google
+    // Créer le document Firestore si c'est la première connexion Google (non-bloquant)
     if (cred.additionalUserInfo && cred.additionalUserInfo.isNewUser) {
       const parts = (cred.user.displayName || '').trim().split(/\s+/);
       try {
@@ -774,9 +747,7 @@ async function doGoogleSignIn() {
           cgu_date:     null,
           created_at:   firebase.firestore.Timestamp.fromDate(new Date())
         });
-      } catch(firestoreErr) {
-        console.warn('Firestore non disponible.', firestoreErr);
-      }
+      } catch(fsErr) { console.warn('Firestore indisponible', fsErr); }
     }
     redirectAfterLogin();
   } catch(e) {
@@ -785,33 +756,20 @@ async function doGoogleSignIn() {
   }
 }
 
-// ── Resend Verification Email ──
-let resendCooldown = false;
+// ── Resend verification email ──
+let _resendPending = false;
 async function resendVerification() {
-  if (resendCooldown) return;
-  const btn = document.getElementById('btnResend');
-  btn.disabled = true;
-  btn.textContent = 'E-mail envoyé ✓';
-  resendCooldown = true;
-  try {
-    // Re-sign in to get the user object (already signed out)
-    // We can only resend if the user is signed in; offer a workaround via reset password
-    // Best UX: use Firebase's password reset as a proxy — or prompt them to sign in again
-    // Actually we need user signed in to resend — so sign them in silently if possible
-    const emailVal = document.getElementById('verifyEmailBadge').textContent;
-    showPanel('signin');
-    document.getElementById('signinEmail').value = emailVal;
-    document.getElementById('signinErrorMsg').textContent = '';
-    // Show info message
-    const errEl = document.getElementById('signinError');
-    errEl.className = 'alert alert-success show';
-    errEl.querySelector('span').textContent = 'Connectez-vous pour renvoyer l'e-mail de vérification.';
-  } catch(e) {}
-  // Re-enable after 30s
-  setTimeout(() => {
-    resendCooldown = false;
-    if (btn) { btn.disabled = false; btn.textContent = 'Renvoyer l'e-mail'; }
-  }, 30000);
+  if (_resendPending) return;
+  _resendPending = true;
+  const email = document.getElementById('verifyEmailBadge').textContent;
+  // L'utilisateur est déconnecté à ce stade — on lui demande de se reconnecter
+  // pour pouvoir renvoyer. On le redirige vers signin avec son email pré-rempli.
+  showPanel('signin');
+  document.getElementById('signinEmail').value = email;
+  const err = document.getElementById('signinError');
+  err.className = 'alert alert-success show';
+  err.querySelector('span').textContent = 'Connectez-vous pour renvoyer l'e-mail de vérification.';
+  setTimeout(() => { _resendPending = false; }, 30000);
 }
 
 // ── Reset Password ──
