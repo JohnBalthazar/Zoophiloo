@@ -31,6 +31,14 @@ jobs:
             fi
           done
 
+      - name: Inject imgbb key
+        run: |
+          for file in deposer.html editer.html; do
+            if [ -f "$file" ]; then
+              sed -i "s|__IMGBB_KEY__|${{ secrets.IMGBB_KEY }}|g" $file
+            fi
+          done
+
       - name: Inject Firebase config
         run: |
           for file in index.html annonce.html login.html mon-espace.html deposer.html editer.html; do
