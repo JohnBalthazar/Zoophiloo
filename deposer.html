@@ -268,11 +268,11 @@
     <div class="form-row cols-2">
       <div class="form-group">
         <label>Prénom <span class="req">*</span></label>
-        <input type="text" id="prenom_contact" readonly style="color:var(--text-muted)" title="Défini lors de votre inscription — modifiez-le dans Mon espace">
+        <input type="text" id="prenom_contact" placeholder="Votre prénom">
       </div>
       <div class="form-group">
-        <label>Nom <span class="req">*</span></label>
-        <input type="text" id="nom_contact" readonly style="color:var(--text-muted)" title="Défini lors de votre inscription — modifiez-le dans Mon espace">
+        <label>Nom</label>
+        <input type="text" id="nom_contact" placeholder="Votre nom">
       </div>
     </div>
     <div class="form-row cols-2">
@@ -321,6 +321,11 @@ let photoFiles = []; // {file, previewUrl, cloudUrl}
 // ── Auth guard ──
 auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
+  if (!user.emailVerified) {
+    // E-mail non vérifié : rediriger vers login avec message
+    window.location.href = 'login.html?unverified=1';
+    return;
+  }
   currentUser = user;
 
   // Email (toujours disponible)
@@ -346,7 +351,12 @@ auth.onAuthStateChanged(user => {
   nomInput.value    = nom;
 
   // Toujours verrouiller — modifiable uniquement depuis le profil
-  // readonly, style et title déjà définis dans le HTML
+  prenomInput.readOnly = true;
+  nomInput.readOnly    = true;
+  prenomInput.style.color = 'var(--text-muted)';
+  nomInput.style.color    = 'var(--text-muted)';
+  prenomInput.title = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
+  nomInput.title    = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
 });
 
 // ── Photo handling ──
