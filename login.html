@@ -283,21 +283,18 @@
     accent-color: var(--green);
     cursor: pointer;
   }
-  .cgu-row label {
+  .cgu-row span {
     font-size: 12.5px;
     font-weight: 400;
     color: var(--text);
     line-height: 1.5;
-    cursor: pointer;
-    margin-bottom: 0;
   }
-  .cgu-row label a {
+  .cgu-row span a {
     color: var(--green);
     text-decoration: none;
     font-weight: 500;
   }
-  .cgu-row label a:hover { text-decoration: underline; }
-  .cgu-row input[type="checkbox"]:checked ~ label { color: var(--text); }
+  .cgu-row span a:hover { text-decoration: underline; }
   /* Override generic input styles for checkbox */
   input[type="checkbox"] {
     width: auto; padding: 0; border: none;
@@ -428,12 +425,10 @@
           </div>
         </div>
         <!-- Case CGU — uniquement sur le panneau inscription -->
-        <div class="cgu-row" id="cguRow" onclick="document.getElementById('cguCheck').click(); event.stopPropagation();">
+        <label class="cgu-row" id="cguRow" for="cguCheck">
           <input type="checkbox" id="cguCheck">
-          <label for="cguCheck" onclick="event.stopPropagation()">
-            J'ai lu et j'accepte les <a href="cgu.html" target="_blank" onclick="event.stopPropagation()">Conditions Générales d'Utilisation</a> <span style="color:var(--green)">*</span>
-          </label>
-        </div>
+          <span>J'ai lu et j'accepte les <a href="cgu.html" target="_blank" onclick="event.stopPropagation()">Conditions Générales d'Utilisation</a> <span style="color:var(--green)">*</span></span>
+        </label>
         <button class="btn-submit" id="btnSignup" onclick="doSignUp()">
           <div class="spinner"></div>
           <span class="btn-label">Créer mon compte</span>
