@@ -321,11 +321,6 @@ let photoFiles = []; // {file, previewUrl, cloudUrl}
 // ── Auth guard ──
 auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
-  if (!user.emailVerified) {
-    // E-mail non vérifié : rediriger vers login avec message
-    window.location.href = 'login.html?unverified=1';
-    return;
-  }
   currentUser = user;
 
   // Email (toujours disponible)

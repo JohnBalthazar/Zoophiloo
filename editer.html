@@ -162,10 +162,6 @@ recordId = params.get('id');
 
 auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
-  if (!user.emailVerified) {
-    window.location.href = 'login.html?unverified=1';
-    return;
-  }
   currentUser = user;
 
   // Résoudre prénom/nom depuis Firebase puis localStorage
