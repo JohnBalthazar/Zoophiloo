@@ -150,8 +150,7 @@ const auth = firebase.auth();
 const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
 const BASE_ID = 'appepwMYbNUv2k3f9';
 const TABLE = 'Annonces';
-const CLOUDINARY_CLOUD = 'drip4fcld';
-const CLOUDINARY_PRESET = 'zoophiloo-upload';
+const IMGBB_KEY = '__IMGBB_KEY__';
 
 let currentUser = null;
 let recordId = null;
@@ -397,7 +396,8 @@ function renderNewPreviews() {
 function removeNewPhoto(i) { newPhotoFiles.splice(i, 1); renderNewPreviews(); }
 
 async function uploadNewPhotos() {
-  if (newPhotoFiles.filter(p => !p.cloudUrl).length === 0) return;
+  const toUpload = newPhotoFiles.filter(p => !p.cloudUrl);
+  if (toUpload.length === 0) return;
   const progress = document.getElementById('uploadProgress');
   const fill = document.getElementById('progressFill');
   const label = document.getElementById('progressLabel');
@@ -405,17 +405,32 @@ async function uploadNewPhotos() {
   for (let i = 0; i < newPhotoFiles.length; i++) {
     if (newPhotoFiles[i].cloudUrl) continue;
     fill.style.width = Math.round((i / newPhotoFiles.length) * 100) + '%';
-    label.textContent = `Upload photo ${i+1}/${newPhotoFiles.length}…`;
+    label.textContent = `Upload photo ${i+1}/${newPhotoFiles.length}...`;
+
+    // Convertir en base64 (sans le prefixe data:...)
+    const base64 = newPhotoFiles[i].previewUrl.split(',')[1];
     const fd = new FormData();
-    fd.append('file', newPhotoFiles[i].file);
-    fd.append('upload_preset', CLOUDINARY_PRESET);
-    fd.append('folder', 'zoophiloo');
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
-    const data = await res.json();
-    if (data.secure_url) newPhotoFiles[i].cloudUrl = data.secure_url;
+    fd.append('image', base64);
+    fd.append('name', `zoophiloo_${Date.now()}_${i}`);
+
+    let res, data;
+    try {
+      res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
+      data = await res.json();
+    } catch (networkErr) {
+      throw new Error(`Photo ${i+1} : erreur reseau — ${networkErr.message}`);
+    }
+    if (!res.ok || !data.success) {
+      const msg = data.error?.message || `HTTP ${res.status}`;
+      throw new Error(`imgbb a refuse la photo ${i+1} : ${msg}`);
+    }
+    if (!data.data?.url) {
+      throw new Error(`Photo ${i+1} : reponse imgbb inattendue : ${JSON.stringify(data)}`);
+    }
+    newPhotoFiles[i].cloudUrl = data.data.url;
   }
   fill.style.width = '100%';
-  label.textContent = 'Photos uploadées ✓';
+  label.textContent = `${toUpload.length} photo(s) uploadee(s).`;
 }
 
 async function geocodeAddress() {
