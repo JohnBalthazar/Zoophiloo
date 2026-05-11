@@ -268,11 +268,11 @@
     <div class="form-row cols-2">
       <div class="form-group">
         <label>Prénom <span class="req">*</span></label>
-        <input type="text" id="prenom_contact" placeholder="Votre prénom">
+        <input type="text" id="prenom_contact" readonly style="color:var(--text-muted)" title="Défini lors de votre inscription — modifiez-le dans Mon espace">
       </div>
       <div class="form-group">
-        <label>Nom</label>
-        <input type="text" id="nom_contact" placeholder="Votre nom">
+        <label>Nom <span class="req">*</span></label>
+        <input type="text" id="nom_contact" readonly style="color:var(--text-muted)" title="Défini lors de votre inscription — modifiez-le dans Mon espace">
       </div>
     </div>
     <div class="form-row cols-2">
@@ -346,12 +346,7 @@ auth.onAuthStateChanged(user => {
   nomInput.value    = nom;
 
   // Toujours verrouiller — modifiable uniquement depuis le profil
-  prenomInput.readOnly = true;
-  nomInput.readOnly    = true;
-  prenomInput.style.color = 'var(--text-muted)';
-  nomInput.style.color    = 'var(--text-muted)';
-  prenomInput.title = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
-  nomInput.title    = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
+  // readonly, style et title déjà définis dans le HTML
 });
 
 // ── Photo handling ──
