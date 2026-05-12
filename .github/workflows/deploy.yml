@@ -41,7 +41,7 @@ jobs:
 
       - name: Inject Firebase config
         run: |
-          for file in index.html annonce.html login.html mon-espace.html deposer.html editer.html; do
+          for file in index.html annonce.html login.html mon-espace.html deposer.html editer.html messages.html; do
             if [ -f "$file" ]; then
               sed -i "s|__FIREBASE_API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g" $file
               sed -i "s|__FIREBASE_AUTH_DOMAIN__|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g" $file
