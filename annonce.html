@@ -605,15 +605,11 @@ function renderPage(record) {
       Appeler : ${f['Telephone']}
     </a>`);
   }
-  // Internal messaging button (always shown if not own ad)
-  actions.push(`<button onclick="startConversation()" class="btn-contact btn-contact-primary" id="msgBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Envoyer un message
-    </button>`);
-  if (f['Telephone']) {
-    // phone already pushed above, nothing needed here
-  } else if (f['Email_contact']) {
-    // keep email as secondary fallback (hidden, for accessibility)
+  if (f['Email_contact']) {
+    actions.push(`<a href="mailto:${f['Email_contact']}?subject=Annonce Zoophiloo : ${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Envoyer un email
+    </a>`);
   }
   if (actions.length === 0) {
     actions.push(`<p style="font-size:12px;color:var(--text-muted);text-align:center">Aucune coordonnée disponible.</p>`);
@@ -648,7 +644,6 @@ async function init() {
     const record = await res.json();
     if (!record || !record.fields) throw new Error('Enregistrement vide');
     renderPage(record);
-    cacheRecord(record);
   } catch (err) {
     console.error(err);
     showError('Impossible de charger cette annonce. Vérifiez l\'identifiant ou réessayez plus tard.');
@@ -771,7 +766,6 @@ document.addEventListener('keydown', e => {
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
@@ -783,109 +777,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db   = firebase.firestore();
-
-/* ── MESSAGERIE INTERNE ── */
-// Store current ad info for conversation creation
-let _currentRecord = null;
-
-// Called from renderPage to cache the record
-function cacheRecord(record) { _currentRecord = record; }
-
-async function startConversation() {
-  // Wait for Firebase Auth to resolve (with LOCAL persistence)
-  await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-  const user = await new Promise(resolve => {
-    const unsub = auth.onAuthStateChanged(u => { unsub(); resolve(u); });
-  });
-  if (!user) {
-    showToastMsg('Connectez-vous pour envoyer un message', 'info');
-    setTimeout(() => window.location.href = 'login.html?next=' + encodeURIComponent(location.href), 1200);
-    return;
-  }
-  if (!_currentRecord) return;
-  const f = _currentRecord.fields;
-
-  // Prevent messaging yourself
-  const ownerEmail = f['Email_contact'];
-  if (ownerEmail && user.email === ownerEmail) {
-    showToastMsg('C\'est votre propre annonce !', '');
-    return;
-  }
-
-  const btn = document.getElementById('msgBtn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Ouverture…'; }
-
-  try {
-    // Look for existing conversation between these two users about this ad
-    const convRef = db.collection('conversations');
-    const adId    = _currentRecord.id;
-    const uid     = user.uid;
-
-    const existing = await convRef
-      .where('adId', '==', adId)
-      .where('participants', 'array-contains', uid)
-      .limit(5)
-      .get();
-
-    let convId = null;
-
-    if (!existing.empty) {
-      convId = existing.docs[0].id;
-    } else {
-      // Create new conversation
-      const adTitle  = f['Titre'] || 'Annonce';
-      const adEspece = f['Espèce'] || '';
-      const adPhoto  = f['Photos']?.[0]?.url || null;
-      const ownerName = [f['Prenom_contact'] || '', f['Nom_contact'] || ''].filter(Boolean).join(' ') || 'Annonceur';
-
-      const newConv = await convRef.add({
-        adId,
-        adTitle,
-        adEspece,
-        adPhoto,
-        participants: [uid, ownerEmail], // mix uid + email (owner may not have uid yet)
-        participantA: {
-          uid:   uid,
-          name:  user.displayName || '',
-          email: user.email
-        },
-        participantB: {
-          uid:   ownerEmail, // used as ID fallback if owner not yet registered
-          name:  ownerName,
-          email: ownerEmail
-        },
-        lastMessage:   '',
-        lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
-        readBy:        { [uid]: true },
-        createdAt:     firebase.firestore.FieldValue.serverTimestamp()
-      });
-      convId = newConv.id;
-    }
-
-    window.location.href = `messages.html?conv=${convId}`;
-  } catch(e) {
-    console.error(e);
-    showToastMsg('Erreur — réessayez', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer un message'; }
-  }
-}
-
-function showToastMsg(msg, type) {
-  // Reuse existing toast if present
-  let t = document.getElementById('toastMsg');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toastMsg';
-    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;transition:transform 0.25s ease;white-space:nowrap;font-family:var(--font-body)';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  if (type === 'error') t.style.background = '#c0392b';
-  else t.style.background = '#1a1a1a';
-  t.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(() => t.style.transform = 'translateX(-50%) translateY(80px)', 3000);
-}
 
 // ── User menu styles (injected via JS to keep annonce.html self-contained) ──
 const styleEl = document.createElement('style');
