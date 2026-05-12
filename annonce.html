@@ -793,13 +793,14 @@ let _currentRecord = null;
 function cacheRecord(record) { _currentRecord = record; }
 
 async function startConversation() {
-  // Wait for Firebase Auth to resolve before checking login state
+  // Wait for Firebase Auth to resolve (with LOCAL persistence)
+  await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
   const user = await new Promise(resolve => {
     const unsub = auth.onAuthStateChanged(u => { unsub(); resolve(u); });
   });
   if (!user) {
     showToastMsg('Connectez-vous pour envoyer un message', 'info');
-    setTimeout(() => window.location.href = 'login.html?redirect=' + encodeURIComponent(location.href), 1200);
+    setTimeout(() => window.location.href = 'login.html?next=' + encodeURIComponent(location.href), 1200);
     return;
   }
   if (!_currentRecord) return;
