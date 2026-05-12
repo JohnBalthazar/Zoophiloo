@@ -149,46 +149,98 @@
 
   /* DATE BADGE */
   .date-badge { font-size: 11px; color: var(--text-muted); text-align: center; padding: 6px 0; }
+  .req { color: var(--green); }
 
-  /* REPORT ABUSE */
-  .report-btn {
+  /* SIGNALEMENT */
+  .report-link {
     display: flex; align-items: center; justify-content: center; gap: 5px;
-    width: 100%; padding: 8px 12px;
-    border: 1px solid var(--border); border-radius: 8px;
-    background: transparent; color: var(--text-muted);
-    font-family: var(--font-body); font-size: 12px;
-    cursor: pointer; transition: all 0.15s; text-decoration: none;
+    font-size: 12px; color: var(--text-muted); cursor: pointer;
+    background: none; border: none; font-family: var(--font-body);
+    padding: 4px 0; width: 100%; transition: color 0.15s;
   }
-  .report-btn:hover { border-color: #c0392b; color: #c0392b; background: #fdf0ee; }
+  .report-link:hover { color: #c0392b; }
 
-  /* REPORT MODAL */
+  /* MODAL OVERLAY */
   .modal-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.45); z-index: 1000;
-    align-items: center; justify-content: center; padding: 24px;
+    background: rgba(0,0,0,0.45); z-index: 500;
+    align-items: center; justify-content: center; padding: 20px;
   }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--white); border-radius: 14px; padding: 24px;
-    max-width: 420px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  .modal-box {
+    background: var(--white); border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    max-width: 440px; width: 100%; overflow: hidden;
+    animation: modalIn 0.2s ease;
   }
-  .modal-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
-  .modal-reasons { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-  .modal-reason {
-    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-    border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
-    font-size: 13px; transition: all 0.12s;
+  @keyframes modalIn { from { opacity:0; transform:translateY(12px) scale(.97); } to { opacity:1; transform:none; } }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
   }
-  .modal-reason:hover { border-color: var(--green); background: var(--green-light); }
-  .modal-reason input[type="radio"] { accent-color: var(--green); flex-shrink: 0; }
-  .modal-reason.selected { border-color: var(--green); background: var(--green-light); }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
-  .modal-cancel { font-family: var(--font-body); font-size: 13px; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; }
-  .modal-cancel:hover { background: var(--bg); }
-  .modal-submit { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 8px 18px; border: none; border-radius: 8px; background: #c0392b; color: white; cursor: pointer; }
-  .modal-submit:hover { background: #a93226; }
-  .modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .modal-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--text); }
+  .modal-close {
+    width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--bg); cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); transition: all 0.15s;
+  }
+  .modal-close:hover { border-color: #c0392b; color: #c0392b; background: #fdf0ee; }
+  .modal-body { padding: 18px 20px; }
+  .modal-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .report-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .report-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);
+    cursor: pointer; transition: all 0.12s; background: var(--bg);
+  }
+  .report-option:hover { border-color: var(--green); background: var(--green-light); }
+  .report-option input[type="radio"] { margin-top: 2px; accent-color: var(--green); flex-shrink: 0; }
+  .report-option label { font-size: 13px; cursor: pointer; line-height: 1.4; }
+  .report-option label strong { display: block; font-weight: 500; color: var(--text); margin-bottom: 1px; }
+  .report-option label span { font-size: 11px; color: var(--text-muted); }
+  .report-option.selected { border-color: var(--green); background: var(--green-light); }
+
+  .report-autre-block { display: none; margin-bottom: 14px; }
+  .report-autre-block.show { display: block; }
+  .report-autre-block textarea {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: var(--font-body); font-size: 13px;
+    background: var(--bg); color: var(--text);
+    resize: vertical; min-height: 80px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .report-autre-block textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,158,110,.1); }
+  .report-autre-block textarea.error { border-color: #c0392b; }
+  .report-autre-label { font-size: 12px; font-weight: 500; margin-bottom: 5px; display: block; }
+  .report-autre-label .req { color: var(--green); }
+
+  .report-error { font-size: 12px; color: #c0392b; display: none; margin-bottom: 8px; }
+  .report-error.show { display: block; }
+
+  .modal-footer {
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    padding: 14px 20px; border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .btn-modal-cancel {
+    font-family: var(--font-body); font-size: 13px; padding: 8px 16px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s;
+  }
+  .btn-modal-cancel:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-modal-send {
+    font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 8px 18px;
+    border: none; border-radius: 8px;
+    background: #c0392b; color: white; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-modal-send:hover { background: #a93226; }
+  .report-success {
+    display: none; text-align: center; padding: 10px 0 4px;
+    font-size: 13px; color: var(--green-dark);
+  }
+  .report-success.show { display: block; }
 
   /* LOADING / ERROR */
   .page-loading, .page-error {
@@ -313,8 +365,8 @@
 
     <div class="date-badge" id="dateBadge"></div>
 
-    <button class="report-btn" onclick="openReportModal()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <button class="report-link" onclick="openReportModal()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       Signaler cette annonce
     </button>
 
@@ -322,21 +374,61 @@
 </div>
 
 <!-- MODAL SIGNALEMENT -->
-<div class="modal-overlay" id="reportModal" onclick="handleModalClick(event)">
-  <div class="modal">
-    <div class="modal-title">⚠️ Signaler une annonce</div>
-    <div class="modal-sub">Pourquoi signalez-vous cette annonce ?</div>
-    <div class="modal-reasons" id="reportReasons">
-      <label class="modal-reason"><input type="radio" name="reason" value="Arnaque ou fraude"> Arnaque ou fraude</label>
-      <label class="modal-reason"><input type="radio" name="reason" value="Maltraitance animale"> Maltraitance animale suspectée</label>
-      <label class="modal-reason"><input type="radio" name="reason" value="Annonce interdite"> Vente d'espèce protégée / annonce illégale</label>
-      <label class="modal-reason"><input type="radio" name="reason" value="Contenu offensant"> Contenu offensant ou inapproprié</label>
-      <label class="modal-reason"><input type="radio" name="reason" value="Doublon"> Annonce dupliquée</label>
-      <label class="modal-reason"><input type="radio" name="reason" value="Autre"> Autre raison</label>
+<div class="modal-overlay" id="reportModal" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="reportModalBox">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Signaler cette annonce</span>
+      <button class="modal-close" onclick="closeReportModal()">✕</button>
     </div>
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeReportModal()">Annuler</button>
-      <button class="modal-submit" id="reportSubmitBtn" onclick="submitReport()" disabled>Envoyer le signalement</button>
+    <div class="modal-body">
+      <p class="modal-subtitle">Aidez-nous à maintenir la qualité du site. Votre signalement sera transmis à notre équipe de modération.</p>
+
+      <div class="report-options" id="reportOptions">
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="animal_fictif">
+          <span><strong>Animal fictif ou inexistant</strong><span>L'annonce décrit un animal qui n'existe probablement pas.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="photos_volees">
+          <span><strong>Photos volées ou trompeuses</strong><span>Les photos semblent copiées sur internet ou ne correspondent pas à l'animal réel.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="arnaque">
+          <span><strong>Arnaque ou escroquerie suspectée</strong><span>Demande d'avance, prix anormalement bas ou comportement suspect.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="maltraitance">
+          <span><strong>Suspicion de maltraitance animale</strong><span>L'animal semble être dans un état de souffrance ou de négligence.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="espece_protegee">
+          <span><strong>Espèce protégée ou trafic illégal</strong><span>Vente d'un animal protégé ou commerce illicite.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="doublon">
+          <span><strong>Annonce dupliquée</strong><span>Cette annonce a déjà été publiée plusieurs fois.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this)">
+          <input type="radio" name="report_reason" value="contenu_inapproprie">
+          <span><strong>Contenu inapproprié ou offensant</strong><span>Texte, images ou informations choquantes ou hors sujet.</span></span>
+        </label>
+        <label class="report-option" onclick="selectReport(this, true)">
+          <input type="radio" name="report_reason" value="autre">
+          <span><strong>Autre raison</strong><span>Précisez votre motif ci-dessous.</span></span>
+        </label>
+      </div>
+
+      <div class="report-autre-block" id="reportAutreBlock">
+        <label class="report-autre-label">Précisez votre motif <span class="req">*</span></label>
+        <textarea id="reportAutreText" placeholder="Décrivez en quelques mots la raison de votre signalement…" oninput="clearAutreError()"></textarea>
+      </div>
+
+      <div class="report-error" id="reportError"></div>
+      <div class="report-success" id="reportSuccess">✅ Merci pour votre signalement ! Notre équipe va examiner cette annonce.</div>
+    </div>
+    <div class="modal-footer" id="reportFooter">
+      <button class="btn-modal-cancel" onclick="closeReportModal()">Annuler</button>
+      <button class="btn-modal-send" onclick="sendReport()">Envoyer le signalement</button>
     </div>
   </div>
 </div>
@@ -417,10 +509,6 @@ function renderPage(record) {
   const title = f['Titre'] || 'Sans titre';
   document.title = `${title} — Zoophiloo`;
   document.getElementById('breadcrumbText').textContent = title;
-
-  // Signalement
-  _reportAnnonceTitle = title;
-  _reportAnnonceId = record.id;
 
   // Gallery
   renderGallery(f['Photos'], emoji);
@@ -525,17 +613,26 @@ async function init() {
   }
 }
 
-// ── Signalement d'abus ──
-let _reportAnnonceTitle = '';
-let _reportAnnonceId = '';
+init();
+
+// ── SIGNALEMENT ──
+let _currentAdTitle = '', _currentAdId = '';
 
 function openReportModal() {
+  // Grab current ad info for the email subject
+  _currentAdTitle = document.getElementById('adTitle')?.textContent || 'Annonce';
+  _currentAdId = new URLSearchParams(window.location.search).get('id') || '';
+  // Reset state
+  document.querySelectorAll('.report-option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('input[name="report_reason"]').forEach(r => r.checked = false);
+  document.getElementById('reportAutreBlock').classList.remove('show');
+  document.getElementById('reportAutreText').value = '';
+  document.getElementById('reportAutreText').classList.remove('error');
+  document.getElementById('reportError').classList.remove('show');
+  document.getElementById('reportSuccess').classList.remove('show');
+  document.getElementById('reportFooter').style.display = '';
   document.getElementById('reportModal').classList.add('open');
   document.body.style.overflow = 'hidden';
-  // reset
-  document.querySelectorAll('.modal-reason input').forEach(r => r.checked = false);
-  document.querySelectorAll('.modal-reason').forEach(r => r.classList.remove('selected'));
-  document.getElementById('reportSubmitBtn').disabled = true;
 }
 
 function closeReportModal() {
@@ -543,37 +640,90 @@ function closeReportModal() {
   document.body.style.overflow = '';
 }
 
-function handleModalClick(e) {
+function handleOverlayClick(e) {
   if (e.target === document.getElementById('reportModal')) closeReportModal();
 }
 
-document.addEventListener('change', e => {
-  if (e.target.name === 'reason') {
-    document.querySelectorAll('.modal-reason').forEach(r => r.classList.remove('selected'));
-    e.target.closest('.modal-reason').classList.add('selected');
-    document.getElementById('reportSubmitBtn').disabled = false;
+function selectReport(el, isAutre) {
+  document.querySelectorAll('.report-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const autreBlock = document.getElementById('reportAutreBlock');
+  if (isAutre) {
+    autreBlock.classList.add('show');
+    setTimeout(() => document.getElementById('reportAutreText').focus(), 50);
+  } else {
+    autreBlock.classList.remove('show');
+    document.getElementById('reportAutreText').classList.remove('error');
   }
-});
+  document.getElementById('reportError').classList.remove('show');
+}
 
-function submitReport() {
-  const reason = document.querySelector('input[name="reason"]:checked')?.value;
-  if (!reason) return;
+function clearAutreError() {
+  document.getElementById('reportAutreText').classList.remove('error');
+  document.getElementById('reportError').classList.remove('show');
+}
 
-  const subject = encodeURIComponent(`[Signalement] Annonce Zoophiloo – ${_reportAnnonceTitle}`);
+const REPORT_LABELS = {
+  animal_fictif: 'Animal fictif ou inexistant',
+  photos_volees: 'Photos volées ou trompeuses',
+  arnaque: 'Arnaque ou escroquerie suspectée',
+  maltraitance: 'Suspicion de maltraitance animale',
+  espece_protegee: 'Espèce protégée ou trafic illégal',
+  doublon: 'Annonce dupliquée',
+  contenu_inapproprie: 'Contenu inapproprié ou offensant',
+  autre: 'Autre raison',
+};
+
+function sendReport() {
+  const selected = document.querySelector('input[name="report_reason"]:checked');
+  const errEl = document.getElementById('reportError');
+
+  if (!selected) {
+    errEl.textContent = 'Veuillez sélectionner un motif de signalement.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  let motifLabel = REPORT_LABELS[selected.value] || selected.value;
+  let detail = '';
+
+  if (selected.value === 'autre') {
+    const txt = document.getElementById('reportAutreText').value.trim();
+    if (!txt) {
+      document.getElementById('reportAutreText').classList.add('error');
+      errEl.textContent = 'Veuillez préciser votre motif pour le choix "Autre raison".';
+      errEl.classList.add('show');
+      return;
+    }
+    detail = txt;
+  }
+
+  const adUrl = window.location.href;
+  const subject = encodeURIComponent(`[Signalement] ${_currentAdTitle} — ${motifLabel}`);
   const body = encodeURIComponent(
     `Bonjour,\n\nJe souhaite signaler l'annonce suivante :\n\n` +
-    `Titre : ${_reportAnnonceTitle}\n` +
-    `ID : ${_reportAnnonceId}\n` +
-    `Lien : ${window.location.href}\n\n` +
-    `Motif du signalement : ${reason}\n\n` +
-    `Merci de traiter ce signalement.\n\nCordialement`
+    `Titre : ${_currentAdTitle}\n` +
+    `ID : ${_currentAdId}\n` +
+    `URL : ${adUrl}\n\n` +
+    `Motif : ${motifLabel}` +
+    (detail ? `\n\nPrécision : ${detail}` : '') +
+    `\n\nCordialement.`
   );
 
   window.location.href = `mailto:zoophiloocontact@gmail.com?subject=${subject}&body=${body}`;
-  closeReportModal();
+
+  // Show success feedback
+  document.getElementById('reportSuccess').classList.add('show');
+  document.getElementById('reportFooter').style.display = 'none';
+  document.getElementById('reportError').classList.remove('show');
+  // Auto-close after delay
+  setTimeout(closeReportModal, 3000);
 }
 
-init();
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeReportModal();
+});
 </script>
 
 <!-- Firebase SDK -->

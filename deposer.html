@@ -313,8 +313,7 @@ const auth = firebase.auth();
 const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
 const BASE_ID = 'appepwMYbNUv2k3f9';
 const TABLE = 'Annonces';
-const CLOUDINARY_CLOUD = 'drip4fcld';
-const CLOUDINARY_PRESET = 'zoophiloo-upload';
+const IMGBB_KEY = '__IMGBB_KEY__';
 
 let currentUser = null;
 let photoFiles = []; // {file, previewUrl, cloudUrl}
@@ -393,7 +392,7 @@ function removePhoto(i) {
   renderPreviews();
 }
 
-// ── Upload photos vers Cloudinary (unsigned) ──
+// ── Upload photos vers imgbb ──
 async function uploadPhotos() {
   const progress = document.getElementById('uploadProgress');
   const fill = document.getElementById('progressFill');
@@ -405,37 +404,34 @@ async function uploadPhotos() {
   for (let i = 0; i < photoFiles.length; i++) {
     const pct = Math.round((i / photoFiles.length) * 100);
     fill.style.width = pct + '%';
-    label.textContent = `Upload photo ${i+1}/${photoFiles.length}…`;
+    label.textContent = `Upload photo ${i+1}/${photoFiles.length}...`;
     if (photoFiles[i].cloudUrl) { urls.push(photoFiles[i].cloudUrl); continue; }
 
+    // Convertir en base64 (sans le prefixe data:...)
+    const base64 = photoFiles[i].previewUrl.split(',')[1];
     const fd = new FormData();
-    fd.append('file', photoFiles[i].file);
-    fd.append('upload_preset', CLOUDINARY_PRESET);
-    fd.append('public_id', `zoophiloo_${Date.now()}_${i}`);
+    fd.append('image', base64);
+    fd.append('name', `zoophiloo_${Date.now()}_${i}`);
 
     let res, data;
     try {
-      res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
-        { method: 'POST', body: fd }
-      );
+      res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
       data = await res.json();
     } catch (networkErr) {
-      throw new Error(`Photo ${i+1} : erreur réseau — ${networkErr.message}`);
+      throw new Error(`Photo ${i+1} : erreur reseau — ${networkErr.message}`);
     }
 
-    if (!res.ok || data.error) {
+    if (!res.ok || !data.success) {
       const msg = data.error?.message || `HTTP ${res.status}`;
-      throw new Error(`Cloudinary a refusé la photo ${i+1} : ${msg}`);
+      throw new Error(`imgbb a refuse la photo ${i+1} : ${msg}`);
     }
 
-    const url = data.secure_url;
+    const url = data.data.url;
     photoFiles[i].cloudUrl = url;
     urls.push(url);
   }
   fill.style.width = '100%';
-  label.textContent = `✓ ${urls.length} photo(s) uploadée(s).`;
-  setTimeout(() => { progress.style.display = 'none'; }, 2500);
+  label.textContent = `${urls.length} photo(s) uploadee(s).`;
   return urls;
 }
 
