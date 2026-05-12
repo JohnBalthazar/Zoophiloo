@@ -196,10 +196,39 @@
   }
   .report-option:hover { border-color: var(--green); background: var(--green-light); }
   .report-option input[type="radio"] { margin-top: 2px; accent-color: var(--green); flex-shrink: 0; }
-  .report-option label { font-size: 13px; cursor: pointer; line-height: 1.4; }
-  .report-option label strong { display: block; font-weight: 500; color: var(--text); margin-bottom: 1px; }
-  .report-option label span { font-size: 11px; color: var(--text-muted); }
+  .report-option label { font-size: 13px; cursor: pointer; line-height: 1.4; display: flex; align-items: center; gap: 6px; }
+  .report-option label strong { font-weight: 500; color: var(--text); }
+  .report-option label span { display: none; }
   .report-option.selected { border-color: var(--green); background: var(--green-light); }
+
+  /* Tooltip */
+  .report-tip {
+    position: relative; display: inline-flex; align-items: center; flex-shrink: 0;
+  }
+  .report-tip-icon {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--border); color: var(--text-muted);
+    font-size: 10px; font-weight: 700; font-style: normal;
+    display: flex; align-items: center; justify-content: center;
+    cursor: default; flex-shrink: 0; transition: background 0.15s;
+    font-family: serif;
+  }
+  .report-tip:hover .report-tip-icon { background: var(--green); color: white; }
+  .report-tip-bubble {
+    display: none; position: absolute;
+    left: 22px; top: 50%; transform: translateY(-50%);
+    background: #1a1a1a; color: #fff;
+    font-size: 11px; line-height: 1.4; font-weight: 400;
+    padding: 6px 10px; border-radius: 7px;
+    width: 200px; z-index: 600; pointer-events: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .report-tip-bubble::before {
+    content: ''; position: absolute;
+    right: 100%; top: 50%; transform: translateY(-50%);
+    border: 5px solid transparent; border-right-color: #1a1a1a;
+  }
+  .report-tip:hover .report-tip-bubble { display: block; }
 
   .report-autre-block { display: none; margin-bottom: 14px; }
   .report-autre-block.show { display: block; }
@@ -386,35 +415,43 @@
       <div class="report-options" id="reportOptions">
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="animal_fictif">
-          <span><strong>Animal fictif ou inexistant</strong><span>L'annonce décrit un animal qui n'existe probablement pas.</span></span>
+          <span><strong>Animal fictif ou inexistant</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">L'annonce décrit un animal qui n'existe probablement pas.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="photos_volees">
-          <span><strong>Photos volées ou trompeuses</strong><span>Les photos semblent copiées sur internet ou ne correspondent pas à l'animal réel.</span></span>
+          <span><strong>Photos volées ou trompeuses</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">Les photos semblent copiées sur internet ou ne correspondent pas à l'animal réel.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="arnaque">
-          <span><strong>Arnaque ou escroquerie suspectée</strong><span>Demande d'avance, prix anormalement bas ou comportement suspect.</span></span>
+          <span><strong>Arnaque ou escroquerie suspectée</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">Demande d'avance, prix anormalement bas ou comportement suspect.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="maltraitance">
-          <span><strong>Suspicion de maltraitance animale</strong><span>L'animal semble être dans un état de souffrance ou de négligence.</span></span>
+          <span><strong>Suspicion de maltraitance animale</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">L'animal semble être dans un état de souffrance ou de négligence.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="espece_protegee">
-          <span><strong>Espèce protégée ou trafic illégal</strong><span>Vente d'un animal protégé ou commerce illicite.</span></span>
+          <span><strong>Espèce protégée ou trafic illégal</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">Vente d'un animal protégé ou commerce illicite.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="doublon">
-          <span><strong>Annonce dupliquée</strong><span>Cette annonce a déjà été publiée plusieurs fois.</span></span>
+          <span><strong>Annonce dupliquée</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">Cette annonce a déjà été publiée plusieurs fois.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this)">
           <input type="radio" name="report_reason" value="contenu_inapproprie">
-          <span><strong>Contenu inapproprié ou offensant</strong><span>Texte, images ou informations choquantes ou hors sujet.</span></span>
+          <span><strong>Contenu inapproprié ou offensant</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">Texte, images ou informations choquantes ou hors sujet.</span></span>
         </label>
         <label class="report-option" onclick="selectReport(this, true)">
           <input type="radio" name="report_reason" value="autre">
-          <span><strong>Autre raison</strong><span>Précisez votre motif ci-dessous.</span></span>
+          <span><strong>Autre raison</strong></span>
+          <span class="report-tip"><i class="report-tip-icon">?</i><span class="report-tip-bubble">Précisez votre motif dans le champ qui s'affiche.</span></span>
         </label>
       </div>
 
