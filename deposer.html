@@ -65,76 +65,33 @@
   /* PHOTO UPLOAD */
   .photo-zone {
     border: 2px dashed var(--border); border-radius: 10px;
-    padding: 28px 24px; text-align: center; cursor: pointer;
-    transition: all 0.2s; background: var(--bg); position: relative;
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: all 0.15s; background: var(--bg);
   }
-  .photo-zone:hover, .photo-zone.drag-over {
-    border-color: var(--green); background: var(--green-light);
-    transform: scale(1.005);
-  }
-  .photo-zone.drag-over { border-style: solid; }
-  .photo-zone .icon { font-size: 32px; margin-bottom: 10px; display: block; }
-  .photo-zone p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .photo-zone:hover, .photo-zone.drag-over { border-color: var(--green); background: var(--green-light); }
+  .photo-zone .icon { font-size: 28px; margin-bottom: 8px; }
+  .photo-zone p { font-size: 13px; color: var(--text-muted); }
   .photo-zone p strong { color: var(--text); }
-  .photo-zone .zone-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
   .photo-zone input[type="file"] { display: none; }
-  .photo-counter {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11px; font-weight: 600; color: var(--text-muted);
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 20px; padding: 3px 10px; margin-top: 10px;
-  }
-  .photo-counter .count-cur { color: var(--green); }
-  .photo-counter.full { color: var(--orange); border-color: var(--orange); background: #fff8f4; }
-
-  .photo-previews { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+  .photo-previews { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
   .photo-thumb {
     position: relative; aspect-ratio: 1; border-radius: 8px;
-    overflow: hidden; border: 2px solid transparent; background: var(--bg);
-    transition: border-color 0.15s, box-shadow 0.15s;
+    overflow: hidden; border: 1px solid var(--border); background: var(--bg);
   }
-  .photo-thumb:first-child { border-color: var(--green); box-shadow: 0 0 0 2px rgba(26,158,110,0.15); }
-  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .photo-thumb .remove-photo {
     position: absolute; top: 4px; right: 4px;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(0,0,0,0.65); color: white;
-    border: none; cursor: pointer; font-size: 13px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,0,0,0.6); color: white;
+    border: none; cursor: pointer; font-size: 12px;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s; line-height: 1;
   }
-  .photo-thumb .remove-photo:hover { background: rgba(192,57,43,0.85); }
-  .photo-thumb .photo-num {
-    position: absolute; bottom: 4px; left: 4px;
-    font-size: 10px; font-weight: 700; color: white;
-    background: rgba(0,0,0,0.55); border-radius: 4px;
-    padding: 1px 5px; line-height: 1.4;
-  }
-  .photo-thumb:first-child .photo-num {
-    background: var(--green); content: 'Couverture';
-  }
-  .photo-cover-badge {
-    position: absolute; bottom: 4px; left: 4px;
-    font-size: 10px; font-weight: 600; color: white;
-    background: var(--green); border-radius: 4px;
-    padding: 1px 6px; line-height: 1.4;
-  }
+  .upload-progress { margin-top: 8px; display: none; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s; border-radius: 2px; }
+  .progress-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
-  .upload-progress { margin-top: 10px; display: none; }
-  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-dark)); width: 0%; transition: width 0.35s ease; border-radius: 3px; }
-  .progress-label { font-size: 11px; color: var(--text-muted); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-  .progress-label .prog-spinner { width: 10px; height: 10px; border: 1.5px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.6s linear infinite; flex-shrink: 0; }
-
-  /* CONTACT PRE-FILL */
-  .prefilled-notice {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 12px; color: var(--green-dark);
-    background: var(--green-light); border: 1px solid rgba(26,158,110,0.2);
-    border-radius: 8px; padding: 8px 12px; margin-bottom: 14px;
-  }
-  .prefilled-notice svg { flex-shrink: 0; opacity: 0.7; }
-  input[readonly] { cursor: default; }
+  /* ADDRESS */
   .geocode-btn {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: 12px; color: var(--green); cursor: pointer;
@@ -260,21 +217,15 @@
   <div class="form-section">
     <div class="section-title"><div class="num">3</div>Photos</div>
     <div class="photo-zone" id="photoZone" onclick="document.getElementById('fileInput').click()">
-      <span class="icon">📷</span>
-      <p><strong>Cliquez ou glissez vos photos ici</strong></p>
-      <p>JPG, PNG — max 10 Mo par photo</p>
-      <p class="zone-hint">La première photo sera la photo de couverture de l'annonce</p>
+      <div class="icon">📷</div>
+      <p><strong>Cliquez ou glissez vos photos</strong></p>
+      <p>JPG, PNG — max 5 photos, 10 Mo chacune</p>
       <input type="file" id="fileInput" accept="image/*" multiple>
-    </div>
-    <div id="photoCounter" style="display:none;margin-top:8px">
-      <span class="photo-counter" id="photoCounterBadge">
-        <span class="count-cur" id="countCur">0</span><span style="color:var(--text-muted)">/5 photo(s)</span>
-      </span>
     </div>
     <div class="photo-previews" id="photoPreviews"></div>
     <div class="upload-progress" id="uploadProgress">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-label"><div class="prog-spinner"></div><span id="progressLabel">Upload en cours…</span></div>
+      <div class="progress-label" id="progressLabel">Upload en cours…</div>
     </div>
   </div>
 
@@ -314,20 +265,6 @@
   <!-- 5. Contact -->
   <div class="form-section">
     <div class="section-title"><div class="num">5</div>Contact</div>
-    <div class="prefilled-notice">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      Vos coordonnées sont pré-remplies depuis votre compte. Pour les modifier, rendez-vous dans <a href="mon-espace.html" style="color:var(--green-dark);font-weight:500;margin-left:2px">Mon espace</a>.
-    </div>
-    <div class="form-row cols-2">
-      <div class="form-group">
-        <label>Prénom <span class="req">*</span></label>
-        <input type="text" id="prenom_contact" placeholder="Votre prénom">
-      </div>
-      <div class="form-group">
-        <label>Nom</label>
-        <input type="text" id="nom_contact" placeholder="Votre nom">
-      </div>
-    </div>
     <div class="form-row cols-2">
       <div class="form-group">
         <label>E-mail <span class="req">*</span></label>
@@ -375,36 +312,7 @@ let photoFiles = []; // {file, previewUrl, cloudUrl}
 auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
   currentUser = user;
-
-  // Email (toujours disponible)
   document.getElementById('email_contact').value = user.email;
-
-  // Prénom / Nom : priorité displayName Firebase, sinon localStorage
-  let prenom = '', nom = '';
-
-  if (user.displayName) {
-    const parts = user.displayName.trim().split(/\s+/);
-    prenom = parts[0] || '';
-    nom    = parts.slice(1).join(' ') || '';
-  } else {
-    // Fallback : données sauvegardées lors de l'inscription
-    prenom = localStorage.getItem('zph_prenom') || '';
-    nom    = localStorage.getItem('zph_nom')    || '';
-  }
-
-  const prenomInput = document.getElementById('prenom_contact');
-  const nomInput    = document.getElementById('nom_contact');
-
-  prenomInput.value = prenom;
-  nomInput.value    = nom;
-
-  // Toujours verrouiller — modifiable uniquement depuis le profil
-  prenomInput.readOnly = true;
-  nomInput.readOnly    = true;
-  prenomInput.style.color = 'var(--text-muted)';
-  nomInput.style.color    = 'var(--text-muted)';
-  prenomInput.title = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
-  nomInput.title    = 'Défini lors de votre inscription — modifiez-le dans Mon espace';
 });
 
 // ── Photo handling ──
@@ -433,26 +341,10 @@ function handleFiles(files) {
 
 function renderPreviews() {
   const container = document.getElementById('photoPreviews');
-  const counterEl = document.getElementById('photoCounter');
-  const countCur = document.getElementById('countCur');
-  const badge = document.getElementById('photoCounterBadge');
-
-  // Compteur
-  if (photoFiles.length > 0) {
-    counterEl.style.display = 'block';
-    countCur.textContent = photoFiles.length;
-    badge.className = 'photo-counter' + (photoFiles.length >= 5 ? ' full' : '');
-  } else {
-    counterEl.style.display = 'none';
-  }
-
   container.innerHTML = photoFiles.map((p, i) => `
     <div class="photo-thumb">
-      <img src="${p.previewUrl}" alt="Photo ${i+1}">
-      <button class="remove-photo" onclick="removePhoto(${i})" title="Supprimer">✕</button>
-      ${i === 0
-        ? `<span class="photo-cover-badge">Couverture</span>`
-        : `<span class="photo-num">${i+1}</span>`}
+      <img src="${p.previewUrl}" alt="">
+      <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
     </div>`).join('');
 }
 
@@ -473,7 +365,7 @@ async function uploadPhotos() {
   for (let i = 0; i < photoFiles.length; i++) {
     const pct = Math.round((i / photoFiles.length) * 100);
     fill.style.width = pct + '%';
-    label.textContent = `Envoi photo ${i+1} sur ${photoFiles.length}…`;
+    label.textContent = `Upload photo ${i+1}/${photoFiles.length}...`;
     if (photoFiles[i].cloudUrl) { urls.push(photoFiles[i].cloudUrl); continue; }
 
     // Convertir en base64 (sans le prefixe data:...)
@@ -487,12 +379,12 @@ async function uploadPhotos() {
       res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd });
       data = await res.json();
     } catch (networkErr) {
-      throw new Error(`Photo ${i+1} : erreur réseau — ${networkErr.message}`);
+      throw new Error(`Photo ${i+1} : erreur reseau — ${networkErr.message}`);
     }
 
     if (!res.ok || !data.success) {
       const msg = data.error?.message || `HTTP ${res.status}`;
-      throw new Error(`Imgbb a refusé la photo ${i+1} : ${msg}`);
+      throw new Error(`imgbb a refuse la photo ${i+1} : ${msg}`);
     }
 
     const url = data.data.url;
@@ -500,8 +392,7 @@ async function uploadPhotos() {
     urls.push(url);
   }
   fill.style.width = '100%';
-  label.textContent = `${urls.length} photo${urls.length > 1 ? 's' : ''} envoyée${urls.length > 1 ? 's' : ''} ✓`;
-  setTimeout(() => { progress.style.display = 'none'; }, 1500);
+  label.textContent = `${urls.length} photo(s) uploadee(s).`;
   return urls;
 }
 
@@ -608,8 +499,6 @@ async function submitAnnonce() {
       'Type_annonce': document.getElementById('type_annonce').value,
       'Ville': document.getElementById('ville').value.trim(),
       'Adresse': document.getElementById('adresse').value.trim() || undefined,
-      'Nom_contact': document.getElementById('nom_contact').value.trim() || undefined,
-      'Prenom_contact': document.getElementById('prenom_contact').value.trim() || undefined,
       'Email_contact': currentUser.email,
       'Telephone': document.getElementById('telephone').value.trim() || undefined,
       'Visible': true,
