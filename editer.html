@@ -163,17 +163,6 @@ recordId = params.get('id');
 auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
   currentUser = user;
-
-  // Résoudre prénom/nom depuis Firebase puis localStorage
-  if (user.displayName) {
-    const parts = user.displayName.trim().split(/\s+/);
-    currentUser._prenom = parts[0] || '';
-    currentUser._nom    = parts.slice(1).join(' ') || '';
-  } else {
-    currentUser._prenom = localStorage.getItem('zph_prenom') || '';
-    currentUser._nom    = localStorage.getItem('zph_nom')    || '';
-  }
-
   if (!recordId) { window.location.href = 'mon-espace.html'; return; }
   loadRecord();
 });
@@ -315,16 +304,6 @@ function renderForm(f) {
     <!-- 5. Contact -->
     <div class="form-section">
       <div class="section-title"><div class="num">5</div>Contact</div>
-      <div class="form-row cols-2">
-        <div class="form-group">
-          <label>Prénom</label>
-          <input type="text" id="prenom_contact" value="${esc(currentUser._prenom)}" readonly style="color:var(--text-muted)" title="Défini lors de votre inscription — modifiez-le dans Mon espace">
-        </div>
-        <div class="form-group">
-          <label>Nom</label>
-          <input type="text" id="nom_contact" value="${esc(currentUser._nom)}" readonly style="color:var(--text-muted)" title="Défini lors de votre inscription — modifiez-le dans Mon espace">
-        </div>
-      </div>
       <div class="form-row cols-2">
         <div class="form-group"><label>E-mail</label><input type="email" id="email_contact" value="${esc(f['Email_contact']||'')}" readonly style="color:var(--text-muted)"></div>
         <div class="form-group"><label>Téléphone</label><input type="tel" id="telephone" value="${esc(f['Telephone']||'')}"></div>
@@ -487,8 +466,6 @@ async function submitEdit() {
       'Type_annonce': document.getElementById('type_annonce').value,
       'Ville': document.getElementById('ville').value.trim(),
       'Adresse': document.getElementById('adresse').value.trim() || null,
-      'Nom_contact': document.getElementById('nom_contact').value.trim() || null,
-      'Prenom_contact': document.getElementById('prenom_contact').value.trim() || null,
       'Telephone': document.getElementById('telephone').value.trim() || null,
       'Visible': true,
       'Statut': 'Active',
