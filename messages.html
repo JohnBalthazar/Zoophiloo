@@ -453,15 +453,28 @@ const ESPECE_EMOJI = {
 };
 
 /* ────────────────────────── AUTH ────────────────────────── */
-auth.onAuthStateChanged(user => {
-  if (!user) { window.location.href = 'login.html'; return; }
-  currentUser = user;
+// Show a loading overlay while Firebase resolves auth state
+const authOverlay = document.createElement('div');
+authOverlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center';
+authOverlay.innerHTML = '<div class="loading-spinner"></div>';
+document.body.appendChild(authOverlay);
 
-  // Check if we should auto-open a conversation from URL
-  const params = new URLSearchParams(location.search);
-  const openConvId = params.get('conv');
+// Set LOCAL persistence explicitly so session survives page navigation
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+  auth.onAuthStateChanged(user => {
+    authOverlay.remove();
+    if (!user) {
+      window.location.href = 'login.html?next=' + encodeURIComponent(location.href);
+      return;
+    }
+    currentUser = user;
 
-  listenConversations(openConvId);
+    // Check if we should auto-open a conversation from URL
+    const params = new URLSearchParams(location.search);
+    const openConvId = params.get('conv');
+
+    listenConversations(openConvId);
+  });
 });
 
 /* ────────────────────────── CONVERSATIONS LISTENER ────────────────────────── */
