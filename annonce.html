@@ -793,10 +793,13 @@ let _currentRecord = null;
 function cacheRecord(record) { _currentRecord = record; }
 
 async function startConversation() {
-  const user = auth.currentUser;
+  // Wait for Firebase Auth to resolve before checking login state
+  const user = await new Promise(resolve => {
+    const unsub = auth.onAuthStateChanged(u => { unsub(); resolve(u); });
+  });
   if (!user) {
     showToastMsg('Connectez-vous pour envoyer un message', 'info');
-    setTimeout(() => window.location.href = 'login.html', 1200);
+    setTimeout(() => window.location.href = 'login.html?redirect=' + encodeURIComponent(location.href), 1200);
     return;
   }
   if (!_currentRecord) return;
