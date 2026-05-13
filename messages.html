@@ -469,6 +469,12 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
     }
     currentUser = user;
 
+    // Upsert email index + patch email placeholders
+    db.collection('users').doc(user.uid).set({
+      email: user.email, displayName: user.displayName || ''
+    }, { merge: true });
+    patchEmailToUid(user);
+
     // Check if we should auto-open a conversation from URL
     const params = new URLSearchParams(location.search);
     const openConvId = params.get('conv');
@@ -476,6 +482,29 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
     listenConversations(openConvId);
   });
 });
+
+/* ────────────────────────── PATCH EMAIL→UID ────────────────────────── */
+// When a user logs in, replace their email placeholder in participants with their real UID
+async function patchEmailToUid(user) {
+  try {
+    const snap = await db.collection('conversations')
+      .where('participants', 'array-contains', user.email)
+      .get();
+    const batch = db.batch();
+    snap.docs.forEach(doc => {
+      const data = doc.data();
+      const parts = data.participants.map(p => p === user.email ? user.uid : p);
+      const update = { participants: parts };
+      // Also update participantB uid if it matched the email
+      if (data.participantB?.uid === user.email) {
+        update['participantB.uid'] = user.uid;
+        update['participantB.name'] = user.displayName || data.participantB.name || '';
+      }
+      batch.update(doc.ref, update);
+    });
+    if (!snap.empty) await batch.commit();
+  } catch(e) { console.warn('patchEmailToUid error', e); }
+}
 
 /* ────────────────────────── CONVERSATIONS LISTENER ────────────────────────── */
 function listenConversations(autoOpenId = null) {

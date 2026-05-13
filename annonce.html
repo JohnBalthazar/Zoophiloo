@@ -817,41 +817,51 @@ async function startConversation() {
   if (btn) { btn.disabled = true; btn.textContent = 'Ouverture…'; }
 
   try {
-    // Look for existing conversation between these two users about this ad
     const convRef = db.collection('conversations');
     const adId    = _currentRecord.id;
     const uid     = user.uid;
 
+    // Resolve seller UID from their email in the users collection
+    const adTitle   = f['Titre'] || 'Annonce';
+    const adEspece  = f['Espèce'] || '';
+    const adPhoto   = f['Photos']?.[0]?.url || null;
+    const ownerName = [f['Prenom_contact'] || '', f['Nom_contact'] || ''].filter(Boolean).join(' ') || 'Annonceur';
+
+    let ownerUid = null;
+    if (ownerEmail) {
+      const userSnap = await db.collection('users')
+        .where('email', '==', ownerEmail).limit(1).get();
+      if (!userSnap.empty) ownerUid = userSnap.docs[0].id;
+    }
+
+    // Participants: always UIDs only (fall back to email as placeholder if owner not registered)
+    const participantsList = ownerUid
+      ? [uid, ownerUid]
+      : [uid, ownerEmail]; // temporary until owner logs in
+
+    // Look for existing conversation
     const existing = await convRef
       .where('adId', '==', adId)
       .where('participants', 'array-contains', uid)
-      .limit(5)
-      .get();
+      .limit(5).get();
 
     let convId = null;
-
     if (!existing.empty) {
       convId = existing.docs[0].id;
     } else {
-      // Create new conversation
-      const adTitle  = f['Titre'] || 'Annonce';
-      const adEspece = f['Espèce'] || '';
-      const adPhoto  = f['Photos']?.[0]?.url || null;
-      const ownerName = [f['Prenom_contact'] || '', f['Nom_contact'] || ''].filter(Boolean).join(' ') || 'Annonceur';
-
       const newConv = await convRef.add({
         adId,
         adTitle,
         adEspece,
         adPhoto,
-        participants: [uid, ownerEmail], // mix uid + email (owner may not have uid yet)
+        participants: participantsList,
         participantA: {
           uid:   uid,
           name:  user.displayName || '',
           email: user.email
         },
         participantB: {
-          uid:   ownerEmail, // used as ID fallback if owner not yet registered
+          uid:   ownerUid || ownerEmail,
           name:  ownerName,
           email: ownerEmail
         },
@@ -861,6 +871,17 @@ async function startConversation() {
         createdAt:     firebase.firestore.FieldValue.serverTimestamp()
       });
       convId = newConv.id;
+
+      // Send email notification to seller via EmailJS
+      try {
+        await sendNotificationEmail({
+          to_email:   ownerEmail,
+          to_name:    ownerName,
+          from_name:  user.displayName || user.email,
+          ad_title:   adTitle,
+          conv_url:   `https://www.zoophiloo.fr/messages.html?conv=${convId}`
+        });
+      } catch(mailErr) { console.warn('Email notification failed', mailErr); }
     }
 
     window.location.href = `messages.html?conv=${convId}`;
@@ -869,6 +890,28 @@ async function startConversation() {
     showToastMsg('Erreur — réessayez', 'error');
     if (btn) { btn.disabled = false; btn.textContent = 'Envoyer un message'; }
   }
+}
+
+// ── Email notification via EmailJS ──
+// Sign up free at emailjs.com, create a template with variables:
+// {{to_email}}, {{to_name}}, {{from_name}}, {{ad_title}}, {{conv_url}}
+// Then replace these three IDs:
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+
+async function sendNotificationEmail(params) {
+  // Load EmailJS on demand
+  if (!window.emailjs) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+  return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
 }
 
 function showToastMsg(msg, type) {
