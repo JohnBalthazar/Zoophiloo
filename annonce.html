@@ -896,22 +896,33 @@ async function startConversation() {
 // Sign up free at emailjs.com, create a template with variables:
 // {{to_email}}, {{to_name}}, {{from_name}}, {{ad_title}}, {{conv_url}}
 // Then replace these three IDs:
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const BREVO_API_KEY = '__BREVO_API_KEY__';
 
 async function sendNotificationEmail(params) {
-  // Load EmailJS on demand
-  if (!window.emailjs) {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-  }
-  return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+  return fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': BREVO_API_KEY
+    },
+    body: JSON.stringify({
+      sender:      { name: 'Zoophiloo', email: 'noreply@zoophiloo.fr' },
+      to:          [{ email: params.to_email, name: params.to_name }],
+      subject:     `${params.from_name} vous a envoyé un message sur Zoophiloo`,
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:520px;margin:auto">
+          <h2 style="color:#1a9e6e">Nouveau message sur Zoophiloo 🐾</h2>
+          <p>Bonjour <b>${params.to_name}</b>,</p>
+          <p><b>${params.from_name}</b> vous a envoyé un message concernant votre annonce&nbsp;:<br>
+          <b>${params.ad_title}</b></p>
+          <a href="${params.conv_url}"
+             style="display:inline-block;margin:16px 0;padding:12px 24px;background:#1a9e6e;color:white;border-radius:8px;text-decoration:none;font-weight:600">
+            Lire et répondre →
+          </a>
+          <p style="color:#999;font-size:12px">Zoophiloo — le site des annonces animalières</p>
+        </div>`
+    })
+  });
 }
 
 function showToastMsg(msg, type) {
