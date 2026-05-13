@@ -31,6 +31,14 @@ jobs:
             fi
           done
 
+      - name: Inject Brevo key
+        run: |
+          for file in annonce.html; do
+            if [ -f "$file" ]; then
+              sed -i "s|__BREVO_API_KEY__|${{ secrets.BREVO_API_KEY }}|g" $file
+            fi
+          done
+
       - name: Inject imgbb key
         run: |
           for file in deposer.html editer.html; do
