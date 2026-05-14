@@ -335,6 +335,14 @@
     .auth-card { padding: 20px 16px; }
   }
 </style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PYR4KQ6XLZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PYR4KQ6XLZ');
+</script>
 </head>
 <body>
 
@@ -480,6 +488,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 // ─────────────────────────────────────────────
@@ -620,7 +629,8 @@ async function doSignIn() {
   if (!password) { showError('signin', 'Entrez votre mot de passe.'); return; }
   setLoading('btnSignin', true);
   try {
-    await auth.signInWithEmailAndPassword(email, password);
+    const cred2 = await auth.signInWithEmailAndPassword(email, password);
+    await db.collection('users').doc(cred2.user.uid).set({ email: cred2.user.email, displayName: cred2.user.displayName||'' }, { merge: true });
     redirectAfterLogin();
   } catch(e) {
     showError('signin', firebaseError(e.code));
@@ -691,6 +701,7 @@ async function doGoogleSignIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     const cred = await auth.signInWithPopup(provider);
+    await db.collection('users').doc(cred.user.uid).set({ email: cred.user.email, displayName: cred.user.displayName||'' }, { merge: true });
     // Sauvegarder prénom/nom depuis le displayName Google
     if (cred.user.displayName) {
       const parts = cred.user.displayName.trim().split(/\s+/);

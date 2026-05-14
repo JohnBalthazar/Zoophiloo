@@ -292,6 +292,14 @@
     .details-grid { grid-template-columns: 1fr; }
   }
 </style>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PYR4KQ6XLZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PYR4KQ6XLZ');
+</script>
 </head>
 <body>
 
@@ -605,12 +613,11 @@ function renderPage(record) {
       Appeler : ${f['Telephone']}
     </a>`);
   }
-  if (f['Email_contact']) {
-    actions.push(`<a href="mailto:${f['Email_contact']}?subject=Annonce Zoophiloo : ${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      Envoyer un email
-    </a>`);
-  }
+  // Bouton messagerie interne
+  actions.push(`<button onclick="startConversation()" class="btn-contact btn-contact-primary" id="msgBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Envoyer un message
+    </button>`);
   if (actions.length === 0) {
     actions.push(`<p style="font-size:12px;color:var(--text-muted);text-align:center">Aucune coordonnée disponible.</p>`);
   }
@@ -644,6 +651,7 @@ async function init() {
     const record = await res.json();
     if (!record || !record.fields) throw new Error('Enregistrement vide');
     renderPage(record);
+    cacheRecord(record);
   } catch (err) {
     console.error(err);
     showError('Impossible de charger cette annonce. Vérifiez l\'identifiant ou réessayez plus tard.');
@@ -766,6 +774,7 @@ document.addEventListener('keydown', e => {
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
@@ -777,6 +786,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db   = firebase.firestore();
 
 // ── User menu styles (injected via JS to keep annonce.html self-contained) ──
 const styleEl = document.createElement('style');
@@ -845,6 +855,110 @@ document.addEventListener('click', e => {
 });
 async function doSignOut() { await auth.signOut(); }
 auth.onAuthStateChanged(user => renderHeaderAuth(user));
+
+/* ── MESSAGERIE INTERNE ── */
+let _currentRecord = null;
+function cacheRecord(record) { _currentRecord = record; }
+
+async function startConversation() {
+  await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  const user = await new Promise(resolve => {
+    const unsub = auth.onAuthStateChanged(u => { unsub(); resolve(u); });
+  });
+  if (!user) {
+    showToastMsg('Connectez-vous pour envoyer un message');
+    setTimeout(() => window.location.href = 'login.html?next=' + encodeURIComponent(location.href), 1200);
+    return;
+  }
+  if (!_currentRecord) return;
+  const f = _currentRecord.fields;
+  const ownerEmail = f['Email_contact'];
+  if (ownerEmail && user.email === ownerEmail) {
+    showToastMsg("C'est votre propre annonce !");
+    return;
+  }
+  const btn = document.getElementById('msgBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Ouverture…'; }
+  try {
+    const convRef  = db.collection('conversations');
+    const adId     = _currentRecord.id;
+    const uid      = user.uid;
+    const adTitle  = f['Titre'] || 'Annonce';
+    const adEspece = f['Espèce'] || '';
+    const adPhoto  = f['Photos']?.[0]?.url || null;
+    const ownerName = [f['Prenom_contact']||'', f['Nom_contact']||''].filter(Boolean).join(' ') || 'Annonceur';
+
+    // Resolve seller UID from users collection
+    let ownerUid = null;
+    if (ownerEmail) {
+      const snap = await db.collection('users').where('email','==',ownerEmail).limit(1).get();
+      if (!snap.empty) ownerUid = snap.docs[0].id;
+    }
+    const participantsList = ownerUid ? [uid, ownerUid] : [uid, ownerEmail];
+
+    // Check existing conversation
+    const existing = await convRef
+      .where('adId','==',adId)
+      .where('participants','array-contains',uid)
+      .limit(5).get();
+
+    let convId = null;
+    if (!existing.empty) {
+      convId = existing.docs[0].id;
+    } else {
+      const newConv = await convRef.add({
+        adId, adTitle, adEspece, adPhoto,
+        participants: participantsList,
+        participantA: { uid, name: user.displayName||'', email: user.email },
+        participantB: { uid: ownerUid||ownerEmail, name: ownerName, email: ownerEmail },
+        lastMessage: '', lastMessageAt: firebase.firestore.FieldValue.serverTimestamp(),
+        readBy: { [uid]: true },
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      convId = newConv.id;
+      // Email notification
+      try {
+        await sendNotificationEmail({
+          to_email: ownerEmail, to_name: ownerName,
+          from_name: user.displayName || user.email,
+          ad_title: adTitle,
+          conv_url: 'https://www.zoophiloo.fr/messages.html?conv=' + convId
+        });
+      } catch(e) { console.warn('Email notif failed', e); }
+    }
+    window.location.href = 'messages.html?conv=' + convId;
+  } catch(e) {
+    console.error(e);
+    showToastMsg('Erreur — réessayez');
+    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer un message'; }
+  }
+}
+
+const BREVO_API_KEY = '__BREVO_API_KEY__';
+async function sendNotificationEmail(p) {
+  return fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': BREVO_API_KEY },
+    body: JSON.stringify({
+      sender: { name: 'Zoophiloo', email: 'noreply@zoophiloo.fr' },
+      to: [{ email: p.to_email, name: p.to_name }],
+      subject: p.from_name + ' vous a envoyé un message sur Zoophiloo',
+      htmlContent: '<div style="font-family:sans-serif;max-width:520px;margin:auto"><h2 style="color:#1a9e6e">Nouveau message sur Zoophiloo 🐾</h2><p>Bonjour <b>'+p.to_name+'</b>,</p><p><b>'+p.from_name+'</b> vous a envoyé un message concernant votre annonce : <b>'+p.ad_title+'</b></p><a href="'+p.conv_url+'" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#1a9e6e;color:white;border-radius:8px;text-decoration:none;font-weight:600">Lire et répondre →</a><p style="color:#999;font-size:12px">Zoophiloo — le site des annonces animalières</p></div>'
+    })
+  });
+}
+
+function showToastMsg(msg) {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999;transition:transform 0.25s;white-space:nowrap';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => t.style.transform = 'translateX(-50%) translateY(80px)', 3000);
+}
 </script>
 </body>
 </html>
