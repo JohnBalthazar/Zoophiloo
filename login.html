@@ -620,12 +620,7 @@ async function doSignIn() {
   if (!password) { showError('signin', 'Entrez votre mot de passe.'); return; }
   setLoading('btnSignin', true);
   try {
-    const cred2 = await auth.signInWithEmailAndPassword(email, password);
-    // Upsert email index so conversations can resolve UID from email
-    await db.collection('users').doc(cred2.user.uid).set({
-      email: cred2.user.email,
-      displayName: cred2.user.displayName || ''
-    }, { merge: true });
+    await auth.signInWithEmailAndPassword(email, password);
     redirectAfterLogin();
   } catch(e) {
     showError('signin', firebaseError(e.code));
@@ -696,11 +691,6 @@ async function doGoogleSignIn() {
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     const cred = await auth.signInWithPopup(provider);
-    // Always upsert email index
-    await db.collection('users').doc(cred.user.uid).set({
-      email: cred.user.email,
-      displayName: cred.user.displayName || ''
-    }, { merge: true });
     // Sauvegarder prénom/nom depuis le displayName Google
     if (cred.user.displayName) {
       const parts = cred.user.displayName.trim().split(/\s+/);
