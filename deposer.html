@@ -66,30 +66,55 @@
   .photo-zone {
     border: 2px dashed var(--border); border-radius: 10px;
     padding: 24px; text-align: center; cursor: pointer;
-    transition: all 0.15s; background: var(--bg);
+    transition: all 0.2s; background: var(--bg); position: relative;
   }
   .photo-zone:hover, .photo-zone.drag-over { border-color: var(--green); background: var(--green-light); }
+  .photo-zone.full { cursor: default; border-style: solid; border-color: var(--green); opacity: 0.7; }
   .photo-zone .icon { font-size: 28px; margin-bottom: 8px; }
   .photo-zone p { font-size: 13px; color: var(--text-muted); }
   .photo-zone p strong { color: var(--text); }
   .photo-zone input[type="file"] { display: none; }
-  .photo-previews { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+  .photo-counter {
+    position: absolute; top: 8px; right: 10px;
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 20px; transition: all 0.15s;
+  }
+  .photo-counter.has-photos { color: var(--green-dark); border-color: var(--green); background: var(--green-light); }
+  .photo-previews { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
   .photo-thumb {
     position: relative; aspect-ratio: 1; border-radius: 8px;
     overflow: hidden; border: 1px solid var(--border); background: var(--bg);
+    animation: thumbIn 0.2s ease;
   }
+  @keyframes thumbIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
   .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .photo-thumb .remove-photo {
     position: absolute; top: 4px; right: 4px;
     width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(0,0,0,0.6); color: white;
-    border: none; cursor: pointer; font-size: 12px;
+    background: rgba(0,0,0,0.65); color: white;
+    border: none; cursor: pointer; font-size: 11px;
     display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s;
   }
-  .upload-progress { margin-top: 8px; display: none; }
-  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s; border-radius: 2px; }
-  .progress-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .photo-thumb:hover .remove-photo { opacity: 1; }
+  .photo-thumb .photo-size-badge {
+    position: absolute; bottom: 4px; left: 4px;
+    font-size: 9px; color: white; background: rgba(0,0,0,0.5);
+    padding: 1px 5px; border-radius: 4px; pointer-events: none;
+  }
+  .photo-thumb.main-badge::after {
+    content: '1ère'; position: absolute; top: 4px; left: 4px;
+    font-size: 9px; font-weight: 700; color: white;
+    background: var(--green); padding: 1px 5px; border-radius: 4px;
+  }
+  .upload-progress { margin-top: 10px; display: none; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .progress-label { font-size: 11px; color: var(--text-muted); }
+  .progress-pct { font-size: 11px; font-weight: 600; color: var(--green-dark); }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), #2dd4a0); width: 0%; transition: width 0.3s ease; border-radius: 3px; }
+  .photo-error { font-size: 11px; color: var(--red); margin-top: 6px; display: none; }
 
   /* ADDRESS */
   .geocode-btn {
@@ -216,16 +241,21 @@
   <!-- 3. Photos -->
   <div class="form-section">
     <div class="section-title"><div class="num">3</div>Photos</div>
-    <div class="photo-zone" id="photoZone" onclick="document.getElementById('fileInput').click()">
+    <div class="photo-zone" id="photoZone" onclick="onPhotoZoneClick()">
+      <span class="photo-counter" id="photoCounter">0 / 5</span>
       <div class="icon">📷</div>
-      <p><strong>Cliquez ou glissez vos photos</strong></p>
-      <p>JPG, PNG — max 5 photos, 10 Mo chacune</p>
-      <input type="file" id="fileInput" accept="image/*" multiple>
+      <p><strong>Cliquez ou glissez vos photos ici</strong></p>
+      <p id="photoZoneHint">JPG, PNG · max 5 photos · 10 Mo chacune</p>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
     </div>
+    <div class="photo-error" id="photoError"></div>
     <div class="photo-previews" id="photoPreviews"></div>
     <div class="upload-progress" id="uploadProgress">
+      <div class="progress-header">
+        <span class="progress-label" id="progressLabel">Upload en cours…</span>
+        <span class="progress-pct" id="progressPct">0 %</span>
+      </div>
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-label" id="progressLabel">Upload en cours…</div>
     </div>
   </div>
 
@@ -316,35 +346,85 @@ auth.onAuthStateChanged(user => {
 });
 
 // ── Photo handling ──
+const MAX_PHOTOS = 5;
+const MAX_SIZE_MB = 10;
 const fileInput = document.getElementById('fileInput');
 const photoZone = document.getElementById('photoZone');
 
-fileInput.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
-photoZone.addEventListener('dragover', e => { e.preventDefault(); photoZone.classList.add('drag-over'); });
+function onPhotoZoneClick() {
+  if (photoFiles.length >= MAX_PHOTOS) return;
+  fileInput.click();
+}
+
+fileInput.addEventListener('change', e => {
+  handleFiles(Array.from(e.target.files));
+  // Reset input so same file can be re-added after remove
+  e.target.value = '';
+});
+photoZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  if (photoFiles.length < MAX_PHOTOS) photoZone.classList.add('drag-over');
+});
 photoZone.addEventListener('dragleave', () => photoZone.classList.remove('drag-over'));
 photoZone.addEventListener('drop', e => {
   e.preventDefault(); photoZone.classList.remove('drag-over');
   handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
 });
 
+function formatBytes(bytes) {
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' Ko';
+  return (bytes / (1024*1024)).toFixed(1) + ' Mo';
+}
+
+function showPhotoError(msg) {
+  const el = document.getElementById('photoError');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
 function handleFiles(files) {
-  const remaining = 5 - photoFiles.length;
-  files.slice(0, remaining).forEach(file => {
+  const remaining = MAX_PHOTOS - photoFiles.length;
+  let added = 0;
+  for (const file of files) {
+    if (added >= remaining) { showPhotoError(`Maximum ${MAX_PHOTOS} photos.`); break; }
+    if (!file.type.startsWith('image/')) { showPhotoError(`"${file.name}" n'est pas une image.`); continue; }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      showPhotoError(`"${file.name}" dépasse ${MAX_SIZE_MB} Mo.`);
+      continue;
+    }
     const reader = new FileReader();
     reader.onload = e => {
-      photoFiles.push({ file, previewUrl: e.target.result, cloudUrl: null });
+      photoFiles.push({ file, previewUrl: e.target.result, cloudUrl: null, size: file.size });
       renderPreviews();
     };
     reader.readAsDataURL(file);
-  });
+    added++;
+  }
 }
 
 function renderPreviews() {
   const container = document.getElementById('photoPreviews');
+  const counter = document.getElementById('photoCounter');
+  const zone = document.getElementById('photoZone');
+  const hint = document.getElementById('photoZoneHint');
+  const n = photoFiles.length;
+
+  counter.textContent = n + ' / ' + MAX_PHOTOS;
+  counter.classList.toggle('has-photos', n > 0);
+  zone.classList.toggle('full', n >= MAX_PHOTOS);
+
+  if (n >= MAX_PHOTOS) {
+    hint.textContent = 'Quota atteint — supprimez une photo pour en ajouter.';
+  } else {
+    hint.textContent = `JPG, PNG · max ${MAX_PHOTOS} photos · ${MAX_SIZE_MB} Mo chacune`;
+  }
+
   container.innerHTML = photoFiles.map((p, i) => `
-    <div class="photo-thumb">
-      <img src="${p.previewUrl}" alt="">
-      <button class="remove-photo" onclick="removePhoto(${i})">✕</button>
+    <div class="photo-thumb ${i===0?'main-badge':''}">
+      <img src="${p.previewUrl}" alt="Photo ${i+1}">
+      <button class="remove-photo" onclick="removePhoto(${i})" title="Supprimer">✕</button>
+      <span class="photo-size-badge">${formatBytes(p.size)}</span>
     </div>`).join('');
 }
 
@@ -361,11 +441,13 @@ async function uploadPhotos() {
   if (photoFiles.length === 0) return [];
 
   progress.style.display = 'block';
+  const pctEl = document.getElementById('progressPct');
   const urls = [];
   for (let i = 0; i < photoFiles.length; i++) {
     const pct = Math.round((i / photoFiles.length) * 100);
     fill.style.width = pct + '%';
-    label.textContent = `Upload photo ${i+1}/${photoFiles.length}...`;
+    if (pctEl) pctEl.textContent = pct + ' %';
+    label.textContent = `Photo ${i+1} / ${photoFiles.length}…`;
     if (photoFiles[i].cloudUrl) { urls.push(photoFiles[i].cloudUrl); continue; }
 
     // Convertir en base64 (sans le prefixe data:...)
@@ -392,7 +474,9 @@ async function uploadPhotos() {
     urls.push(url);
   }
   fill.style.width = '100%';
-  label.textContent = `${urls.length} photo(s) uploadee(s).`;
+  if (pctEl) pctEl.textContent = '100 %';
+  label.textContent = `✅ ${urls.length} photo(s) uploadée(s)`;
+  setTimeout(() => { progress.style.display = 'none'; }, 2000);
   return urls;
 }
 
