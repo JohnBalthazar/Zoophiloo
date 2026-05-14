@@ -157,22 +157,7 @@
     .annonce-title { font-size: 13px; }
     .page { padding: 20px 14px; }
   }
-  /* NAV TABS */
-  .nav-tabs { display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border); }
-  .nav-tab { font-family:var(--font-body);font-size:13px;font-weight:500;padding:10px 18px;border:none;background:transparent;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;display:flex;align-items:center;gap:7px;text-decoration:none; }
-  .nav-tab:hover { color:var(--green); }
-  .nav-tab.active { color:var(--green);border-bottom-color:var(--green); }
-  .msg-badge { background:var(--green);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;display:none; }
-  .msg-badge.show { display:inline-flex; }
 </style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PYR4KQ6XLZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-PYR4KQ6XLZ');
-</script>
 </head>
 <body>
 
@@ -204,18 +189,6 @@
     <div class="stat-card orange"><div class="stat-num">—</div><div class="stat-label">Expirées</div></div>
   </div>
 
-  <!-- Nav tabs -->
-  <div class="nav-tabs">
-    <button class="nav-tab active">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Mes annonces
-    </button>
-    <a class="nav-tab" href="messages.html">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Messages
-      <span class="msg-badge" id="msgBadge"></span>
-    </a>
-  </div>
   <!-- Filters -->
   <div class="filters">
     <button class="filter-chip active" data-filter="">Toutes</button>
@@ -252,7 +225,6 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
@@ -264,7 +236,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db   = firebase.firestore();
 
 const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
 const BASE_ID = 'appepwMYbNUv2k3f9';
@@ -286,7 +257,6 @@ auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html'; return; }
   currentUser = user;
   document.getElementById('userInfo').textContent = user.displayName || user.email;
-  listenUnreadMessages(user.uid);
   loadAnnonces();
 });
 
@@ -461,16 +431,6 @@ function showToast(msg, type = '') {
 document.getElementById('deleteModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeDeleteModal();
 });
-
-function listenUnreadMessages(uid) {
-  db.collection('conversations')
-    .where('participants','array-contains', uid)
-    .onSnapshot(snap => {
-      const n = snap.docs.filter(d => !(d.data().readBy||{})[uid]).length;
-      const b = document.getElementById('msgBadge');
-      if (b) { b.textContent = n; b.classList.toggle('show', n > 0); }
-    });
-}
 </script>
 </body>
 </html>
