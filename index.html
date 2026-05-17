@@ -730,7 +730,7 @@ function drawGeoCircle() {
     radius: km * 1000, color: '#1a9e6e', weight: 1.5,
     fillColor: '#1a9e6e', fillOpacity: 0.06, dashArray: '5,5'
   }).addTo(map);
-  map.flyTo([geoCenter.lat, geoCenter.lng], Math.max(7, 12 - Math.log2(km)), { animate: true, duration: 0.8 });
+  map.flyToBounds(window._geoCircle.getBounds(), { padding: [50, 50], maxZoom: 14, animate: true, duration: 0.8 });
 }
 
 /* ---- TAB SWITCHER (mobile only) ---- */
