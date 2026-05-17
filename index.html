@@ -336,6 +336,8 @@
   .marker-pin { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--green); margin-top: -1px; }
   .marker-pin.don { border-top-color: var(--orange); }
   .marker-pin.active { border-top-color: var(--text); }
+  .marker-bubble.multi { background: var(--blue); }
+  .marker-pin.multi { border-top-color: var(--blue); }
 
   /* ================================
      MOBILE TAB SWITCHER (hidden  on desktop)
@@ -824,6 +826,40 @@ function createMarker(record) {
   return marker;
 }
 
+function createGroupMarker(lat, lng, records) {
+  const icon = L.divIcon({
+    className: '',
+    html: `<div class="custom-marker">
+      <div class="marker-bubble multi">${records.length} annonces</div>
+      <div class="marker-pin multi"></div>
+    </div>`,
+    iconAnchor: [40, 28]
+  });
+  const marker = L.marker([lat, lng], { icon }).addTo(map);
+  const items = records.map(r => {
+    const f = r.fields;
+    const price = formatPrice(f['Prix'], f['Type_annonce']);
+    const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
+    const photo = f['Photos']?.[0]?.url;
+    return `<a href="annonce.html?id=${r.id}" style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #e8e8e4;text-decoration:none;color:inherit;align-items:center">
+      <div style="width:34px;height:34px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#fafaf8;display:flex;align-items:center;justify-content:center;font-size:16px">
+        ${photo?`<img src="${photo}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.textContent='${emoji}'">`:`${emoji}`}
+      </div>
+      <div style="min-width:0;flex:1">
+        <div style="font-size:12px;font-weight:600;color:#1a1a1a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f['Titre']||'Sans titre'}</div>
+        <div style="font-size:11px;color:#1a9e6e;font-weight:600;margin-top:1px">${price.text}</div>
+      </div>
+    </a>`;
+  }).join('');
+  marker.bindPopup(`
+    <div class="popup-body">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#6b6b6b;margin-bottom:8px">📍 ${records.length} annonces ici</div>
+      ${items}
+    </div>`, { maxWidth: 220 });
+  marker.on('click', () => { if (window.innerWidth <= 680) switchTab('list'); });
+  return marker;
+}
+
 function renderList() {
   const container = document.getElementById('listScroll');
   const count = document.getElementById('resultCount');
@@ -854,7 +890,7 @@ function renderList() {
       }
     }
     return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${record.id}" onclick="handleCardClick('${record.id}')">
-      <div class="ad-img">${photoUrl?`<img src="${photoUrl}" alt="">`:emoji}</div>
+      <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${photoUrl}" alt="" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
       <div class="ad-body">
         <div class="ad-title">${f['Titre']||'Sans titre'}</div>
         <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
@@ -867,11 +903,25 @@ function renderList() {
 }
 
 function renderMarkers() {
-  Object.values(markers).forEach(m => map.removeLayer(m));
+  new Set(Object.values(markers)).forEach(m => map.removeLayer(m));
   markers = {};
+  const byCoord = new Map();
   filteredRecords.forEach(record => {
-    const m = createMarker(record);
-    if (m) markers[record.id] = m;
+    const f = record.fields;
+    const lat = parseFloat(f['Latitude']), lng = parseFloat(f['Longitude']);
+    if (isNaN(lat) || isNaN(lng)) return;
+    const key = `${lat.toFixed(5)}|${lng.toFixed(5)}`;
+    if (!byCoord.has(key)) byCoord.set(key, { lat, lng, records: [] });
+    byCoord.get(key).records.push(record);
+  });
+  byCoord.forEach(({ lat, lng, records }) => {
+    if (records.length === 1) {
+      const m = createMarker(records[0]);
+      if (m) markers[records[0].id] = m;
+    } else {
+      const m = createGroupMarker(lat, lng, records);
+      if (m) records.forEach(r => { markers[r.id] = m; });
+    }
   });
 }
 
@@ -1092,8 +1142,11 @@ async function init() {
     renderMarkers();
   } catch(err) {
     document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Vérifiez votre clé API</span></div>`;
-    console.error(err);
   }
+  // Les URLs signées Airtable expirent en ~2h — on rafraîchit avant expiry
+  setInterval(async () => {
+    try { allRecords = await fetchAnnonces(); applyFilters(); } catch(e) {}
+  }, 90 * 60 * 1000);
 }
 init();
 </script>
