@@ -265,6 +265,8 @@
   .chip-trouve { --chip-color: #7c3aed; }
   .chip-trouve.active { background: #7c3aed; border-color: #7c3aed; }
   .tag-dist { background: #f0fdf8; color: #0d7a55; border: 1px solid #a7f3d0; font-size: 10px; }
+  .tag-perdu { background: #fef2f2; color: #dc2626; }
+  .tag-trouve { background: #f5f3ff; color: #7c3aed; }
 
   @media (max-width: 680px) {
     .filters-bar-2 { padding: 6px 12px; }
@@ -343,46 +345,6 @@
   /* ================================
      RESPONSIVE — mobile ≤ 680px
   ================================ */
-  /* USER MENU */
-  .user-menu { position: relative; }
-  .user-btn {
-    display: flex; align-items: center; gap: 7px;
-    padding: 5px 10px 5px 5px;
-    border: 1px solid var(--border); border-radius: 20px;
-    background: var(--white); cursor: pointer;
-    font-family: var(--font-body); font-size: 13px; color: var(--text);
-    transition: all 0.15s;
-  }
-  .user-btn:hover { border-color: var(--green); background: var(--green-light); }
-  .user-avatar {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--green); color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; flex-shrink: 0;
-    overflow: hidden;
-  }
-  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .user-dropdown {
-    display: none; position: absolute; top: calc(100% + 6px); right: 0;
-    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.10); min-width: 170px; z-index: 1000;
-    overflow: hidden;
-  }
-  .user-dropdown.open { display: block; }
-  .user-dropdown-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px; font-size: 13px; color: var(--text);
-    cursor: pointer; transition: background 0.12s; border: none;
-    background: transparent; width: 100%; font-family: var(--font-body);
-    text-align: left;
-  }
-  .user-dropdown-item:hover { background: var(--green-light); color: var(--green-dark); }
-  .user-dropdown-item.danger:hover { background: #fdf0ee; color: var(--error, #c0392b); }
-  .dropdown-divider { height: 1px; background: var(--border); }
-  #headerAuth { display: flex; align-items: center; gap: 8px; }
-
-
   /* USER MENU */
   .user-menu { position: relative; }
   .user-btn {
@@ -538,6 +500,7 @@
     <button class="chip active" data-val="">Toutes</button>
     <button class="chip" data-val="Chien">🐕 Chien</button>
     <button class="chip" data-val="Chat">🐈 Chat</button>
+    <button class="chip" data-val="Cheval">🐴 Cheval</button>
     <button class="chip" data-val="Poisson">🐟 Poisson</button>
     <button class="chip" data-val="Oiseau">🦜 Oiseau</button>
     <button class="chip" data-val="Rongeur">🐇 Rongeur</button>
@@ -649,7 +612,7 @@ const BASE_ID = 'appepwMYbNUv2k3f9';
 const TABLE_NAME = 'Annonces';
 
 const ESPECE_EMOJI = {
-  'Chien':'🐕','Chat':'🐈','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
+  'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
   'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
   'Insecte':'🐛','Araignée':'🕷️','Plante':'🌿','Autre':'🔵'
 };
@@ -815,8 +778,8 @@ async function fetchAnnonces() {
 }
 
 function formatPrice(val, type) {
-  if (!val && (type === 'A donner' || type === 'À donner')) return { text: 'Don gratuit', cls: 'don' };
-  if (!val && (type === 'A adopter' || type === 'À adopter')) return { text: 'Adoption', cls: 'gratuit' };
+  if (type === 'A donner' || type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
+  if (type === 'A adopter' || type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
   if (!val) return { text: 'Prix non précisé', cls: '' };
   const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
   return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
@@ -877,7 +840,7 @@ function renderList() {
     const photoUrl = f['Photos']?.[0]?.url || null;
     const isDonType = f['Type_annonce']==='A donner' || f['Type_annonce']==='À donner';
     const isAdopterType = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
-    const typeClass = isDonType?'tag-don':isAdopterType?'tag-adoption':'tag-vente';
+    const typeClass = isDonType?'tag-don':isAdopterType?'tag-adoption':f['Type_annonce']==='Perdu'?'tag-perdu':f['Type_annonce']==='Trouvé'?'tag-trouve':'tag-vente';
     const typeLabel = isDonType?'Don':isAdopterType?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
     // Distance badge
     let distBadge = '';
@@ -960,8 +923,6 @@ function applyFilters() {
   const sliderStep = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
   if (geoCenter && sliderStep > 0 && sliderStep < GEO_STEPS.length - 1) {
     const km = GEO_STEPS[sliderStep];
-    console.log(`[Geo filter] centre=${JSON.stringify(geoCenter)} rayon=${km}km sur ${results.length} annonces`);
-    const before = results.length;
     results = results.filter(r => {
       const latRaw = r.fields['Latitude'], lngRaw = r.fields['Longitude'];
       const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw || '').replace(',', '.'));
@@ -971,7 +932,6 @@ function applyFilters() {
       const dist = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
       return dist <= km;
     });
-    console.log(`[Geo filter] → ${results.length}/${before} annonces dans le rayon`);
   }
   // sliderStep === GEO_STEPS.length - 1 → France entière, pas de filtre distance
 
@@ -1119,14 +1079,6 @@ async function init() {
   initGeoSlider();
   try {
     allRecords = await fetchAnnonces();
-    console.log('[allRecords count]', allRecords.length);
-    console.log('[Sample fields]', allRecords.slice(0,3).map(r => ({
-      titre: r.fields['Titre'],
-      visible: r.fields['Visible'],
-      type: r.fields['Type_annonce'],
-      lat: r.fields['Latitude'],
-      lng: r.fields['Longitude']
-    })));
     filteredRecords = allRecords;
 
     // fitBounds AVANT renderList/renderMarkers pour éviter que Leaflet
