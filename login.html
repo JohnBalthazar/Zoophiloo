@@ -823,6 +823,9 @@ async function doGoogleSignIn() {
   provider.addScope('profile');
   try {
     const result = await auth.signInWithPopup(provider);
+    // Bloquer onAuthStateChanged IMMÉDIATEMENT avant tout autre await
+    _googleCguPending = true;
+
     const user   = result.user;
     const isNew  = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
 
@@ -832,7 +835,7 @@ async function doGoogleSignIn() {
       localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
     }
 
-    // Vérifier si CGU déjà acceptées
+    // Vérifier si CGU déjà acceptées (le await ici peut laisser onAuthStateChanged passer — protégé par le flag)
     let cguAccepted = false;
     if (!isNew) {
       try {
@@ -842,6 +845,7 @@ async function doGoogleSignIn() {
     }
 
     if (cguAccepted) {
+      _googleCguPending = false;
       redirectAfterLogin();
     } else {
       showGoogleCguModal(user, isNew);
