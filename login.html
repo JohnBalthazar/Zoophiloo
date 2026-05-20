@@ -512,6 +512,35 @@ function redirectAfterLogin() {
   window.location.href = (next && /^[a-z\-]+\.html$/.test(next)) ? next : 'index.html';
 }
 
+// ── Handle Google redirect result (retour après signInWithRedirect) ──
+auth.getRedirectResult().then(result => {
+  if (!result || !result.user) return;
+  const user = result.user;
+  if (user.displayName) {
+    const parts = user.displayName.trim().split(/\s+/);
+    localStorage.setItem('zph_prenom', parts[0] || '');
+    localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
+  }
+  const isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
+  if (isNew) {
+    const parts = (user.displayName || '').trim().split(/\s+/);
+    db.collection('users').doc(user.uid).set({
+      prenom:       parts[0] || '',
+      nom:          parts.slice(1).join(' ') || '',
+      email:        user.email,
+      cgu_accepted: false,
+      cgu_date:     null,
+      created_at:   firebase.firestore.Timestamp.fromDate(new Date())
+    });
+  }
+  redirectAfterLogin();
+}).catch(e => {
+  if (e.code && e.code !== 'auth/no-auth-event') {
+    const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
+    showError(panel, firebaseError(e.code));
+  }
+});
+
 // ── Redirect if already logged in ──
 auth.onAuthStateChanged(user => {
   if (user) redirectAfterLogin();
@@ -693,31 +722,14 @@ async function doSignUp() {
   }
 }
 
-// ── Google Sign In ──
+// ── Google Sign In (redirect flow — plus fiable que popup) ──
 async function doGoogleSignIn() {
   clearAlerts();
   const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('email');
+  provider.addScope('profile');
   try {
-    const cred = await auth.signInWithPopup(provider);
-    // Sauvegarder prénom/nom depuis le displayName Google
-    if (cred.user.displayName) {
-      const parts = cred.user.displayName.trim().split(/\s+/);
-      localStorage.setItem('zph_prenom', parts[0] || '');
-      localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
-    }
-    // Créer le document Firestore si c'est la première connexion Google
-    if (cred.additionalUserInfo && cred.additionalUserInfo.isNewUser) {
-      const parts = (cred.user.displayName || '').trim().split(/\s+/);
-      await db.collection('users').doc(cred.user.uid).set({
-        prenom:       parts[0] || '',
-        nom:          parts.slice(1).join(' ') || '',
-        email:        cred.user.email,
-        cgu_accepted: false, // Google OAuth : CGU non explicitement acceptées
-        cgu_date:     null,
-        created_at:   firebase.firestore.Timestamp.fromDate(new Date())
-      });
-    }
-    redirectAfterLogin();
+    await auth.signInWithRedirect(provider);
   } catch(e) {
     const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
     showError(panel, firebaseError(e.code));
