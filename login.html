@@ -554,14 +554,12 @@ function redirectAfterLogin() {
 }
 
 // ── Google CGU modal state ──
-let _googleUser      = null;
-let _googleIsNew     = false;
-let _googleCguPending = false; // empêche onAuthStateChanged de rediriger pendant le modal
+let _googleUser  = null;
+let _googleIsNew = false;
 
 function showGoogleCguModal(user, isNew) {
-  _googleUser       = user;
-  _googleIsNew      = isNew;
-  _googleCguPending = true;
+  _googleUser  = user;
+  _googleIsNew = isNew;
   document.getElementById('googleCguDateDisplay').textContent =
     new Date().toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
   const overlay = document.getElementById('googleCguOverlay');
@@ -614,15 +612,17 @@ async function acceptGoogleCgu() {
 }
 
 async function cancelGoogleCgu() {
-  _googleCguPending = false;
   await auth.signOut();
   document.getElementById('googleCguOverlay').style.display = 'none';
   document.body.style.overflow = '';
 }
 
-// ── Redirect si déjà connecté (bloqué si le modal CGU Google est ouvert) ──
-auth.onAuthStateChanged(user => {
-  if (_googleCguPending) return;
+// ── Redirect si déjà connecté — vérification unique au chargement ──
+// On se désabonne immédiatement après le premier appel afin que les
+// événements ultérieurs (signInWithPopup, signOut…) ne déclenchent
+// jamais de redirection intempestive.
+let _unsubInitAuth = auth.onAuthStateChanged(user => {
+  if (_unsubInitAuth) { _unsubInitAuth(); _unsubInitAuth = null; }
   if (user) redirectAfterLogin();
 });
 
@@ -823,9 +823,6 @@ async function doGoogleSignIn() {
   provider.addScope('profile');
   try {
     const result = await auth.signInWithPopup(provider);
-    // Bloquer onAuthStateChanged IMMÉDIATEMENT avant tout autre await
-    _googleCguPending = true;
-
     const user   = result.user;
     const isNew  = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
 
@@ -835,7 +832,6 @@ async function doGoogleSignIn() {
       localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
     }
 
-    // Vérifier si CGU déjà acceptées (le await ici peut laisser onAuthStateChanged passer — protégé par le flag)
     let cguAccepted = false;
     if (!isNew) {
       try {
@@ -845,7 +841,6 @@ async function doGoogleSignIn() {
     }
 
     if (cguAccepted) {
-      _googleCguPending = false;
       redirectAfterLogin();
     } else {
       showGoogleCguModal(user, isNew);
