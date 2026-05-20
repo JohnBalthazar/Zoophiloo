@@ -1225,7 +1225,16 @@ document.addEventListener('click', e => {
 async function doSignOut() {
   await auth.signOut();
 }
-auth.onAuthStateChanged(user => renderHeaderAuth(user));
+auth.onAuthStateChanged(user => {
+  renderHeaderAuth(user);
+  if (user) {
+    const lat = parseFloat(localStorage.getItem('zph_lat'));
+    const lng = parseFloat(localStorage.getItem('zph_lng'));
+    if (!isNaN(lat) && !isNaN(lng) && map) {
+      map.flyTo([lat, lng], 11, { duration: 1.5 });
+    }
+  }
+});
 </script>
 </body>
 </html>

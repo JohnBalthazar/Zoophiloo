@@ -150,6 +150,20 @@
     .page { padding: 20px 14px 48px; }
     .card { padding: 18px; }
   }
+
+  /* ADDRESS AUTOCOMPLETE */
+  .addr-wrap { position: relative; }
+  .addr-drop { position: absolute; top: calc(100% + 3px); left: 0; right: 0; background: var(--white); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.10); z-index: 200; overflow: hidden; display: none; }
+  .addr-drop.open { display: block; }
+  .addr-opt { padding: 9px 12px; font-size: 13px; color: var(--text); cursor: pointer; border-bottom: 1px solid var(--border); line-height: 1.4; }
+  .addr-opt:last-child { border-bottom: none; }
+  .addr-opt:hover { background: var(--green-light); color: var(--green-dark); }
+  .addr-opt strong { font-weight: 500; }
+  .addr-opt small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .addr-confirm { margin-top: 6px; font-size: 12px; color: var(--green-dark); display: none; align-items: center; gap: 5px; }
+  .addr-confirm.show { display: flex; }
+  .addr-loading { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin .6s linear infinite; display: none; }
+  .addr-loading.show { display: block; }
 </style>
 </head>
 <body>
@@ -229,8 +243,16 @@
       <input type="tel" id="telephone" placeholder="06 00 00 00 00" maxlength="20">
     </div>
     <div class="form-group">
-      <label>Adresse (optionnel)</label>
-      <input type="text" id="adresse" placeholder="5 rue de la République, Lyon">
+      <label>Adresse</label>
+      <div class="addr-wrap">
+        <input type="text" id="adresse" placeholder="5 rue de la République, Lyon" autocomplete="off">
+        <div class="addr-loading" id="addrLoader"></div>
+        <div class="addr-drop" id="addrDrop"></div>
+      </div>
+      <div class="addr-confirm" id="addrConfirm">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="addrConfirmText"></span>
+      </div>
     </div>
     <div class="form-footer">
       <button class="btn-primary" id="btnCoords" onclick="saveCoordonnees()">
@@ -395,6 +417,9 @@ let currentUser        = null;
 let isPasswordProvider = false;
 let isGoogleProvider   = false;
 let _pendingAction     = null; // 'email' | 'password' | 'delete'
+let _addrLat           = null;
+let _addrLng           = null;
+let _addrTimer         = null;
 
 // ── Auth guard ──
 auth.onAuthStateChanged(async user => {
@@ -458,25 +483,94 @@ async function loadCoordonnees() {
     if (snap.exists) {
       const d = snap.data();
       document.getElementById('telephone').value = d.telephone || '';
-      document.getElementById('adresse').value   = d.adresse   || '';
+      if (d.adresse) {
+        document.getElementById('adresse').value = d.adresse;
+        _addrLat = d.lat || null;
+        _addrLng = d.lng || null;
+        if (_addrLat && _addrLng) showAddrConfirm(d.adresse.split(',').slice(0,2).join(','));
+      }
     }
   } catch(e) { /* Firestore non activé ou hors ligne — silencieux */ }
 }
 
 async function saveCoordonnees() {
   const btn = document.getElementById('btnCoords');
+  const adresse = document.getElementById('adresse').value.trim();
+  if (adresse && (_addrLat === null || _addrLng === null)) {
+    showError('Sélectionnez une adresse dans la liste de suggestions pour valider les coordonnées GPS.');
+    return;
+  }
   setLoading(btn, true);
   try {
-    await db.collection('users').doc(currentUser.uid).set({
+    const payload = {
       telephone: document.getElementById('telephone').value.trim(),
-      adresse:   document.getElementById('adresse').value.trim(),
+      adresse,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    };
+    if (_addrLat !== null) { payload.lat = _addrLat; payload.lng = _addrLng; }
+    await db.collection('users').doc(currentUser.uid).set(payload, { merge: true });
+    if (_addrLat !== null) {
+      localStorage.setItem('zph_lat', _addrLat);
+      localStorage.setItem('zph_lng', _addrLng);
+    }
     showSuccess('Coordonnées enregistrées.');
   } catch(e) {
     showError('Impossible d\'enregistrer : ' + (e.message || e.code));
   } finally { setLoading(btn, false); }
 }
+
+// ── Address autocomplete (Nominatim) ──
+function showAddrConfirm(label) {
+  document.getElementById('addrConfirmText').textContent = label;
+  document.getElementById('addrConfirm').classList.add('show');
+}
+
+async function geocodeAddr(q) {
+  const loader = document.getElementById('addrLoader');
+  const drop   = document.getElementById('addrDrop');
+  loader.classList.add('show');
+  try {
+    const res  = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&countrycodes=fr&addressdetails=1`,
+      { headers: { 'Accept-Language': 'fr' } }
+    );
+    const data = await res.json();
+    drop.innerHTML = '';
+    if (!data.length) { drop.classList.remove('open'); return; }
+    data.forEach((r, i) => {
+      const a    = r.address || {};
+      const main = [a.road, a.house_number].filter(Boolean).join(' ') || r.display_name.split(',')[0];
+      const sub  = [a.postcode, a.city || a.town || a.village || a.county].filter(Boolean).join(' ');
+      const el   = document.createElement('div');
+      el.className = 'addr-opt';
+      el.innerHTML = `<strong>${escHtml(main)}</strong><small>${escHtml(sub)}</small>`;
+      el.addEventListener('mousedown', e => {
+        e.preventDefault();
+        _addrLat = parseFloat(r.lat);
+        _addrLng = parseFloat(r.lon);
+        document.getElementById('adresse').value = r.display_name;
+        drop.classList.remove('open');
+        showAddrConfirm([main, sub].filter(Boolean).join(', '));
+      });
+      drop.appendChild(el);
+    });
+    drop.classList.add('open');
+  } catch(e) { /* silencieux */ }
+  finally { loader.classList.remove('show'); }
+}
+
+document.getElementById('adresse').addEventListener('input', function() {
+  _addrLat = null; _addrLng = null;
+  document.getElementById('addrConfirm').classList.remove('show');
+  clearTimeout(_addrTimer);
+  const q = this.value.trim();
+  if (q.length < 3) { document.getElementById('addrDrop').classList.remove('open'); return; }
+  _addrTimer = setTimeout(() => geocodeAddr(q), 400);
+});
+
+document.getElementById('adresse').addEventListener('blur', () => {
+  setTimeout(() => document.getElementById('addrDrop').classList.remove('open'), 150);
+});
 
 // ── MODAL ──
 function openModal(action) {
