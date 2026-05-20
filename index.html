@@ -299,6 +299,8 @@
   .ad-price { font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 5px; }
   .ad-price.don { color: var(--orange); }
   .ad-price.gratuit { color: var(--blue); }
+  .ad-price.perdu { color: #dc2626; }
+  .ad-price.trouve { color: #7c3aed; }
   .ad-tags { display: flex; gap: 4px; }
   .tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.03em; }
   .tag-vente { background: #e6f7f0; color: #0f7a52; }
@@ -334,9 +336,13 @@
   .custom-marker { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
   .marker-bubble { background: var(--green); color: white; border: 2px solid white; border-radius: 20px; padding: 3px 8px; font-family: var(--font-body); font-size: 11px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.18); white-space: nowrap; transition: transform 0.15s; }
   .marker-bubble.don { background: var(--orange); }
+  .marker-bubble.perdu { background: #dc2626; }
+  .marker-bubble.trouve { background: #7c3aed; }
   .marker-bubble.active { background: var(--text); transform: scale(1.1); }
   .marker-pin { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--green); margin-top: -1px; }
   .marker-pin.don { border-top-color: var(--orange); }
+  .marker-pin.perdu { border-top-color: #dc2626; }
+  .marker-pin.trouve { border-top-color: #7c3aed; }
   .marker-pin.active { border-top-color: var(--text); }
   .marker-bubble.multi { background: var(--blue); }
   .marker-pin.multi { border-top-color: var(--blue); }
@@ -784,6 +790,8 @@ async function fetchAnnonces() {
 function formatPrice(val, type) {
   if (type === 'A donner' || type === 'À donner') return { text: 'Don gratuit', cls: 'don' };
   if (type === 'A adopter' || type === 'À adopter') return { text: 'Adoption', cls: 'gratuit' };
+  if (type === 'Perdu')  return { text: 'Perdu',  cls: 'perdu' };
+  if (type === 'Trouvé') return { text: 'Trouvé', cls: 'trouve' };
   if (!val) return { text: 'Prix non précisé', cls: '' };
   const num = parseFloat(String(val).replace(/[^0-9.]/g,''));
   return { text: isNaN(num) ? val : num.toLocaleString('fr-FR') + ' €', cls: '' };
@@ -805,8 +813,8 @@ function createMarker(record) {
   const icon = L.divIcon({
     className: '',
     html: `<div class="custom-marker">
-      <div class="marker-bubble ${isDon?'don':''}" id="bubble-${record.id}">${emoji} ${price.text}</div>
-      <div class="marker-pin ${isDon?'don':''}"></div>
+      <div class="marker-bubble ${price.cls||''}" id="bubble-${record.id}">${emoji} ${price.text}</div>
+      <div class="marker-pin ${price.cls||''}"></div>
     </div>`,
     iconAnchor: [40, 28]
   });
