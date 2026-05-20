@@ -318,7 +318,7 @@ let photoFiles = []; // {file, previewUrl, cloudUrl}
 
 // ── Auth guard ──
 auth.onAuthStateChanged(user => {
-  if (!user) { window.location.href = 'login.html'; return; }
+  if (!user) { window.location.href = 'login.html?next=deposer.html'; return; }
   currentUser = user;
   document.getElementById('email_contact').value = user.email;
 });

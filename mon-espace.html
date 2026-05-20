@@ -262,7 +262,7 @@ let recordToDelete = null;
 
 // ── Auth guard ──
 auth.onAuthStateChanged(user => {
-  if (!user) { window.location.href = 'login.html'; return; }
+  if (!user) { window.location.href = 'login.html?next=mon-espace.html'; return; }
   currentUser = user;
   document.getElementById('userInfo').textContent = user.displayName || user.email;
   loadAnnonces();

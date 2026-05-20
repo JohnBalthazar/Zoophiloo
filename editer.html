@@ -169,7 +169,7 @@ const params = new URLSearchParams(window.location.search);
 recordId = params.get('id');
 
 auth.onAuthStateChanged(user => {
-  if (!user) { window.location.href = 'login.html'; return; }
+  if (!user) { window.location.href = 'login.html?next=mon-espace.html'; return; }
   currentUser = user;
   if (!recordId) { window.location.href = 'mon-espace.html'; return; }
   loadRecord();
