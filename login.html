@@ -432,10 +432,14 @@
             <span id="rule-digit">○ 1 chiffre</span>
           </div>
         </div>
-        <!-- Case CGU — uniquement sur le panneau inscription -->
+        <!-- Cases obligatoires — inscription -->
+        <label class="cgu-row" id="ageRow" for="ageCheck">
+          <input type="checkbox" id="ageCheck">
+          <span>J'atteste avoir <strong>18 ans ou plus</strong> et résider en France. <span style="color:var(--green)">*</span></span>
+        </label>
         <label class="cgu-row" id="cguRow" for="cguCheck">
           <input type="checkbox" id="cguCheck">
-          <span>J'ai lu et j'accepte les <a href="cgu.html" target="_blank" onclick="event.stopPropagation()">Conditions Générales d'Utilisation</a> <span style="color:var(--green)">*</span></span>
+          <span>J'ai lu et j'accepte les <a href="cgu.html" target="_blank" onclick="event.stopPropagation()">Conditions Générales d'Utilisation</a> — je suis seul(e) responsable des annonces que je publie. <span style="color:var(--green)">*</span></span>
         </label>
         <button class="btn-submit" id="btnSignup" onclick="doSignUp()">
           <div class="spinner"></div>
@@ -480,6 +484,43 @@
   </div><!-- /auth-container -->
 </main>
 
+<!-- ── MODAL CGU GOOGLE (bloquant, non-fermable) ── -->
+<div id="googleCguOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:900;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:var(--white);border-radius:16px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.2);overflow:hidden;max-height:90vh;overflow-y:auto;">
+    <div style="padding:24px 24px 0;">
+      <div style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:4px;">Dernière étape 🐾</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Pour créer votre compte Zoophiloo via Google, veuillez accepter nos conditions.</div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12.5px;line-height:1.7;color:var(--text-muted);">
+        <strong style="display:block;margin-bottom:8px;color:var(--text);font-size:13px;">Points essentiels :</strong>
+        <ul style="padding-left:16px;">
+          <li>Zoophiloo met en relation des particuliers — il n'est <strong>pas partie aux transactions</strong>.</li>
+          <li>Le dépôt d'annonce est réservé aux <strong>personnes majeures (18 ans+)</strong> résidant en France.</li>
+          <li>Les annonces sur espèces protégées, trafic ou maltraitance sont <strong>interdites</strong>.</li>
+          <li>Vous êtes <strong>seul(e) responsable</strong> du contenu que vous publiez.</li>
+          <li>La date et l'heure d'acceptation sont <strong>archivées à des fins de preuve légale</strong>.</li>
+        </ul>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:11px 13px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;font-size:13px;background:var(--bg);" id="googleAgeRowEl">
+        <input type="checkbox" id="googleAgeCheck" style="margin-top:2px;accent-color:var(--green);flex-shrink:0;">
+        <span>J'atteste avoir <strong>18 ans ou plus</strong> et résider en France. <span style="color:var(--green)">*</span></span>
+      </label>
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:11px 13px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;font-size:13px;background:var(--bg);" id="googleCguRowEl">
+        <input type="checkbox" id="googleCguCheck" style="margin-top:2px;accent-color:var(--green);flex-shrink:0;">
+        <span>J'ai lu et j'accepte les <a href="cgu.html" target="_blank" style="color:var(--green);font-weight:500;" onclick="event.stopPropagation()">Conditions Générales d'Utilisation</a> — je suis seul(e) responsable de mes annonces. <span style="color:var(--green)">*</span></span>
+      </label>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">📅 Date d'acceptation enregistrée : <span id="googleCguDateDisplay"></span></div>
+      <div id="googleCguErrMsg" style="display:none;font-size:12px;color:var(--error);padding:8px 0;"></div>
+    </div>
+    <div style="padding:16px 24px 20px;background:var(--bg);border-top:1px solid var(--border);margin-top:16px;">
+      <button id="btnGoogleCgu" onclick="acceptGoogleCgu()" class="btn-submit" style="width:100%;">
+        <div class="spinner"></div>
+        <span class="btn-label">J'accepte et je continue</span>
+      </button>
+      <button onclick="cancelGoogleCgu()" style="width:100%;padding:8px;margin-top:8px;border:none;background:transparent;font-size:12px;color:var(--text-muted);cursor:pointer;font-family:var(--font-body);">Annuler et se déconnecter</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   <a href="index.html">← Retour aux annonces</a>
 </footer>
@@ -512,28 +553,93 @@ function redirectAfterLogin() {
   window.location.href = (next && /^[a-z\-]+\.html$/.test(next)) ? next : 'index.html';
 }
 
+// ── Google CGU modal state ──
+let _googleUser = null;
+let _googleIsNew = false;
+
+function showGoogleCguModal(user, isNew) {
+  _googleUser = user;
+  _googleIsNew = isNew;
+  document.getElementById('googleCguDateDisplay').textContent =
+    new Date().toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
+  const overlay = document.getElementById('googleCguOverlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+async function acceptGoogleCgu() {
+  const cguOk = document.getElementById('googleCguCheck').checked;
+  const ageOk = document.getElementById('googleAgeCheck').checked;
+  const errEl = document.getElementById('googleCguErrMsg');
+  if (!ageOk || !cguOk) {
+    errEl.style.display = 'block';
+    errEl.textContent = !ageOk
+      ? 'Vous devez attester avoir 18 ans ou plus.'
+      : 'Vous devez accepter les Conditions Générales d\'Utilisation.';
+    return;
+  }
+  errEl.style.display = 'none';
+  const btn = document.getElementById('btnGoogleCgu');
+  btn.disabled = true; btn.classList.add('loading');
+  const now = new Date();
+  const parts = (_googleUser.displayName || '').trim().split(/\s+/);
+  try {
+    const payload = {
+      email:         _googleUser.email,
+      cgu_accepted:  true,
+      cgu_version:   '1.0',
+      cgu_date:      firebase.firestore.Timestamp.fromDate(now),
+      age_confirmed: true,
+    };
+    if (_googleIsNew) {
+      payload.prenom     = parts[0] || '';
+      payload.nom        = parts.slice(1).join(' ') || '';
+      payload.created_at = firebase.firestore.Timestamp.fromDate(now);
+    }
+    await db.collection('users').doc(_googleUser.uid).set(payload, { merge: true });
+    localStorage.setItem('zph_cgu_accepted', 'true');
+    localStorage.setItem('zph_cgu_date',     now.toISOString());
+    if (_googleUser.displayName) {
+      localStorage.setItem('zph_prenom', parts[0] || '');
+      localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
+    }
+    redirectAfterLogin();
+  } catch(e) {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Une erreur est survenue. Réessayez.';
+    btn.disabled = false; btn.classList.remove('loading');
+  }
+}
+
+async function cancelGoogleCgu() {
+  await auth.signOut();
+  document.getElementById('googleCguOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 // ── Handle Google redirect result (retour après signInWithRedirect) ──
-auth.getRedirectResult().then(result => {
+auth.getRedirectResult().then(async result => {
   if (!result || !result.user) return;
-  const user = result.user;
-  if (user.displayName) {
-    const parts = user.displayName.trim().split(/\s+/);
-    localStorage.setItem('zph_prenom', parts[0] || '');
-    localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
+  const user  = result.user;
+  const isNew = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
+  // Vérifier si CGU déjà acceptées (reconnexion Google d'un compte existant)
+  let cguAccepted = false;
+  if (!isNew) {
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      cguAccepted = snap.exists && snap.data().cgu_accepted === true;
+    } catch(e) {}
   }
-  const isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
-  if (isNew) {
-    const parts = (user.displayName || '').trim().split(/\s+/);
-    db.collection('users').doc(user.uid).set({
-      prenom:       parts[0] || '',
-      nom:          parts.slice(1).join(' ') || '',
-      email:        user.email,
-      cgu_accepted: false,
-      cgu_date:     null,
-      created_at:   firebase.firestore.Timestamp.fromDate(new Date())
-    });
+  if (cguAccepted) {
+    if (user.displayName) {
+      const p = user.displayName.trim().split(/\s+/);
+      localStorage.setItem('zph_prenom', p[0] || '');
+      localStorage.setItem('zph_nom',    p.slice(1).join(' ') || '');
+    }
+    redirectAfterLogin();
+  } else {
+    showGoogleCguModal(user, isNew);
   }
-  redirectAfterLogin();
 }).catch(e => {
   if (e.code && e.code !== 'auth/no-auth-event') {
     const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
@@ -681,6 +787,17 @@ async function doSignUp() {
   const pwCheck = validatePassword(password);
   if (!pwCheck.ok) { showError('signup', pwCheck.msg); return; }
 
+  // ── Vérification âge ──
+  const ageCheck = document.getElementById('ageCheck');
+  const ageRow   = document.getElementById('ageRow');
+  if (!ageCheck.checked) {
+    ageRow.classList.add('cgu-error');
+    showError('signup', 'Vous devez attester avoir 18 ans ou plus.');
+    ageRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  ageRow.classList.remove('cgu-error');
+
   // ── Vérification CGU ──
   if (!cguCheck.checked) {
     cguRow.classList.add('cgu-error');
@@ -703,9 +820,11 @@ async function doSignUp() {
       prenom,
       nom,
       email,
-      cgu_accepted: true,
-      cgu_date:     firebase.firestore.Timestamp.fromDate(new Date()),
-      created_at:   firebase.firestore.Timestamp.fromDate(new Date())
+      cgu_accepted:  true,
+      cgu_version:   '1.0',
+      cgu_date:      firebase.firestore.Timestamp.fromDate(new Date()),
+      age_confirmed: true,
+      created_at:    firebase.firestore.Timestamp.fromDate(new Date())
     });
 
     // Sauvegarde locale pour pré-remplissage des formulaires d'annonce
