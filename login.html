@@ -554,12 +554,14 @@ function redirectAfterLogin() {
 }
 
 // ── Google CGU modal state ──
-let _googleUser = null;
-let _googleIsNew = false;
+let _googleUser      = null;
+let _googleIsNew     = false;
+let _googleCguPending = false; // empêche onAuthStateChanged de rediriger pendant le modal
 
 function showGoogleCguModal(user, isNew) {
-  _googleUser = user;
-  _googleIsNew = isNew;
+  _googleUser       = user;
+  _googleIsNew      = isNew;
+  _googleCguPending = true;
   document.getElementById('googleCguDateDisplay').textContent =
     new Date().toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' });
   const overlay = document.getElementById('googleCguOverlay');
@@ -612,58 +614,15 @@ async function acceptGoogleCgu() {
 }
 
 async function cancelGoogleCgu() {
+  _googleCguPending = false;
   await auth.signOut();
   document.getElementById('googleCguOverlay').style.display = 'none';
   document.body.style.overflow = '';
 }
 
-// ── Redirect guard : bloque onAuthStateChanged pendant getRedirectResult ──
-let _redirectChecking = true; // true jusqu'à ce que getRedirectResult soit résolu
-let _cachedUser       = null; // utilisateur mis en cache si onAuthStateChanged arrive en premier
-
-auth.getRedirectResult().then(async result => {
-  _redirectChecking = false;
-
-  if (!result || !result.user) {
-    // Pas de retour Google — si un utilisateur était déjà connecté, on le redirige
-    if (_cachedUser) redirectAfterLogin();
-    return;
-  }
-
-  const user  = result.user;
-  const isNew = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
-
-  // Vérifier si CGU déjà acceptées (reconnexion Google compte existant)
-  let cguAccepted = false;
-  if (!isNew) {
-    try {
-      const snap = await db.collection('users').doc(user.uid).get();
-      cguAccepted = snap.exists && snap.data().cgu_accepted === true;
-    } catch(e) {}
-  }
-
-  if (cguAccepted) {
-    if (user.displayName) {
-      const p = user.displayName.trim().split(/\s+/);
-      localStorage.setItem('zph_prenom', p[0] || '');
-      localStorage.setItem('zph_nom',    p.slice(1).join(' ') || '');
-    }
-    redirectAfterLogin();
-  } else {
-    showGoogleCguModal(user, isNew);
-  }
-}).catch(e => {
-  _redirectChecking = false;
-  if (_cachedUser) redirectAfterLogin();
-  if (e.code && e.code !== 'auth/no-auth-event') {
-    const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
-    showError(panel, firebaseError(e.code));
-  }
-});
-
-// ── Redirect si déjà connecté (bloqué pendant la vérification du redirect Google) ──
+// ── Redirect si déjà connecté (bloqué si le modal CGU Google est ouvert) ──
 auth.onAuthStateChanged(user => {
-  if (_redirectChecking) { _cachedUser = user; return; }
+  if (_googleCguPending) return;
   if (user) redirectAfterLogin();
 });
 
@@ -856,17 +815,45 @@ async function doSignUp() {
   }
 }
 
-// ── Google Sign In (redirect flow — plus fiable que popup) ──
+// ── Google Sign In ──
 async function doGoogleSignIn() {
   clearAlerts();
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.addScope('email');
   provider.addScope('profile');
   try {
-    await auth.signInWithRedirect(provider);
+    const result = await auth.signInWithPopup(provider);
+    const user   = result.user;
+    const isNew  = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
+
+    if (user.displayName) {
+      const parts = user.displayName.trim().split(/\s+/);
+      localStorage.setItem('zph_prenom', parts[0] || '');
+      localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
+    }
+
+    // Vérifier si CGU déjà acceptées
+    let cguAccepted = false;
+    if (!isNew) {
+      try {
+        const snap = await db.collection('users').doc(user.uid).get();
+        cguAccepted = snap.exists && snap.data().cgu_accepted === true;
+      } catch(e) {}
+    }
+
+    if (cguAccepted) {
+      redirectAfterLogin();
+    } else {
+      showGoogleCguModal(user, isNew);
+    }
   } catch(e) {
-    const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
-    showError(panel, firebaseError(e.code));
+    if (e.code === 'auth/popup-blocked') {
+      const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
+      showError(panel, 'La fenêtre Google a été bloquée. Autorisez les pop-ups pour ce site puis réessayez.');
+    } else if (e.code !== 'auth/popup-closed-by-user') {
+      const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
+      showError(panel, firebaseError(e.code));
+    }
   }
 }
 
