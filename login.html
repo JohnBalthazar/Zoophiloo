@@ -617,12 +617,23 @@ async function cancelGoogleCgu() {
   document.body.style.overflow = '';
 }
 
-// ── Handle Google redirect result (retour après signInWithRedirect) ──
+// ── Redirect guard : bloque onAuthStateChanged pendant getRedirectResult ──
+let _redirectChecking = true; // true jusqu'à ce que getRedirectResult soit résolu
+let _cachedUser       = null; // utilisateur mis en cache si onAuthStateChanged arrive en premier
+
 auth.getRedirectResult().then(async result => {
-  if (!result || !result.user) return;
+  _redirectChecking = false;
+
+  if (!result || !result.user) {
+    // Pas de retour Google — si un utilisateur était déjà connecté, on le redirige
+    if (_cachedUser) redirectAfterLogin();
+    return;
+  }
+
   const user  = result.user;
   const isNew = !!(result.additionalUserInfo && result.additionalUserInfo.isNewUser);
-  // Vérifier si CGU déjà acceptées (reconnexion Google d'un compte existant)
+
+  // Vérifier si CGU déjà acceptées (reconnexion Google compte existant)
   let cguAccepted = false;
   if (!isNew) {
     try {
@@ -630,6 +641,7 @@ auth.getRedirectResult().then(async result => {
       cguAccepted = snap.exists && snap.data().cgu_accepted === true;
     } catch(e) {}
   }
+
   if (cguAccepted) {
     if (user.displayName) {
       const p = user.displayName.trim().split(/\s+/);
@@ -641,14 +653,17 @@ auth.getRedirectResult().then(async result => {
     showGoogleCguModal(user, isNew);
   }
 }).catch(e => {
+  _redirectChecking = false;
+  if (_cachedUser) redirectAfterLogin();
   if (e.code && e.code !== 'auth/no-auth-event') {
     const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
     showError(panel, firebaseError(e.code));
   }
 });
 
-// ── Redirect if already logged in ──
+// ── Redirect si déjà connecté (bloqué pendant la vérification du redirect Google) ──
 auth.onAuthStateChanged(user => {
+  if (_redirectChecking) { _cachedUser = user; return; }
   if (user) redirectAfterLogin();
 });
 
