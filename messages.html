@@ -535,27 +535,34 @@ authOverlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index
 authOverlay.innerHTML = '<div class="loading-spinner"></div>';
 document.body.appendChild(authOverlay);
 
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-  auth.onAuthStateChanged(user => {
+// Guard contre le null transitoire de Firebase Auth au chargement
+let _authRedirectTimer = null;
+auth.onAuthStateChanged(user => {
+  if (_authRedirectTimer) { clearTimeout(_authRedirectTimer); _authRedirectTimer = null; }
+
+  if (user) {
     authOverlay.remove();
-    if (!user) {
-      window.location.href = 'login.html?next=' + encodeURIComponent(location.href);
-      return;
-    }
     currentUser = user;
 
-    // Upsert email index + patch email placeholders
     db.collection('users').doc(user.uid).set({
       email: user.email, displayName: user.displayName || ''
     }, { merge: true });
     patchEmailToUid(user);
 
-    // Check if we should auto-open a conversation from URL
     const params = new URLSearchParams(location.search);
     const openConvId = params.get('conv');
-
     listenConversations(openConvId);
-  });
+    return;
+  }
+
+  // null reçu — on attend 800ms avant de rediriger
+  // (Firebase peut émettre null brièvement avant de restaurer la session)
+  _authRedirectTimer = setTimeout(() => {
+    if (!auth.currentUser) {
+      authOverlay.remove();
+      window.location.href = 'login.html?next=' + encodeURIComponent(location.href);
+    }
+  }, 800);
 });
 
 /* ────────────────────────── PATCH EMAIL→UID ────────────────────────── */
@@ -587,9 +594,14 @@ function listenConversations(autoOpenId = null) {
 
   unsubConvs = db.collection('conversations')
     .where('participants', 'array-contains', currentUser.uid)
-    .orderBy('lastMessageAt', 'desc')
     .onSnapshot(snapshot => {
-      conversations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      conversations = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .sort((a, b) => {
+          const ta = a.lastMessageAt?.toMillis?.() ?? 0;
+          const tb = b.lastMessageAt?.toMillis?.() ?? 0;
+          return tb - ta;
+        });
       renderConvList();
 
       // Count unread
