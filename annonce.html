@@ -918,17 +918,17 @@ async function startConversation() {
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
 
   try {
-    // Check for existing conversation (same buyer + same ad)
+    // Check for existing conversation — single where clause (no composite index needed)
     const snap = await db.collection('conversations')
-      .where('adId', '==', _adState.id)
       .where('participants', 'array-contains', _authUser.uid)
       .get();
 
     let convId = null;
     if (!snap.empty) {
       const existing = snap.docs.find(d => {
-        const parts = d.data().participants || [];
-        return parts.includes(_adState.sellerEmail);
+        const data = d.data();
+        const parts = data.participants || [];
+        return data.adId === _adState.id && parts.includes(_adState.sellerEmail);
       });
       if (existing) convId = existing.id;
     }

@@ -550,7 +550,7 @@ const db   = firebase.firestore();
 
 function redirectAfterLogin() {
   const next = new URLSearchParams(window.location.search).get('next');
-  window.location.href = (next && /^[a-z\-]+\.html$/.test(next)) ? next : 'index.html';
+  window.location.href = (next && /^[a-z\-]+\.html(\?[^#]*)?$/.test(next)) ? next : 'index.html';
 }
 
 // ── Google CGU modal state ──
