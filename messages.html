@@ -535,28 +535,25 @@ authOverlay.style.cssText = 'position:fixed;inset:0;background:var(--bg);z-index
 authOverlay.innerHTML = '<div class="loading-spinner"></div>';
 document.body.appendChild(authOverlay);
 
-// Set LOCAL persistence explicitly so session survives page navigation
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-  auth.onAuthStateChanged(user => {
-    authOverlay.remove();
-    if (!user) {
-      window.location.href = 'login.html?next=' + encodeURIComponent(location.href);
-      return;
-    }
-    currentUser = user;
+auth.onAuthStateChanged(user => {
+  authOverlay.remove();
+  if (!user) {
+    window.location.href = 'login.html?next=' + encodeURIComponent(location.href);
+    return;
+  }
+  currentUser = user;
 
-    // Upsert email index + patch email placeholders
-    db.collection('users').doc(user.uid).set({
-      email: user.email, displayName: user.displayName || ''
-    }, { merge: true });
-    patchEmailToUid(user);
+  // Upsert email index + patch email placeholders
+  db.collection('users').doc(user.uid).set({
+    email: user.email, displayName: user.displayName || ''
+  }, { merge: true });
+  patchEmailToUid(user);
 
-    // Check if we should auto-open a conversation from URL
-    const params = new URLSearchParams(location.search);
-    const openConvId = params.get('conv');
+  // Check if we should auto-open a conversation from URL
+  const params = new URLSearchParams(location.search);
+  const openConvId = params.get('conv');
 
-    listenConversations(openConvId);
-  });
+  listenConversations(openConvId);
 });
 
 /* ────────────────────────── PATCH EMAIL→UID ────────────────────────── */
