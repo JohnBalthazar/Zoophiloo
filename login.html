@@ -373,6 +373,10 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span id="signinErrorMsg"></span>
         </div>
+        <div class="alert alert-success" id="signinSuccess">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="signinSuccessMsg"></span>
+        </div>
         <div class="form-group">
           <label>Adresse e-mail</label>
           <input type="email" id="signinEmail" placeholder="vous@exemple.fr" autocomplete="email">
@@ -547,6 +551,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+auth.languageCode = 'fr';
 
 function redirectAfterLogin() {
   const next = new URLSearchParams(window.location.search).get('next');
@@ -622,6 +627,24 @@ async function cancelGoogleCgu() {
   document.getElementById('googleCguOverlay').style.display = 'none';
   document.body.style.overflow = '';
 }
+
+// ── Bannière succès après reset mot de passe ──
+(function() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('reset') === 'success') {
+    const el = document.getElementById('signinSuccess');
+    const msgEl = document.getElementById('signinSuccessMsg');
+    if (el && msgEl) {
+      msgEl.textContent = 'Mot de passe modifié ! Vous pouvez maintenant vous connecter.';
+      el.classList.add('show');
+    }
+    history.replaceState(null, '', 'login.html');
+  }
+  if (sessionStorage.getItem('openReset') === '1') {
+    sessionStorage.removeItem('openReset');
+    showPanel('reset');
+  }
+})();
 
 // ── Redirect si déjà connecté — vérification unique au chargement ──
 // On se désabonne immédiatement après le premier appel afin que les
@@ -870,7 +893,7 @@ async function doResetPassword() {
   setLoading('btnReset', true);
   try {
     await auth.sendPasswordResetEmail(email);
-    showSuccess('reset', 'E-mail envoyé ! Vérifiez votre boîte mail (et les spams).');
+    showSuccess('reset', 'Lien envoyé ! Vérifiez votre boîte mail. Si vous ne voyez rien sous 2 minutes, regardez dans le dossier Spams / Indésirables.');
     document.getElementById('resetEmail').value = '';
   } catch(e) {
     showError('reset', firebaseError(e.code));
