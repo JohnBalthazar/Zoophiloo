@@ -315,6 +315,39 @@
   .loading-spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* Message report button */
+  .msg-wrap.theirs { position: relative; }
+  .msg-report-btn {
+    position: absolute; left: calc(100% + 6px); bottom: 18px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); padding: 2px 4px; border-radius: 4px;
+    opacity: 0; transition: opacity 0.15s;
+    font-size: 14px; line-height: 1;
+  }
+  .msg-wrap.theirs:hover .msg-report-btn { opacity: 1; }
+  .msg-wrap.theirs .msg-report-btn:hover { color: #c0392b; background: #fdf0ee; }
+
+  /* Report modal */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.45); z-index: 500;
+    align-items: center; justify-content: center;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-box {
+    background: var(--white); border-radius: 14px;
+    padding: 24px; width: 320px; max-width: calc(100vw - 32px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.18);
+  }
+  .modal-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+  .report-option { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+  .report-option:hover { background: var(--bg); }
+  .report-option input { accent-color: var(--green); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
+  .modal-btn { flex: 1; padding: 9px; border-radius: 8px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); }
+  .modal-btn.primary { background: #c0392b; color: white; border-color: #c0392b; }
+  .modal-btn.primary:disabled { opacity: .5; cursor: not-allowed; }
+
   /* Toast */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -420,6 +453,21 @@
   </div>
 </div>
 
+<!-- MODAL SIGNALEMENT MESSAGE -->
+<div class="modal-backdrop" id="reportMsgModal">
+  <div class="modal-box">
+    <div class="modal-title">⚠️ Signaler ce message</div>
+    <label class="report-option"><input type="radio" name="msg_report" value="spam"> Spam ou publicité</label>
+    <label class="report-option"><input type="radio" name="msg_report" value="harcelement"> Harcèlement</label>
+    <label class="report-option"><input type="radio" name="msg_report" value="arnaque"> Arnaque ou escroquerie</label>
+    <label class="report-option"><input type="radio" name="msg_report" value="inapproprie"> Contenu inapproprié</label>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeReportMsgModal()">Annuler</button>
+      <button class="modal-btn primary" id="reportMsgSubmitBtn" onclick="submitMsgReport()">Signaler</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- Firebase -->
@@ -441,10 +489,38 @@ const db   = firebase.firestore();
 
 /* ────────────────────────── STATE ────────────────────────── */
 let currentUser    = null;
-let conversations  = [];    // local cache
+let conversations  = [];
 let activeConvId   = null;
-let unsubMessages  = null;  // Firestore listener
+let unsubMessages  = null;
 let unsubConvs     = null;
+
+// Rate limiting: max 5 messages per 10 seconds
+const RATE_WINDOW_MS = 10000;
+const RATE_MAX       = 5;
+let _msgTimestamps   = [];
+
+// Contact-info filter (strict mode — like LeBonCoin)
+const CONTACT_PATTERNS = [
+  /\b(?:\+33|0033|0)[1-9](?:[\s.\-]?\d{2}){4}\b/,
+  /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/,
+  /https?:\/\/[^\s]+/i,
+  /\bwww\.[^\s]+/i,
+  /\b(?:whatsapp|telegram|signal|snapchat|instagram|facebook|messenger|wechat|viber)\b/i
+];
+
+function containsContactInfo(text) {
+  return CONTACT_PATTERNS.some(rx => rx.test(text));
+}
+
+function isRateLimited() {
+  const now = Date.now();
+  _msgTimestamps = _msgTimestamps.filter(t => now - t < RATE_WINDOW_MS);
+  return _msgTimestamps.length >= RATE_MAX;
+}
+
+function recordSend() {
+  _msgTimestamps.push(Date.now());
+}
 
 const ESPECE_EMOJI = {
   'Chien':'🐕','Chat':'🐈','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
@@ -686,6 +762,7 @@ function renderMessages(messages) {
           <div class="msg-bubble">${escHtml(msg.text)}</div>
           <div class="msg-time">${timeStr}</div>
         </div>
+        ${!isMine ? `<button class="msg-report-btn" title="Signaler" onclick="openReportMsgModal('${msg.id}','${escHtml(msg.senderId)}')">⋯</button>` : ''}
       </div>`;
   });
 
@@ -698,6 +775,16 @@ async function sendMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if (!text || !activeConvId) return;
+
+  if (isRateLimited()) {
+    showToast('Vous envoyez trop vite — patientez quelques secondes.', 'error');
+    return;
+  }
+
+  if (containsContactInfo(text)) {
+    showToast('Coordonnées non autorisées dans les messages (téléphone, email, lien…)', 'error');
+    return;
+  }
 
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
@@ -732,6 +819,7 @@ async function sendMessage() {
       readBy
     });
 
+    recordSend();
   } catch(e) {
     console.error(e);
     showToast('Erreur d\'envoi', 'error');
@@ -802,6 +890,54 @@ function showToast(msg, type = '') {
   t.textContent = msg; t.className = `toast ${type} show`;
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+/* ────────────────────────── MESSAGE REPORTING ────────────────────────── */
+let _reportMsgId     = null;
+let _reportSenderId  = null;
+
+function openReportMsgModal(msgId, senderId) {
+  _reportMsgId    = msgId;
+  _reportSenderId = senderId;
+  document.querySelectorAll('input[name="msg_report"]').forEach(r => r.checked = false);
+  document.getElementById('reportMsgSubmitBtn').disabled = false;
+  document.getElementById('reportMsgModal').classList.add('open');
+}
+
+function closeReportMsgModal() {
+  document.getElementById('reportMsgModal').classList.remove('open');
+  _reportMsgId = _reportSenderId = null;
+}
+
+async function submitMsgReport() {
+  const reason = document.querySelector('input[name="msg_report"]:checked')?.value;
+  if (!reason) { showToast('Choisissez une raison.', 'error'); return; }
+
+  const btn = document.getElementById('reportMsgSubmitBtn');
+  btn.disabled = true;
+
+  try {
+    await db.collection('reports').add({
+      type:         'message',
+      messageId:    _reportMsgId,
+      convId:       activeConvId,
+      reportedUid:  _reportSenderId,
+      reporterUid:  currentUser.uid,
+      reason,
+      createdAt:    firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeReportMsgModal();
+    showToast('Signalement envoyé. Merci.', 'success');
+  } catch(e) {
+    console.error(e);
+    btn.disabled = false;
+    showToast('Erreur lors du signalement.', 'error');
+  }
+}
+
+// Close modal on backdrop click
+document.getElementById('reportMsgModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('reportMsgModal')) closeReportMsgModal();
+});
 </script>
 </body>
 </html>

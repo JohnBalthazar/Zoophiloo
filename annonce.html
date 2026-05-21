@@ -390,6 +390,7 @@
         </div>
       </div>
       <div class="contact-actions" id="contactActions"></div>
+      <div id="msgBtnContainer"></div>
     </div>
 
     <div class="location-card">
@@ -609,6 +610,17 @@ function renderPage(record) {
   document.getElementById('adDateBadge').textContent = f['Date_creation']
     ? 'Annonce du ' + formatDate(f['Date_creation']) : '';
 
+  // Store ad state for messaging
+  _adState = {
+    id: record.id,
+    title,
+    espece: f['Espèce'] || '',
+    photo: f['Photos']?.[0]?.thumbnails?.small?.url || f['Photos']?.[0]?.url || '',
+    sellerEmail: f['Email_contact'] || '',
+    sellerName: fullName
+  };
+  updateMsgBtn();
+
   const actions = [];
   if (f['Telephone']) {
     actions.push(`<a href="tel:${f['Telephone']}" class="btn-contact btn-contact-primary">
@@ -777,6 +789,7 @@ document.addEventListener('keydown', e => {
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
@@ -788,6 +801,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db   = firebase.firestore();
 
 // ── User menu styles (injected via JS to keep annonce.html self-contained) ──
 const styleEl = document.createElement('style');
@@ -859,7 +873,91 @@ document.addEventListener('click', e => {
   }
 });
 async function doSignOut() { await auth.signOut(); }
-auth.onAuthStateChanged(user => renderHeaderAuth(user));
+auth.onAuthStateChanged(user => {
+  _authUser = user;
+  renderHeaderAuth(user);
+  updateMsgBtn();
+});
+
+// ── Messaging ──
+let _adState   = null;
+let _authUser  = null;
+
+function updateMsgBtn() {
+  const container = document.getElementById('msgBtnContainer');
+  if (!container || !_adState) return;
+
+  if (_authUser && _authUser.email === _adState.sellerEmail) {
+    container.innerHTML = `<p style="font-size:12px;color:var(--text-muted);text-align:center;padding-top:4px">C'est votre annonce.</p>`;
+    return;
+  }
+
+  if (!_authUser) {
+    container.innerHTML = `
+      <button class="btn-contact btn-contact-secondary" onclick="loginToMessage()" style="margin-top:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Se connecter pour écrire
+      </button>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <button class="btn-contact btn-contact-primary" onclick="startConversation()" id="msgBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Envoyer un message
+    </button>`;
+}
+
+function loginToMessage() {
+  window.location.href = 'login.html?next=' + encodeURIComponent(location.href);
+}
+
+async function startConversation() {
+  if (!_adState || !_authUser) return;
+  const btn = document.getElementById('msgBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  try {
+    // Check for existing conversation (same buyer + same ad)
+    const snap = await db.collection('conversations')
+      .where('adId', '==', _adState.id)
+      .where('participants', 'array-contains', _authUser.uid)
+      .get();
+
+    let convId = null;
+    if (!snap.empty) {
+      const existing = snap.docs.find(d => {
+        const parts = d.data().participants || [];
+        return parts.includes(_adState.sellerEmail);
+      });
+      if (existing) convId = existing.id;
+    }
+
+    if (!convId) {
+      const now = firebase.firestore.FieldValue.serverTimestamp();
+      const buyerName = _authUser.displayName || _authUser.email.split('@')[0];
+      const ref = await db.collection('conversations').add({
+        adId:      _adState.id,
+        adTitle:   _adState.title,
+        adEspece:  _adState.espece,
+        adPhoto:   _adState.photo,
+        participantA: { uid: _authUser.uid,          name: buyerName,           email: _authUser.email },
+        participantB: { uid: _adState.sellerEmail,   name: _adState.sellerName, email: _adState.sellerEmail },
+        participants: [_authUser.uid, _adState.sellerEmail],
+        lastMessage:   '',
+        lastMessageAt: now,
+        createdAt:     now,
+        readBy: { [_authUser.uid]: true }
+      });
+      convId = ref.id;
+    }
+
+    window.location.href = 'messages.html?conv=' + convId;
+  } catch(e) {
+    console.error(e);
+    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer un message'; }
+  }
+}
 </script>
 </body>
 </html>
