@@ -240,6 +240,17 @@
     @media (max-width: 800px) {
       #sb { width: 200px; --sb-w: 200px; }
     }
+
+    /* ── LOGS ── */
+    .bdg-log-del     { background: var(--red-light);    color: var(--red);    }
+    .bdg-log-mod     { background: var(--blue-light);   color: var(--blue);   }
+    .bdg-log-ok      { background: #f0fdf4;             color: #16a34a;       }
+    .bdg-log-account { background: var(--orange-light); color: var(--orange); }
+    .delay-good  { color: #16a34a; font-weight: 600; }
+    .delay-med   { color: var(--orange); font-weight: 600; }
+    .delay-bad   { color: var(--red);    font-weight: 600; }
+    .logs-info-bar { display:flex;align-items:flex-start;gap:10px;padding:13px 16px;border-radius:8px;
+                     background:var(--blue-light);border:1px solid #bfdbfe;margin-bottom:16px;font-size:12.5px; }
   </style>
 </head>
 <body>
@@ -273,6 +284,7 @@
       <a href="#" data-sec="users"><span class="ico">👥</span>Utilisateurs</a>
       <div class="sb-section">Système</div>
       <a href="#" data-sec="settings"><span class="ico">⚙️</span>Paramètres</a>
+      <a href="#" data-sec="logs"><span class="ico">📜</span>Logs juridiques<span class="sb-badge" id="lBadge">!</span></a>
       <a href="index.html" target="_blank" style="margin-top:4px;opacity:.7"><span class="ico">🏠</span>Retour au site</a>
     </nav>
     <div class="sb-foot">
@@ -310,6 +322,12 @@
           <div class="stat-card"><div class="stat-icon ico-blue">🚫</div><div><div class="stat-val" id="stBanned">—</div><div class="stat-lbl">Comptes bannis</div></div></div>
           <div class="stat-card"><div class="stat-icon ico-green">📋</div><div><div class="stat-val" id="stAds">—</div><div class="stat-lbl">Annonces publiées</div></div></div>
         </div>
+        <div id="purgeAlertOv" style="display:none" class="alert-bar warn">
+          <span style="font-size:18px">⏰</span>
+          <div class="alert-bar-text" id="purgeAlertOvTxt"></div>
+          <button class="alert-bar-btn" onclick="goSec('logs')">Gérer les logs →</button>
+        </div>
+
         <div class="ov-grid">
           <div class="ov-panel">
             <div class="ov-panel-hdr">
@@ -422,7 +440,103 @@
 
         <div class="set-card" style="border-left:3px solid var(--orange)">
           <h3>⚠️ Note de sécurité</h3>
-          <p class="set-desc" style="margin-bottom:0">Pour une protection maximale, configurez les <strong>règles Firestore</strong> dans la console Firebase afin de restreindre la lecture des collections <code>reports</code>, <code>adminConfig</code> et <code>users</code> aux seuls admins (champ <code>isAdmin: true</code>).</p>
+          <p class="set-desc" style="margin-bottom:0">Pour une protection maximale, configurez les <strong>règles Firestore</strong> dans la console Firebase afin de restreindre la lecture des collections <code>reports</code>, <code>adminConfig</code>, <code>users</code> et <code>moderation_logs</code> aux seuls admins (champ <code>isAdmin: true</code>).</p>
+        </div>
+
+        <div class="set-card" style="border-left:3px solid var(--blue)">
+          <h3>📜 Logs juridiques (LCEN / RGPD)</h3>
+          <p class="set-desc">Chaque action de modération (suppression annonce, bannissement, traitement signalement…) est enregistrée dans la collection Firestore <code>moderation_logs</code>.</p>
+          <div class="db-row"><span style="color:var(--muted)">Collection Firestore</span><strong><code>moderation_logs</code></strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Rétention minimale (LCEN)</span><strong style="color:var(--green)">1 an</strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Rétention maximale (RGPD)</span><strong>3 ans</strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Champ TTL auto-suppression</span><strong><code>expiresAt</code></strong></div>
+          <p class="fhint" style="margin-top:10px">Activer la suppression automatique : <strong>Firebase Console → Firestore → Indexes → TTL → champ <code>expiresAt</code> sur <code>moderation_logs</code></strong>.</p>
+          <p class="fhint" style="margin-top:6px">Consultez et exportez les logs via l'onglet <strong>Logs juridiques</strong> du menu.</p>
+        </div>
+      </section>
+
+      <!-- ═══ LOGS JURIDIQUES ═══ -->
+      <section class="sec" id="secLogs">
+        <div class="sec-hdr">
+          <div>
+            <div class="sec-title">Journaux de modération</div>
+            <div class="sec-sub" id="logsSub">Chargement…</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" onclick="exportLogs()" style="font-size:13px">⬇ CSV</button>
+            <button class="btn btn-ghost" onclick="exportPDF()"  style="font-size:13px;border-color:#fca5a5;color:var(--red)">⬇ PDF officiel</button>
+          </div>
+        </div>
+
+        <div id="purgeAlertLogs" style="display:none" class="alert-bar danger">
+          <span style="font-size:18px">⏰</span>
+          <div class="alert-bar-text" id="purgeAlertLogsTxt"></div>
+          <button class="alert-bar-btn" onclick="document.getElementById('purgeCard').scrollIntoView({behavior:'smooth',block:'center'})">Purger maintenant →</button>
+        </div>
+
+        <div class="logs-info-bar">
+          <span style="font-size:20px;flex-shrink:0">⚖️</span>
+          <div>
+            <strong>Conservation RGPD / LCEN</strong> — Logs conservés <strong>minimum 1 an</strong> (preuve en cas de litige LCEN) · supprimés automatiquement après <strong>3 ans</strong> via TTL Firestore (champ <code>expiresAt</code>).<br>
+            Le <strong>délai de traitement</strong> est enregistré à chaque action — c'est le critère clé de la responsabilité LCEN sur les signalements. Ces données sont confidentielles (accès admin uniquement).
+          </div>
+        </div>
+
+        <div class="fbar">
+          <div class="ftabs">
+            <button class="ftab on" data-lf="all"         onclick="setLF('all',this)">Tous</button>
+            <button class="ftab"    data-lf="annonce"     onclick="setLF('annonce',this)">Annonces</button>
+            <button class="ftab"    data-lf="signalement" onclick="setLF('signalement',this)">Signalements</button>
+            <button class="ftab"    data-lf="compte"      onclick="setLF('compte',this)">Comptes</button>
+          </div>
+          <div class="fsearch">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Rechercher dans les logs…" id="logsSearch" oninput="renderLogs()">
+          </div>
+        </div>
+
+        <div class="tcard" id="logsTableWrap">
+          <div class="tloading"><div class="tspinner"></div><div style="font-size:13px;margin-top:6px">Chargement…</div></div>
+        </div>
+
+        <div class="set-card" style="margin-top:22px;border-left:3px solid var(--blue)">
+          <h3>🗄️ Politique de rétention RGPD</h3>
+          <p class="set-desc">Les logs contiennent des données personnelles (uid, adId). Conformément au RGPD et à la LCEN&nbsp;:</p>
+          <div class="db-row"><span style="color:var(--muted)">Durée minimale de conservation</span><strong style="color:var(--green)">1 an</strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Durée maximale de conservation</span><strong>3 ans</strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Suppression automatique</span><strong>TTL Firestore · champ <code>expiresAt</code></strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Total logs enregistrés</span><strong id="logsCount">—</strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Logs expirés (> 3 ans)</span><strong id="logsExpiredCount">—</strong></div>
+          <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-danger" onclick="purgeExpiredLogs()" id="btnPurge" style="font-size:13px">
+              🗑 Purger les logs expirés (&gt; 3 ans)
+            </button>
+            <span style="font-size:12px;color:var(--muted)">À effectuer au moins une fois par an · obligation RGPD</span>
+          </div>
+          <p class="fhint" style="margin-top:12px">💡 Suppression automatique possible en activant le plan Blaze Firebase + TTL sur le champ <code>expiresAt</code>.</p>
+          <p class="fhint" style="margin-top:6px">Mentionnez ces logs dans votre <strong>Politique de confidentialité</strong> (finalité : obligation légale LCEN · durée max : 3 ans).</p>
+        </div>
+
+        <div class="set-card" id="purgeCard" style="margin-top:14px;border-left:3px solid var(--orange)">
+          <h3>⏰ Rappel de purge automatique</h3>
+          <p class="set-desc">Configurez la fréquence à laquelle vous souhaitez être rappelé de vérifier et purger les logs expirés. La prochaine date est recalculée automatiquement après chaque purge.</p>
+          <div class="frow">
+            <label class="flbl" for="purgeInterval">Fréquence de rappel</label>
+            <select id="purgeInterval" class="finput" style="max-width:230px">
+              <option value="3">Tous les 3 mois</option>
+              <option value="6">Tous les 6 mois</option>
+              <option value="12" selected>Tous les ans</option>
+              <option value="24">Tous les 2 ans</option>
+            </select>
+            <p class="fhint">Recommandé : une fois par an minimum (RGPD).</p>
+          </div>
+          <div class="db-row"><span style="color:var(--muted)">Prochain rappel prévu</span><strong id="nextPurgeDate">Non configuré</strong></div>
+          <div class="db-row"><span style="color:var(--muted)">Dernier rappel déclenché</span><span id="lastPurgeDate" style="font-size:13px;color:var(--muted)">—</span></div>
+          <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+            <button class="btn-save" onclick="savePurgeConfig()" style="font-size:13px">💾 Enregistrer</button>
+            <button class="btn btn-ghost" onclick="snoozePurge(3)" style="font-size:13px" id="btnSnooze3">⏭ Reporter de 3 mois</button>
+            <button class="btn btn-ghost" onclick="snoozePurge(6)" style="font-size:13px">⏭ Reporter de 6 mois</button>
+          </div>
         </div>
       </section>
 
@@ -516,11 +630,12 @@ function goSec(sec) {
   _curSec = sec;
   document.querySelectorAll('[data-sec]').forEach(a => a.classList.toggle('active', a.dataset.sec === sec));
   document.querySelectorAll('.sec').forEach(s => s.classList.toggle('on', s.id === 'sec' + sec.charAt(0).toUpperCase() + sec.slice(1)));
-  const titles = {overview:'Vue d\'ensemble', reports:'Signalements', annonces:'Annonces', users:'Utilisateurs', settings:'Paramètres'};
+  const titles = {overview:'Vue d\'ensemble', reports:'Signalements', annonces:'Annonces', users:'Utilisateurs', settings:'Paramètres', logs:'Logs juridiques'};
   document.getElementById('hdrTitle').textContent = titles[sec] || sec;
   if (sec === 'annonces' && !_annonces.length) loadAnnonces();
   if (sec === 'users'    && !_users.length)    loadUsers();
   if (sec === 'settings') refreshSettingsUI();
+  if (sec === 'logs'     && !_logs.length)     loadLogs();
 }
 document.querySelectorAll('[data-sec]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); goSec(el.dataset.sec); }));
 
@@ -540,7 +655,7 @@ auth.onAuthStateChanged(async user => {
   document.getElementById('sbName').textContent = nm;
   document.getElementById('sbAv').textContent   = ini(nm);
   await loadThresh();
-  await Promise.all([loadReports(), loadBannedCount()]);
+  await Promise.all([loadReports(), loadBannedCount(), loadPurgeConfig()]);
 });
 function showDenied() {
   document.getElementById('authSpinner').style.display = 'none';
@@ -747,19 +862,61 @@ function renderMsgReports() {
 
 // ── DISMISS ──
 async function dismissOne(id) {
+  const rep = _reports.find(r=>r.id===id) || _msgReps.find(r=>r.id===id);
+  const createdMs = rep?.createdAt?.toMillis ? rep.createdAt.toMillis() : null;
+  const delai_ms  = createdMs ? Date.now() - createdMs : null;
   try {
-    await db.collection('reports').doc(id).update({status:'dismissed'});
+    await db.collection('reports').doc(id).update({
+      status:'dismissed',
+      resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      resolvedBy: _me?.uid || null
+    });
     const a=_reports.findIndex(r=>r.id===id); if(a>=0) _reports[a].status='dismissed';
     const b=_msgReps.findIndex(r=>r.id===id);  if(b>=0) _msgReps[b].status='dismissed';
+    await logAction({
+      action:                  'traitement_signalement',
+      decision:                'ignoré (conservé)',
+      targetType:              rep?.type === 'message' ? 'message' : 'annonce',
+      targetId:                id,
+      signalement_id:          id,
+      adId:                    rep?.adId || null,
+      adTitle:                 rep?.adTitle || null,
+      motif_signalement:       rep?.reason || null,
+      uid_signalant:           rep?.reporterUid || null,
+      delai_traitement_ms:     delai_ms,
+      delai_traitement_humain: formatDuration(delai_ms)
+    });
     renderReports(); renderMsgReports(); updateBadge(); toast('Signalement ignoré.','i');
   } catch(e) { toast('Erreur: '+e.message,'e'); }
 }
 async function dismissAll(adId) {
-  const ids = _reports.filter(r => r.adId === adId).map(r => r.id);
+  const reps    = _reports.filter(r => r.adId === adId);
+  const ids     = reps.map(r => r.id);
+  const pending = reps.filter(r => !r.status || r.status === 'pending');
+  const oldestMs = pending.length
+    ? Math.min(...pending.map(r => r.createdAt?.toMillis ? r.createdAt.toMillis() : Date.now()))
+    : null;
+  const delai_ms = oldestMs ? Date.now() - oldestMs : null;
   try {
-    const batch=db.batch(); ids.forEach(id=>batch.update(db.collection('reports').doc(id),{status:'dismissed'}));
+    const batch=db.batch();
+    ids.forEach(id=>batch.update(db.collection('reports').doc(id),{
+      status:'dismissed',
+      resolvedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      resolvedBy: _me?.uid || null
+    }));
     await batch.commit();
     ids.forEach(id=>{ const r=_reports.find(r=>r.id===id); if(r) r.status='dismissed'; });
+    await logAction({
+      action:                  'traitement_signalement_masse',
+      decision:                'ignoré (conservé)',
+      targetType:              'annonce',
+      targetId:                adId,
+      adId:                    adId,
+      adTitle:                 reps[0]?.adTitle || '—',
+      nb_signalements:         reps.length,
+      delai_traitement_ms:     delai_ms,
+      delai_traitement_humain: formatDuration(delai_ms)
+    });
     renderReports(); updateBadge(); toast('Tous les signalements ignorés.','i');
   } catch(e) { toast('Erreur: '+e.message,'e'); }
 }
@@ -771,10 +928,16 @@ function cfmDelAd(adId, title) {
     icon:'🗑️', title:'Supprimer cette annonce ?',
     body:`L'annonce "${title}" sera supprimée définitivement d'Airtable. Les signalements seront marqués résolus.`,
     okLabel:'Supprimer', okCls:'btn-cfm-danger',
-    action: () => deleteAd(adId, reportIds)
+    action: () => deleteAd(adId, reportIds, title)
   });
 }
-async function deleteAd(adId, reportIds) {
+async function deleteAd(adId, reportIds, adTitle) {
+  // Calcul du délai LCEN : temps entre le 1er signalement en attente et maintenant
+  const pendingReps = _reports.filter(r => r.adId === adId && (!r.status || r.status === 'pending'));
+  const oldestMs = pendingReps.length
+    ? Math.min(...pendingReps.map(r => r.createdAt?.toMillis ? r.createdAt.toMillis() : Date.now()))
+    : null;
+  const delai_ms = oldestMs ? Date.now() - oldestMs : null;
   try {
     const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${adId}`,
       {method:'DELETE', headers:{Authorization:`Bearer ${AT_TOKEN}`}});
@@ -784,6 +947,17 @@ async function deleteAd(adId, reportIds) {
       reportIds.forEach(id=>batch.update(db.collection('reports').doc(id),{status:'resolved',resolvedAt:firebase.firestore.FieldValue.serverTimestamp(),resolvedBy:_me.uid}));
       await batch.commit();
     }
+    await logAction({
+      action:                   'suppression_annonce',
+      decision:                 'supprimé',
+      targetType:               'annonce',
+      targetId:                 adId,
+      adId:                     adId,
+      adTitle:                  adTitle || '—',
+      nb_signalements:          pendingReps.length || null,
+      delai_traitement_ms:      delai_ms,
+      delai_traitement_humain:  formatDuration(delai_ms)
+    });
     _reports  = _reports.filter(r=>r.adId!==adId);
     _annonces = _annonces.filter(a=>a.id!==adId);
     renderReports(); updateBadge(); renderAnnonces();
@@ -925,6 +1099,7 @@ function renderUsers() {
 async function banUser(uid, nm) {
   try {
     await db.collection('users').doc(uid).update({isBanned:true,bannedAt:firebase.firestore.FieldValue.serverTimestamp(),bannedBy:_me.uid});
+    await logAction({action:'bannissement_compte',decision:'banni',targetType:'compte',targetId:uid,uid_cible:uid,nom_cible:nm});
     const u=_users.find(u=>u.id===uid); if(u) u.isBanned=true;
     renderUsers(); document.getElementById('stBanned').textContent=_users.filter(u=>u.isBanned).length;
     toast(`${nm} a été banni.`,'s');
@@ -932,7 +1107,8 @@ async function banUser(uid, nm) {
 }
 async function unbanUser(uid, nm) {
   try {
-    await db.collection('users').doc(uid).update({isBanned:false});
+    await db.collection('users').doc(uid).update({isBanned:false,unbannedAt:firebase.firestore.FieldValue.serverTimestamp(),unbannedBy:_me.uid});
+    await logAction({action:'debannissement_compte',decision:'débanni',targetType:'compte',targetId:uid,uid_cible:uid,nom_cible:nm});
     const u=_users.find(u=>u.id===uid); if(u) u.isBanned=false;
     renderUsers(); document.getElementById('stBanned').textContent=_users.filter(u=>u.isBanned).length;
     toast(`${nm} a été débanni.`,'s');
@@ -941,6 +1117,7 @@ async function unbanUser(uid, nm) {
 async function makeAdmin(uid, nm) {
   try {
     await db.collection('users').doc(uid).update({isAdmin:true});
+    await logAction({action:'promotion_admin',decision:'admin',targetType:'compte',targetId:uid,uid_cible:uid,nom_cible:nm});
     const u=_users.find(u=>u.id===uid); if(u) u.isAdmin=true;
     renderUsers(); refreshSettingsUI(); toast(`${nm} est maintenant admin.`,'s');
   } catch(e) { toast('Erreur: '+e.message,'e'); }
@@ -948,12 +1125,15 @@ async function makeAdmin(uid, nm) {
 async function revokeAdmin(uid, nm) {
   try {
     await db.collection('users').doc(uid).update({isAdmin:false});
+    await logAction({action:'retrait_admin',decision:'membre',targetType:'compte',targetId:uid,uid_cible:uid,nom_cible:nm});
     const u=_users.find(u=>u.id===uid); if(u) u.isAdmin=false;
     renderUsers(); refreshSettingsUI(); toast(`${nm} n'est plus admin.`,'i');
   } catch(e) { toast('Erreur: '+e.message,'e'); }
 }
 async function deleteUser(uid, nm) {
   try {
+    // Log AVANT la suppression (pour garder la trace même si delete échoue)
+    await logAction({action:'suppression_compte',decision:'supprimé',targetType:'compte',targetId:uid,uid_cible:uid,nom_cible:nm,note:'Données Firestore supprimées — Firebase Auth à supprimer manuellement.'});
     await db.collection('users').doc(uid).delete();
     _users=_users.filter(u=>u.id!==uid); renderUsers();
     toast(`Données de ${nm} supprimées. (Compte Firebase Auth à supprimer manuellement si nécessaire.)`,'s');
@@ -1017,6 +1197,547 @@ function refreshSettingsUI() {
   }
 }
 
+// ── LOGS JURIDIQUES ──
+let _logs    = [];
+let _lFilter = 'all';
+
+/** Formate une durée en ms en texte lisible */
+function formatDuration(ms) {
+  if (!ms || ms <= 0) return '—';
+  const m = Math.floor(ms / 60000);
+  const h = Math.floor(ms / 3600000);
+  const d = Math.floor(ms / 86400000);
+  if (d >= 1)  return `${d} jour${d > 1 ? 's' : ''}`;
+  if (h >= 1)  return `${h}h${String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0')}`;
+  return `${m} min`;
+}
+
+/**
+ * Écrit une entrée dans la collection Firestore `moderation_logs`.
+ * Chaque log expire automatiquement après 3 ans (RGPD) via le champ `expiresAt`
+ * — activer le TTL Firestore sur ce champ dans la Firebase Console.
+ */
+async function logAction(data) {
+  if (!_me) return;
+  try {
+    const THREE_YEARS_MS = Math.floor(3 * 365.25 * 24 * 3600 * 1000);
+    await db.collection('moderation_logs').add({
+      timestamp:  firebase.firestore.FieldValue.serverTimestamp(),
+      adminUid:   _me.uid,
+      adminEmail: _me.email || null,
+      expiresAt:  firebase.firestore.Timestamp.fromDate(new Date(Date.now() + THREE_YEARS_MS)),
+      ...data
+    });
+  } catch(e) {
+    console.warn('[logAction] Écriture impossible:', e.message);
+  }
+}
+
+async function loadLogs() {
+  document.getElementById('logsTableWrap').innerHTML =
+    `<div class="tloading"><div class="tspinner"></div><div style="font-size:13px;margin-top:6px">Chargement…</div></div>`;
+  try {
+    const snap = await db.collection('moderation_logs').orderBy('timestamp','desc').limit(500).get();
+    _logs = snap.docs.map(d => ({id:d.id,...d.data()}));
+    document.getElementById('logsSub').textContent =
+      `${_logs.length} entrée${_logs.length !== 1 ? 's' : ''} · 500 max affichées`;
+    document.getElementById('logsCount').textContent = _logs.length + ' entrées';
+    renderLogs();
+    updateExpiredCount();
+    checkPurgeReminder(); // Mise à jour badge + bannières avec le vrai nombre de logs expirés
+  } catch(e) {
+    document.getElementById('logsTableWrap').innerHTML =
+      `<div class="empty"><div class="empty-ico">❌</div><h3>Erreur</h3><p>${esc(e.message)}</p></div>`;
+  }
+}
+
+function setLF(f, btn) {
+  _lFilter = f;
+  document.querySelectorAll('[data-lf]').forEach(b => b.classList.toggle('on', b.dataset.lf === f));
+  renderLogs();
+}
+
+function renderLogs() {
+  const q = (document.getElementById('logsSearch')?.value || '').toLowerCase();
+
+  const ANNONCE_ACTIONS     = ['suppression_annonce'];
+  const SIGNALEMENT_ACTIONS = ['traitement_signalement','traitement_signalement_masse'];
+  const COMPTE_ACTIONS      = ['bannissement_compte','debannissement_compte','suppression_compte','promotion_admin','retrait_admin'];
+
+  let list = _logs.filter(l => {
+    if (_lFilter === 'annonce'     && !ANNONCE_ACTIONS.includes(l.action))     return false;
+    if (_lFilter === 'signalement' && !SIGNALEMENT_ACTIONS.includes(l.action)) return false;
+    if (_lFilter === 'compte'      && !COMPTE_ACTIONS.includes(l.action))      return false;
+    if (q) {
+      const txt = `${l.action||''} ${l.decision||''} ${l.adTitle||''} ${l.nom_cible||''} ${l.uid_cible||''} ${l.adId||''} ${l.adminEmail||''} ${l.motif_signalement||''}`.toLowerCase();
+      if (!txt.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const ACTION_LABELS = {
+    suppression_annonce:          '🗑 Suppression annonce',
+    traitement_signalement:       '⚠️ Signalement traité',
+    traitement_signalement_masse: '⚠️ Signalements en masse',
+    bannissement_compte:          '🚫 Bannissement',
+    debannissement_compte:        '✓ Débannissement',
+    suppression_compte:           '🗑 Suppression compte',
+    promotion_admin:              '↑ Promotion admin',
+    retrait_admin:                '↓ Retrait admin',
+  };
+  const ACTION_CLS = {
+    suppression_annonce:          'bdg-log-del',
+    traitement_signalement:       'bdg-log-mod',
+    traitement_signalement_masse: 'bdg-log-account',
+    bannissement_compte:          'bdg-log-del',
+    debannissement_compte:        'bdg-log-ok',
+    suppression_compte:           'bdg-log-del',
+    promotion_admin:              'bdg-admin',
+    retrait_admin:                'bdg-log-account',
+  };
+
+  if (!list.length) {
+    document.getElementById('logsTableWrap').innerHTML =
+      `<div class="empty"><div class="empty-ico">📜</div><h3>Aucun log</h3><p>Aucune action enregistrée pour ce filtre.</p></div>`;
+    return;
+  }
+
+  let h = `<table class="atbl"><thead><tr>
+    <th>Date / heure</th>
+    <th>Action</th>
+    <th>Cible</th>
+    <th>Décision</th>
+    <th style="text-align:center">⏱ Délai LCEN</th>
+    <th>Signalements / Motif</th>
+    <th>Admin</th>
+  </tr></thead><tbody>`;
+
+  list.forEach(l => {
+    const ts = l.timestamp?.toDate ? l.timestamp.toDate() : null;
+    const dateStr = ts
+      ? ts.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'})
+        + '&nbsp;' + ts.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+      : '—';
+
+    const lbl = ACTION_LABELS[l.action] || l.action || '—';
+    const cls = ACTION_CLS[l.action]   || 'bdg-dismissed';
+
+    // Colonne "Cible"
+    let cible = '—';
+    if (l.adTitle)
+      cible = `<div style="font-weight:500;font-size:13px">${esc(l.adTitle)}</div>`
+            + `<div style="font-size:11px;color:var(--muted)">ID: ${esc((l.adId||'').slice(0,12))}…</div>`;
+    else if (l.nom_cible)
+      cible = `<div style="font-weight:500;font-size:13px">${esc(l.nom_cible)}</div>`
+            + `<div style="font-size:11px;color:var(--muted)">UID: ${esc((l.uid_cible||'').slice(0,14))}…</div>`;
+    else if (l.targetId)
+      cible = `<div style="font-size:12px;color:var(--muted)">${esc(l.targetId.slice(0,14))}…</div>`;
+
+    // Délai LCEN (coloré selon urgence)
+    const delai = l.delai_traitement_humain || formatDuration(l.delai_traitement_ms);
+    let delayCls = 'color:var(--muted)';
+    if (l.delai_traitement_ms != null) {
+      if      (l.delai_traitement_ms < 86400000)  delayCls = 'color:#16a34a;font-weight:600';   // < 24 h ✓
+      else if (l.delai_traitement_ms < 604800000) delayCls = 'color:var(--orange);font-weight:600'; // < 7 j
+      else                                          delayCls = 'color:var(--red);font-weight:600';   // ≥ 7 j ⚠
+    }
+
+    const sigCell = l.nb_signalements != null
+      ? `<span style="font-size:12.5px">${l.nb_signalements} signal.</span>`
+      : l.motif_signalement
+        ? `<span style="font-size:12px;color:var(--muted)">${esc(l.motif_signalement)}</span>`
+        : '—';
+
+    h += `<tr>
+      <td style="font-size:12px;white-space:nowrap">${dateStr}</td>
+      <td><span class="bdg ${cls}" style="font-size:11px;white-space:nowrap">${lbl}</span></td>
+      <td>${cible}</td>
+      <td style="font-size:13px;font-weight:500">${esc(l.decision||'—')}</td>
+      <td style="text-align:center"><span style="${delayCls}">${delai}</span></td>
+      <td>${sigCell}</td>
+      <td style="font-size:12px;color:var(--muted)">${esc((l.adminEmail||l.adminUid||'—').split('@')[0])}</td>
+    </tr>`;
+  });
+
+  h += '</tbody></table>';
+  document.getElementById('logsTableWrap').innerHTML = h;
+}
+
+// ── PURGE REMINDER ──
+let _purgeConfig = { interval: 12, nextAt: null, lastAt: null };
+
+async function loadPurgeConfig() {
+  try {
+    const d = await db.collection('adminConfig').doc('main').get();
+    if (d.exists) {
+      const data = d.data();
+      _purgeConfig.interval = data.purgeReminderInterval || 12;
+      _purgeConfig.nextAt   = data.nextPurgeReminderAt   || null;
+      _purgeConfig.lastAt   = data.lastPurgeAt           || null;
+    }
+  } catch(e) {}
+  applyPurgeConfig();
+}
+
+function applyPurgeConfig() {
+  const sel = document.getElementById('purgeInterval');
+  if (sel) sel.value = String(_purgeConfig.interval);
+
+  const nextEl = document.getElementById('nextPurgeDate');
+  if (nextEl) {
+    if (_purgeConfig.nextAt) {
+      const d = _purgeConfig.nextAt.toDate ? _purgeConfig.nextAt.toDate() : new Date(_purgeConfig.nextAt);
+      const isPast = d < new Date();
+      nextEl.innerHTML = d.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})
+        + (isPast ? ' <span style="color:var(--red);font-size:12px">(dépassé)</span>' : '');
+    } else {
+      nextEl.textContent = 'Non configuré — sera défini après enregistrement';
+    }
+  }
+
+  const lastEl = document.getElementById('lastPurgeDate');
+  if (lastEl) {
+    if (_purgeConfig.lastAt) {
+      const d = _purgeConfig.lastAt.toDate ? _purgeConfig.lastAt.toDate() : new Date(_purgeConfig.lastAt);
+      lastEl.textContent = d.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'});
+    } else {
+      lastEl.textContent = 'Jamais effectuée';
+    }
+  }
+
+  checkPurgeReminder();
+}
+
+function checkPurgeReminder() {
+  if (!_purgeConfig.nextAt) return;
+  const nextDate = _purgeConfig.nextAt.toDate ? _purgeConfig.nextAt.toDate() : new Date(_purgeConfig.nextAt);
+  const isDue = new Date() >= nextDate;
+
+  // Compter les logs expirés (si déjà chargés)
+  const expiredCount = _logs.filter(l => {
+    if (!l.expiresAt) return false;
+    const exp = l.expiresAt.toDate ? l.expiresAt.toDate() : new Date(l.expiresAt);
+    return exp < new Date();
+  }).length;
+
+  // Badge sidebar
+  const badge = document.getElementById('lBadge');
+  if (badge) badge.classList.toggle('on', isDue);
+
+  // Texte de l'alerte
+  const alertMsg = expiredCount > 0
+    ? `<strong>Rappel RGPD :</strong> ${expiredCount} log${expiredCount > 1 ? 's ont' : ' a'} expiré${expiredCount > 1 ? 's' : ''} et doi${expiredCount > 1 ? 'vent' : 't'} être purgé${expiredCount > 1 ? 's' : ''}.`
+    : `<strong>Rappel RGPD :</strong> Date de vérification périodique atteinte — vérifiez vos logs.`;
+
+  // Bannière Vue d'ensemble
+  const bannerOv = document.getElementById('purgeAlertOv');
+  if (bannerOv) {
+    bannerOv.style.display = isDue ? 'flex' : 'none';
+    if (isDue) document.getElementById('purgeAlertOvTxt').innerHTML = alertMsg;
+  }
+
+  // Bannière section Logs
+  const bannerLogs = document.getElementById('purgeAlertLogs');
+  if (bannerLogs) {
+    bannerLogs.style.display = isDue ? 'flex' : 'none';
+    if (isDue) document.getElementById('purgeAlertLogsTxt').innerHTML = alertMsg;
+  }
+}
+
+async function savePurgeConfig() {
+  const interval = parseInt(document.getElementById('purgeInterval')?.value || '12');
+  const nextDate = new Date();
+  nextDate.setMonth(nextDate.getMonth() + interval);
+  _purgeConfig.interval = interval;
+  _purgeConfig.nextAt   = firebase.firestore.Timestamp.fromDate(nextDate);
+  try {
+    await db.collection('adminConfig').doc('main').set({
+      purgeReminderInterval: interval,
+      nextPurgeReminderAt:   _purgeConfig.nextAt
+    }, { merge: true });
+    applyPurgeConfig();
+    toast(`Rappel configuré — prochain : ${nextDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}.`, 's');
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
+}
+
+async function snoozePurge(months) {
+  const snoozeDate = new Date();
+  snoozeDate.setMonth(snoozeDate.getMonth() + months);
+  _purgeConfig.nextAt = firebase.firestore.Timestamp.fromDate(snoozeDate);
+  try {
+    await db.collection('adminConfig').doc('main').set({ nextPurgeReminderAt: _purgeConfig.nextAt }, { merge: true });
+    applyPurgeConfig();
+    toast(`Rappel reporté de ${months} mois.`, 'i');
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
+}
+
+/** Purge manuelle RGPD : supprime les logs dont expiresAt est dépassé (> 3 ans) */
+async function purgeExpiredLogs() {
+  const expired = _logs.filter(l => {
+    if (!l.expiresAt) return false;
+    const exp = l.expiresAt.toDate ? l.expiresAt.toDate() : new Date(l.expiresAt);
+    return exp < new Date();
+  });
+
+  if (!expired.length) {
+    toast('Aucun log expiré à supprimer.', 'i');
+    updateExpiredCount();
+    return;
+  }
+
+  showCfm({
+    icon: '🗑️',
+    title: `Purger ${expired.length} log${expired.length > 1 ? 's' : ''} expirés ?`,
+    body: `Ces ${expired.length} entrée${expired.length > 1 ? 's ont' : ' a'} plus de 3 ans. La suppression est irréversible et conforme au RGPD.`,
+    okLabel: 'Purger',
+    okCls: 'btn-cfm-danger',
+    action: async () => {
+      const btn = document.getElementById('btnPurge');
+      if (btn) { btn.disabled = true; btn.textContent = 'Suppression…'; }
+      try {
+        // Firestore limite les batch à 500 opérations
+        const chunks = [];
+        for (let i = 0; i < expired.length; i += 400) chunks.push(expired.slice(i, i + 400));
+        for (const chunk of chunks) {
+          const batch = db.batch();
+          chunk.forEach(l => batch.delete(db.collection('moderation_logs').doc(l.id)));
+          await batch.commit();
+        }
+        _logs = _logs.filter(l => !expired.find(e => e.id === l.id));
+        document.getElementById('logsSub').textContent  = `${_logs.length} entrée${_logs.length !== 1 ? 's' : ''}`;
+        document.getElementById('logsCount').textContent = _logs.length + ' entrées';
+
+        // Réinitialise le prochain rappel après purge réussie
+        const nextDate = new Date();
+        nextDate.setMonth(nextDate.getMonth() + (_purgeConfig.interval || 12));
+        _purgeConfig.nextAt = firebase.firestore.Timestamp.fromDate(nextDate);
+        _purgeConfig.lastAt = firebase.firestore.Timestamp.fromDate(new Date());
+        await db.collection('adminConfig').doc('main').set({
+          nextPurgeReminderAt: _purgeConfig.nextAt,
+          lastPurgeAt:         _purgeConfig.lastAt
+        }, { merge: true }).catch(() => {});
+        applyPurgeConfig();
+
+        updateExpiredCount();
+        renderLogs();
+        toast(`${expired.length} log${expired.length > 1 ? 's supprimés' : ' supprimé'}. Prochain rappel : ${nextDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}.`, 's');
+      } catch(e) {
+        toast('Erreur lors de la purge : ' + e.message, 'e');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🗑 Purger les logs expirés (> 3 ans)'; }
+      }
+    }
+  });
+}
+
+function updateExpiredCount() {
+  const n = _logs.filter(l => {
+    if (!l.expiresAt) return false;
+    const exp = l.expiresAt.toDate ? l.expiresAt.toDate() : new Date(l.expiresAt);
+    return exp < new Date();
+  }).length;
+  const el = document.getElementById('logsExpiredCount');
+  if (el) el.innerHTML = n > 0
+    ? `<strong style="color:var(--red)">${n} à purger</strong>`
+    : '<span style="color:#16a34a">0 — aucun expiré</span>';
+}
+
+/** Charge un script externe de façon asynchrone (une seule fois) */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = () => reject(new Error('Impossible de charger ' + src));
+    document.head.appendChild(s);
+  });
+}
+
+/**
+ * Export PDF officiel — en-tête YoupiZoo, table complète, délai LCEN coloré,
+ * pied de page légal + numéros de page. Conforme à une transmission judiciaire.
+ */
+async function exportPDF() {
+  if (!_logs.length) { toast('Aucun log à exporter.', 'w'); return; }
+  toast('Génération du PDF…', 'i');
+  try {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+  } catch(e) { toast('Erreur chargement jsPDF : ' + e.message, 'e'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc  = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const W    = doc.internal.pageSize.width;   // 297 mm
+  const H    = doc.internal.pageSize.height;  //  210 mm
+  const now  = new Date();
+  const fmtD = d => d ? (d.toDate ? d.toDate() : new Date(d)).toLocaleDateString('fr-FR') : '—';
+  const fmtDT= d => {
+    if (!d) return '—';
+    const dt = d.toDate ? d.toDate() : new Date(d);
+    return dt.toLocaleDateString('fr-FR') + '\n' + dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  };
+
+  // Libellés sans emojis (jsPDF ne les affiche pas)
+  const LABELS = {
+    suppression_annonce:          'Suppression annonce',
+    traitement_signalement:       'Signalement traite',
+    traitement_signalement_masse: 'Signalements ignores (masse)',
+    bannissement_compte:          'Bannissement compte',
+    debannissement_compte:        'Debannissement compte',
+    suppression_compte:           'Suppression compte',
+    promotion_admin:              'Promotion administrateur',
+    retrait_admin:                'Retrait administrateur',
+  };
+
+  // Période couverte
+  const dates    = _logs.map(l => l.timestamp?.toDate ? l.timestamp.toDate() : null).filter(Boolean);
+  const oldest   = dates.length ? new Date(Math.min(...dates)) : null;
+  const newest   = dates.length ? new Date(Math.max(...dates)) : null;
+  const periodeStr = oldest && newest
+    ? `${oldest.toLocaleDateString('fr-FR')} → ${newest.toLocaleDateString('fr-FR')}`
+    : 'Periode inconnue';
+
+  // ── HEADER ──────────────────────────────────────────────────
+  doc.setFillColor(13, 61, 43);          // vert fonce
+  doc.rect(0, 0, W, 26, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  doc.text('YoupiZoo  —  Journal de moderation', 14, 11);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8.5);
+  doc.text('Document confidentiel · Usage juridique interne · Ne pas diffuser', 14, 19);
+
+  doc.setFontSize(8.5);
+  doc.text(`Genere le ${now.toLocaleDateString('fr-FR')} a ${now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`, W - 14, 11, { align: 'right' });
+  doc.text(`Exporteur : ${_me?.email || 'Administrateur'}`, W - 14, 19, { align: 'right' });
+
+  // ── BANDEAU LÉGAL ────────────────────────────────────────────
+  doc.setFillColor(239, 246, 255);
+  doc.setDrawColor(191, 219, 254);
+  doc.roundedRect(14, 30, W - 28, 20, 2, 2, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.setTextColor(37, 99, 235);
+  doc.text('Base legale', 18, 37);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(30, 30, 30);
+  doc.setFontSize(7.5);
+  doc.text('LCEN art. 6 — Obligation de conservation des traces de moderation (minimum 1 an, maximum 3 ans).', 18, 43);
+  doc.text('RGPD — Traitement fonde sur l\'obligation legale. Acces restreint aux administrateurs autorises.', 18, 48.5);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${_logs.length} entree${_logs.length > 1 ? 's' : ''}   |   Periode : ${periodeStr}`, W - 14, 43, { align: 'right' });
+
+  // ── TABLE ─────────────────────────────────────────────────────
+  const rows = _logs.map(l => [
+    fmtDT(l.timestamp),
+    LABELS[l.action] || l.action || '—',
+    l.adTitle || l.nom_cible || (l.targetId ? l.targetId.slice(0, 18) + '…' : '—'),
+    l.decision || '—',
+    l.delai_traitement_humain || formatDuration(l.delai_traitement_ms) || '—',
+    l.nb_signalements != null ? String(l.nb_signalements) + ' signal.' : (l.motif_signalement || '—'),
+    (l.adminEmail || l.adminUid || '—').split('@')[0]
+  ]);
+
+  doc.autoTable({
+    startY: 54,
+    head: [['Date / heure', 'Action', 'Cible', 'Decision', 'Delai LCEN', 'Signalements', 'Admin']],
+    body: rows,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [26, 158, 110],
+      textColor: 255,
+      fontStyle: 'bold',
+      fontSize: 8,
+      cellPadding: 3
+    },
+    bodyStyles:          { fontSize: 7.5, cellPadding: 2.5 },
+    alternateRowStyles:  { fillColor: [248, 250, 252] },
+    margin:              { left: 14, right: 14, bottom: 16 },
+    columnStyles: {
+      0: { cellWidth: 24 },
+      1: { cellWidth: 50 },
+      2: { cellWidth: 58 },
+      3: { cellWidth: 33 },
+      4: { cellWidth: 24, halign: 'center' },
+      5: { cellWidth: 38 },
+      6: { cellWidth: 28 }
+    },
+    didParseCell(data) {
+      // Colonne délai LCEN : colorée selon l'urgence
+      if (data.column.index === 4 && data.section === 'body') {
+        const ms = _logs[data.row.index]?.delai_traitement_ms;
+        if (ms != null) {
+          if      (ms < 86400000)  data.cell.styles.textColor = [22, 163, 74];   // < 24 h  vert
+          else if (ms < 604800000) data.cell.styles.textColor = [217, 119, 6];   // < 7 j   orange
+          else                      data.cell.styles.textColor = [220, 38, 38];   // >= 7 j  rouge
+          data.cell.styles.fontStyle = 'bold';
+        }
+      }
+    }
+  });
+
+  // ── PIED DE PAGE (toutes les pages) ──────────────────────────
+  const total = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= total; p++) {
+    doc.setPage(p);
+    doc.setFillColor(243, 244, 246);
+    doc.rect(0, H - 10, W, 10, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(107, 114, 128);
+    doc.text('Document confidentiel — YoupiZoo (youpizoo.fr)  ·  Conforme LCEN art.6 & RGPD  ·  Ne pas diffuser publiquement', 14, H - 3.5);
+    doc.text(`Page ${p} / ${total}`, W - 14, H - 3.5, { align: 'right' });
+  }
+
+  doc.save(`logs-moderation-${now.toISOString().slice(0, 10)}.pdf`);
+  toast('PDF officiel téléchargé.', 's');
+}
+
+/** Export CSV de tous les logs affichés — pour archivage ou transmission aux autorités */
+function exportLogs() {
+  if (!_logs.length) { toast('Aucun log à exporter.', 'w'); return; }
+  const headers = [
+    'Timestamp ISO','Action','Décision','Type cible','ID cible',
+    'Titre / Nom cible','Motif signalement','Délai traitement (humain)',
+    'Délai traitement (ms)','Nb signalements','UID signalant',
+    'Admin email','Admin UID','Note'
+  ];
+  const rows = [headers];
+  _logs.forEach(l => {
+    const ts = l.timestamp?.toDate ? l.timestamp.toDate().toISOString() : '';
+    rows.push([
+      ts,
+      l.action||'',
+      l.decision||'',
+      l.targetType||'',
+      l.targetId||'',
+      l.adTitle||l.nom_cible||'',
+      l.motif_signalement||'',
+      l.delai_traitement_humain||formatDuration(l.delai_traitement_ms)||'',
+      l.delai_traitement_ms!=null ? l.delai_traitement_ms : '',
+      l.nb_signalements!=null ? l.nb_signalements : '',
+      l.uid_signalant||'',
+      l.adminEmail||'',
+      l.adminUid||'',
+      l.note||''
+    ]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], {type:'text/csv;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `logs-moderation-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Export CSV téléchargé.', 's');
+}
+
 // ── REFRESH ──
 function refreshSec() {
   const btn=document.getElementById('rfrBtn');
@@ -1026,6 +1747,7 @@ function refreshSec() {
   else if (_curSec==='reports')  { _reports=[]; _msgReps=[]; loadReports().then(done); }
   else if (_curSec==='annonces') { _annonces=[]; document.getElementById('espFilter').innerHTML='<option value="">Toutes les espèces</option>'; loadAnnonces().then(done); }
   else if (_curSec==='users')    { _users=[]; loadUsers().then(done); }
+  else if (_curSec==='logs')     { _logs=[];  loadLogs().then(done); }
   else done();
 }
 </script>
