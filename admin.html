@@ -509,7 +509,7 @@ function showCfm({icon='⚠️', title, body, okLabel='Confirmer', okCls='btn-cf
   document.getElementById('cfm').classList.add('on');
 }
 function closeCfm() { document.getElementById('cfm').classList.remove('on'); _cfmAct = null; }
-async function execCfm() { closeCfm(); if (_cfmAct) await _cfmAct(); }
+async function execCfm() { const act = _cfmAct; closeCfm(); if (act) await act(); }
 
 // ── NAVIGATION ──
 function goSec(sec) {
