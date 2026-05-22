@@ -11,7 +11,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Annonce — Zoophiloo</title>
+<title>Annonce — YoupiZoo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
@@ -307,7 +307,7 @@
 
 <header>
   <div class="header-left">
-    <a href="index.html" class="logo"><span class="z">Zoo</span><span class="rest">philoo</span></a>
+    <a href="index.html" class="logo"><span class="rest">Youpi</span><span class="z">Zoo</span></a>
     <span class="tagline">Trouvez vos animaux près de chez vous</span>
   </div>
   <div class="header-right">
@@ -555,7 +555,7 @@ function renderPage(record) {
 
   // Title & SEO
   const title = f['Titre'] || 'Sans titre';
-  document.title = `${title} — Zoophiloo`;
+  document.title = `${title} — YoupiZoo`;
   document.getElementById('breadcrumbText').textContent = title;
 
   // Gallery
@@ -629,7 +629,7 @@ function renderPage(record) {
     </a>`);
   }
   if (f['Email_contact']) {
-    actions.push(`<a href="mailto:${f['Email_contact']}?subject=Annonce Zoophiloo : ${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
+    actions.push(`<a href="mailto:${f['Email_contact']}?subject=Annonce YoupiZoo : ${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Envoyer un email
     </a>`);
