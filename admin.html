@@ -654,7 +654,6 @@ function renderReports() {
     const top = g.reports.find(r=>!r.status||r.status==='pending')?.reason || g.reports[0]?.reason || '—';
     const ms  = g.pending>0?'pending':(g.reports.every(r=>r.status==='dismissed')?'dismissed':'resolved');
     const rid = 'rg_'+g.adId.replace(/\W/g,'_');
-    const rIds= JSON.stringify(g.reports.map(r=>r.id));
     const title= g.adTitle.replace(/'/g,"\\'").replace(/"/g,'&quot;');
 
     h += `<tr class="${fl?'flagged':''}">
@@ -669,8 +668,8 @@ function renderReports() {
       <td style="text-align:center"><span class="bdg ${SC[ms]}">${SL[ms]}</span></td>
       <td><div style="display:flex;gap:5px;flex-wrap:wrap">
         ${g.adUrl?`<a href="${esc(g.adUrl)}" target="_blank" class="btn btn-ghost">👁 Voir</a>`:''}
-        <button class="btn btn-danger" onclick="cfmDelAd('${esc(g.adId)}','${title}',${rIds})">🗑 Suppr.</button>
-        <button class="btn btn-ghost" onclick="dismissAll(${rIds})">✕ Ignorer</button>
+        <button class="btn btn-danger" onclick="cfmDelAd('${esc(g.adId)}','${title}')">🗑 Suppr.</button>
+        <button class="btn btn-ghost" onclick="dismissAll('${esc(g.adId)}')">✕ Ignorer</button>
       </div></td>
     </tr>
     <tr id="${rid}_d" class="exp-row" style="display:none">
@@ -755,7 +754,8 @@ async function dismissOne(id) {
     renderReports(); renderMsgReports(); updateBadge(); toast('Signalement ignoré.','i');
   } catch(e) { toast('Erreur: '+e.message,'e'); }
 }
-async function dismissAll(ids) {
+async function dismissAll(adId) {
+  const ids = _reports.filter(r => r.adId === adId).map(r => r.id);
   try {
     const batch=db.batch(); ids.forEach(id=>batch.update(db.collection('reports').doc(id),{status:'dismissed'}));
     await batch.commit();
@@ -765,7 +765,8 @@ async function dismissAll(ids) {
 }
 
 // ── DELETE AD ──
-function cfmDelAd(adId, title, reportIds) {
+function cfmDelAd(adId, title) {
+  const reportIds = _reports.filter(r => r.adId === adId).map(r => r.id);
   showCfm({
     icon:'🗑️', title:'Supprimer cette annonce ?',
     body:`L'annonce "${title}" sera supprimée définitivement d'Airtable. Les signalements seront marqués résolus.`,
@@ -854,7 +855,7 @@ function renderAnnonces() {
       <td style="text-align:center">${rc>0?`<span class="cnt ${rc>=_thresh?'cnt-hi':'cnt-md'}">${rc}</span>`:'<span style="color:#d1d5db">—</span>'}</td>
       <td><div style="display:flex;gap:5px">
         <a href="annonce.html?id=${r.id}" target="_blank" class="btn btn-ghost" style="font-size:12px">👁</a>
-        <button onclick="cfmDelAd('${r.id}','${t2}',[])" class="btn btn-danger" style="font-size:12px">🗑 Suppr.</button>
+        <button onclick="cfmDelAd('${r.id}','${t2}')" class="btn btn-danger" style="font-size:12px">🗑 Suppr.</button>
       </div></td>
     </tr>`;
   });

@@ -25,7 +25,7 @@ jobs:
 
       - name: Inject Airtable token
         run: |
-          for file in index.html annonce.html mon-espace.html deposer.html editer.html; do
+          for file in index.html annonce.html mon-espace.html deposer.html editer.html admin.html; do
             if [ -f "$file" ]; then
               sed -i "s|__AIRTABLE_TOKEN__|${{ secrets.AIRTABLE_TOKEN }}|g" $file
             fi
