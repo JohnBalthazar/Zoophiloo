@@ -901,8 +901,13 @@ function updateMsgBtn() {
   const container = document.getElementById('msgBtnContainer');
   if (!container || !_adState) return;
 
-  if (_authUser && _authUser.email === _adState.sellerEmail) {
-    container.innerHTML = `<p style="font-size:12px;color:var(--text-muted);text-align:center;padding-top:4px">C'est votre annonce.</p>`;
+  if (_authUser && _adState.sellerEmail && _authUser.email === _adState.sellerEmail) {
+    container.innerHTML = `
+      <p style="font-size:12px;color:var(--text-muted);text-align:center;padding-top:4px;margin-bottom:6px">C'est votre annonce.</p>
+      <a href="messages.html" class="btn-contact btn-contact-secondary" style="display:flex;align-items:center;gap:6px;justify-content:center;text-decoration:none;margin-top:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Voir mes messages
+      </a>`;
     return;
   }
 
