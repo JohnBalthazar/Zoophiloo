@@ -508,6 +508,8 @@ async function submitAnnonce() {
       'Ville': document.getElementById('ville').value.trim(),
       'Adresse': document.getElementById('adresse').value.trim() || undefined,
       'Email_contact': currentUser.email,
+      'Prenom_contact': localStorage.getItem('zph_prenom') || '',
+      'Nom_contact': localStorage.getItem('zph_nom') || '',
       'Telephone': document.getElementById('telephone').value.trim() || undefined,
       'Visible': true,
       'Statut': 'Active',

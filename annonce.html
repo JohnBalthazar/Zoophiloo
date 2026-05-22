@@ -600,13 +600,27 @@ function renderPage(record) {
      </div>`
   ).join('');
 
-  // Contact
+  // Contact — nom affiché : pseudo Firestore en priorité, sinon prénom+nom Airtable
   const prenom = f['Prenom_contact'] || '';
   const nom = f['Nom_contact'] || '';
-  const fullName = [prenom, nom].filter(Boolean).join(' ') || 'Annonceur';
-  const initials = [prenom[0], nom[0]].filter(Boolean).join('').toUpperCase() || '🙂';
-  document.getElementById('contactAvatar').textContent = initials || '🙂';
-  document.getElementById('contactName').textContent = fullName;
+  const sellerEmail = f['Email_contact'] || '';
+  let displayName = [prenom, nom].filter(Boolean).join(' ') || 'Annonceur';
+  let initials = [prenom[0], nom[0]].filter(Boolean).join('').toUpperCase() || '🙂';
+  document.getElementById('contactAvatar').textContent = initials;
+  document.getElementById('contactName').textContent = displayName;
+  if (sellerEmail) {
+    db.collection('users').where('email', '==', sellerEmail).limit(1).get()
+      .then(snap => {
+        if (!snap.empty) {
+          const pseudo = snap.docs[0].data().pseudo || '';
+          if (pseudo) {
+            document.getElementById('contactName').textContent = pseudo;
+            document.getElementById('contactAvatar').textContent = pseudo.slice(0, 2).toUpperCase();
+          }
+        }
+      })
+      .catch(() => {});
+  }
   document.getElementById('adDateBadge').textContent = f['Date_creation']
     ? 'Annonce du ' + formatDate(f['Date_creation']) : '';
 

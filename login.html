@@ -128,6 +128,25 @@
   .form-group {
     margin-bottom: 16px;
   }
+  .info-tip {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--border); color: var(--text-muted);
+    font-size: 10px; font-weight: 700; cursor: help;
+    position: relative; margin-left: 4px; vertical-align: middle;
+  }
+  .info-tip::after {
+    content: attr(data-tip);
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a; color: #fff;
+    font-size: 11px; font-weight: 400; line-height: 1.5;
+    padding: 6px 10px; border-radius: 6px;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.15s;
+    z-index: 10;
+  }
+  .info-tip:hover::after { opacity: 1; }
   label {
     display: block;
     font-size: 12px;
@@ -418,6 +437,13 @@
           </div>
         </div>
         <div class="form-group">
+          <label>
+            Pseudo <span style="color:var(--green)">*</span>
+            <span class="info-tip" data-tip="C'est ce que les autres utilisateurs verront sur vos annonces">i</span>
+          </label>
+          <input type="text" id="signupPseudo" placeholder="Ex : GrandAmi74, ChatLover…" autocomplete="nickname" maxlength="30">
+        </div>
+        <div class="form-group">
           <label>Adresse e-mail <span style="color:var(--green)">*</span></label>
           <input type="email" id="signupEmail" placeholder="vous@exemple.fr" autocomplete="email">
         </div>
@@ -493,7 +519,7 @@
   <div style="background:var(--white);border-radius:16px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.2);overflow:hidden;max-height:90vh;overflow-y:auto;">
     <div style="padding:24px 24px 0;">
       <div style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:4px;">Dernière étape 🐾</div>
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Pour créer votre compte Zoophiloo via Google, veuillez accepter nos conditions.</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Pour créer votre compte YoupiZoo via Google, veuillez accepter nos conditions.</div>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12.5px;line-height:1.7;color:var(--text-muted);">
         <strong style="display:block;margin-bottom:8px;color:var(--text);font-size:13px;">Points essentiels :</strong>
         <ul style="padding-left:16px;">
@@ -512,6 +538,14 @@
         <input type="checkbox" id="googleCguCheck" style="margin-top:2px;accent-color:var(--green);flex-shrink:0;">
         <span>J'ai lu et j'accepte les <a href="cgu.html" target="_blank" style="color:var(--green);font-weight:500;" onclick="event.stopPropagation()">Conditions Générales d'Utilisation</a> — je suis seul(e) responsable de mes annonces. <span style="color:var(--green)">*</span></span>
       </label>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-size:12px;font-weight:500;color:var(--text);margin-bottom:5px;">
+          Pseudo <span style="color:var(--green)">*</span>
+          <span class="info-tip" data-tip="C'est ce que les autres utilisateurs verront sur vos annonces">i</span>
+        </label>
+        <input type="text" id="googlePseudo" placeholder="Ex : GrandAmi74, ChatLover…" maxlength="30"
+          style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font-body);outline:none;background:var(--white);">
+      </div>
       <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">📅 Date d'acceptation enregistrée : <span id="googleCguDateDisplay"></span></div>
       <div id="googleCguErrMsg" style="display:none;font-size:12px;color:var(--error);padding:8px 0;"></div>
     </div>
@@ -582,11 +616,13 @@ async function acceptGoogleCgu() {
   const cguOk = document.getElementById('googleCguCheck').checked;
   const ageOk = document.getElementById('googleAgeCheck').checked;
   const errEl = document.getElementById('googleCguErrMsg');
-  if (!ageOk || !cguOk) {
+  const pseudo = document.getElementById('googlePseudo').value.trim();
+  if (!ageOk || !cguOk || !pseudo) {
     errEl.style.display = 'block';
     errEl.textContent = !ageOk
       ? 'Vous devez attester avoir 18 ans ou plus.'
-      : 'Vous devez accepter les Conditions Générales d\'Utilisation.';
+      : !cguOk ? 'Vous devez accepter les Conditions Générales d\'Utilisation.'
+      : 'Le pseudo est obligatoire.';
     return;
   }
   errEl.style.display = 'none';
@@ -607,9 +643,11 @@ async function acceptGoogleCgu() {
       payload.nom        = parts.slice(1).join(' ') || '';
       payload.created_at = firebase.firestore.Timestamp.fromDate(now);
     }
+    payload.pseudo = pseudo;
     await db.collection('users').doc(_googleUser.uid).set(payload, { merge: true });
     localStorage.setItem('zph_cgu_accepted', 'true');
     localStorage.setItem('zph_cgu_date',     now.toISOString());
+    localStorage.setItem('zph_pseudo',       pseudo);
     if (_googleUser.displayName) {
       localStorage.setItem('zph_prenom', parts[0] || '');
       localStorage.setItem('zph_nom',    parts.slice(1).join(' ') || '');
@@ -779,6 +817,7 @@ async function doSignUp() {
   clearAlerts();
   const prenom   = document.getElementById('signupPrenom').value.trim();
   const nom      = document.getElementById('signupNom').value.trim();
+  const pseudo   = document.getElementById('signupPseudo').value.trim();
   const email    = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value;
   const cguCheck = document.getElementById('cguCheck');
@@ -786,6 +825,7 @@ async function doSignUp() {
 
   if (!prenom) { showError('signup', 'Le prénom est obligatoire.'); return; }
   if (!nom)    { showError('signup', 'Le nom est obligatoire.'); return; }
+  if (!pseudo) { showError('signup', 'Le pseudo est obligatoire.'); return; }
   if (!email)  { showError('signup', 'Entrez votre adresse e-mail.'); return; }
   const pwCheck = validatePassword(password);
   if (!pwCheck.ok) { showError('signup', pwCheck.msg); return; }
@@ -822,6 +862,7 @@ async function doSignUp() {
     await db.collection('users').doc(cred.user.uid).set({
       prenom,
       nom,
+      pseudo,
       email,
       cgu_accepted:  true,
       cgu_version:   '1.0',
@@ -833,6 +874,7 @@ async function doSignUp() {
     // Sauvegarde locale pour pré-remplissage des formulaires d'annonce
     localStorage.setItem('zph_prenom',       prenom);
     localStorage.setItem('zph_nom',          nom);
+    localStorage.setItem('zph_pseudo',       pseudo);
     // Horodatage acceptation CGU (cache local en complément de Firestore)
     localStorage.setItem('zph_cgu_accepted', 'true');
     localStorage.setItem('zph_cgu_date',     cguDate);
