@@ -631,7 +631,7 @@ function renderPage(record) {
     espece: f['Espèce'] || '',
     photo: f['Photos']?.[0]?.thumbnails?.small?.url || f['Photos']?.[0]?.url || '',
     sellerEmail: f['Email_contact'] || '',
-    sellerName: fullName
+    sellerName: displayName
   };
   updateMsgBtn();
 
