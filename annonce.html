@@ -12,6 +12,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Annonce — YoupiZoo</title>
+<!-- SEO & Social — enrichis dynamiquement après chargement de l'annonce -->
+<meta name="description" content="Annonce animaux sur YoupiZoo — achetez, adoptez ou donnez vos animaux de compagnie entre particuliers en France.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.youpizoo.fr/annonce.html">
+<meta property="og:type" content="product">
+<meta property="og:title" content="Annonce — YoupiZoo">
+<meta property="og:description" content="Annonce animaux sur YoupiZoo — achetez, adoptez ou donnez entre particuliers en France.">
+<meta property="og:url" content="https://www.youpizoo.fr/annonce.html">
+<meta property="og:image" content="https://www.youpizoo.fr/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="YoupiZoo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Annonce — YoupiZoo">
+<meta name="twitter:description" content="Annonce animaux sur YoupiZoo.">
+<meta name="twitter:image" content="https://www.youpizoo.fr/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
@@ -555,8 +572,8 @@ function renderPage(record) {
 
   // Title & SEO
   const title = f['Titre'] || 'Sans titre';
-  document.title = `${title} — YoupiZoo`;
   document.getElementById('breadcrumbText').textContent = title;
+  updateSEOTags(f, record.id);
 
   // Gallery
   renderGallery(f['Photos'], emoji);
@@ -688,6 +705,83 @@ async function init() {
 }
 
 init();
+
+// ── SEO DYNAMIQUE ──
+function _setMeta(attr, value, content) {
+  let el = document.querySelector(`meta[${attr}="${value}"]`);
+  if (!el) { el = document.createElement('meta'); el.setAttribute(attr, value); document.head.appendChild(el); }
+  el.setAttribute('content', content);
+}
+
+function updateSEOTags(f, recordId) {
+  const title    = f['Titre'] || 'Annonce';
+  const espece   = f['Espèce'] || '';
+  const race     = f['Race'] || '';
+  const ville    = f['Ville'] || '';
+  const cp       = f['Code_postal'] ? f['Code_postal'].slice(0, 2) : '';
+  const typeAd   = f['Type_annonce'] || '';
+  const image    = f['Photos']?.[0]?.url || 'https://www.youpizoo.fr/og-image.jpg';
+  const canon    = `https://www.youpizoo.fr/annonce.html?id=${recordId}`;
+
+  // Description : début de la description de l'annonce ou construction automatique
+  let desc = f['Description']
+    ? (f['Description'].length > 155 ? f['Description'].slice(0, 152).trimEnd() + '…' : f['Description'])
+    : [title, espece && `${espece}${race ? ' ' + race : ''}`, ville && `à ${ville}`, 'sur YoupiZoo.'].filter(Boolean).join(' — ');
+
+  const fullTitle = [title, espece, ville].filter(Boolean).join(' · ') + ' — YoupiZoo';
+
+  document.title = fullTitle;
+  document.querySelector('link[rel="canonical"]').href = canon;
+
+  _setMeta('name',     'description',         desc);
+  _setMeta('property', 'og:title',            fullTitle);
+  _setMeta('property', 'og:description',      desc);
+  _setMeta('property', 'og:url',              window.location.href);
+  _setMeta('property', 'og:image',            image);
+  _setMeta('property', 'og:image:alt',        fullTitle);
+  _setMeta('name',     'twitter:title',       fullTitle);
+  _setMeta('name',     'twitter:description', desc);
+  _setMeta('name',     'twitter:image',       image);
+
+  const isFree   = ['A donner','À donner','A adopter','À adopter'].includes(typeAd);
+  const priceNum = f['Prix'] ? parseFloat(String(f['Prix']).replace(/[^0-9.]/g, '')) : null;
+
+  const jsonld = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.youpizoo.fr/" },
+          espece ? { "@type": "ListItem", "position": 2, "name": espece, "item": `https://www.youpizoo.fr/?espece=${encodeURIComponent(espece)}` } : null,
+          { "@type": "ListItem", "position": espece ? 3 : 2, "name": title }
+        ].filter(Boolean)
+      },
+      {
+        "@type": "Product",
+        "name": title,
+        "description": f['Description'] || desc,
+        "url": window.location.href,
+        "image": f['Photos']?.map(p => p.url) || [image],
+        "category": espece || "Animaux",
+        "offers": {
+          "@type": "Offer",
+          "url": window.location.href,
+          "priceCurrency": "EUR",
+          "price": isFree ? "0" : (priceNum != null ? String(priceNum) : "0"),
+          "availability": "https://schema.org/InStock",
+          "itemCondition": "https://schema.org/UsedCondition",
+          "seller": { "@type": "Person", "name": f['Prenom_contact'] || "Annonceur" },
+          "areaServed": ville ? { "@type": "City", "name": ville } : { "@type": "Country", "name": "France" }
+        }
+      }
+    ]
+  };
+
+  let ld = document.getElementById('ld-annonce');
+  if (!ld) { ld = document.createElement('script'); ld.type = 'application/ld+json'; ld.id = 'ld-annonce'; document.head.appendChild(ld); }
+  ld.textContent = JSON.stringify(jsonld);
+}
 
 // ── SIGNALEMENT ──
 let _currentAdTitle = '', _currentAdId = '';

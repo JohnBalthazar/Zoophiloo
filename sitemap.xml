@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Page d'accueil — annonces -->
+  <url>
+    <loc>https://www.youpizoo.fr/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr-FR" href="https://www.youpizoo.fr/"/>
+  </url>
+
+  <!-- Déposer une annonce -->
+  <url>
+    <loc>https://www.youpizoo.fr/deposer.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- CGU -->
+  <url>
+    <loc>https://www.youpizoo.fr/cgu.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Rubriques à venir -->
+  <!-- <url><loc>https://www.youpizoo.fr/accessoires.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
+  <!-- <url><loc>https://www.youpizoo.fr/petsitter.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
+  <!-- <url><loc>https://www.youpizoo.fr/boutique.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
+  <!-- <url><loc>https://www.youpizoo.fr/bons-plans.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
+
+</urlset>

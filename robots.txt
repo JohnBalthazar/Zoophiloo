@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /messages.html
+Disallow: /mon-espace.html
+Disallow: /compte.html
+Disallow: /editer.html
+Disallow: /reset-password.html
+Disallow: /login.html
+
+Sitemap: https://www.youpizoo.fr/sitemap.xml
