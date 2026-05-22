@@ -226,12 +226,15 @@
   }
   .msg-wrap.mine .msg-mini-avatar { display: none; }
 
-  .msg-bubble {
+  .msg-content {
     max-width: 68%;
+  }
+  .msg-bubble {
     padding: 10px 14px;
     border-radius: 16px;
     font-size: 13px; line-height: 1.5;
     word-break: break-word;
+    overflow-wrap: break-word;
   }
   .msg-wrap.theirs .msg-bubble {
     background: var(--white);
@@ -769,7 +772,7 @@ function renderMessages(messages) {
     html += `
       <div class="msg-wrap ${isMine ? 'mine' : 'theirs'}">
         ${!isMine ? `<div class="msg-mini-avatar">${initials}</div>` : ''}
-        <div>
+        <div class="msg-content">
           <div class="msg-bubble">${escHtml(msg.text)}</div>
           <div class="msg-time">${timeStr}</div>
         </div>
