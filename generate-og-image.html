@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Générateur og-image — YoupiZoo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=DM+Sans:wght@300;400&display=swap">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; gap: 16px; font-family: sans-serif; }
+  canvas { max-width: 100%; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,.6); }
+  button {
+    padding: 13px 32px; background: #1a9e6e; color: white; border: none;
+    border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: background .15s; letter-spacing: .02em;
+  }
+  button:hover { background: #0f7a52; }
+  p { color: #888; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<canvas id="c" width="1200" height="630"></canvas>
+<button onclick="download()">⬇ Télécharger og-image.jpg</button>
+<p>Placez le fichier téléchargé à la racine du dossier du site (à côté de index.html), puis commitez-le.</p>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+
+/* Dessin dès que les polices Google Fonts sont prêtes */
+document.fonts.ready.then(draw);
+
+function draw() {
+
+  /* ─── Fond dégradé vert ─────────────────────────── */
+  const bg = ctx.createLinearGradient(0, 0, 1200, 630);
+  bg.addColorStop(0,   '#083d25');
+  bg.addColorStop(0.5, '#0f6641');
+  bg.addColorStop(1,   '#1a9e6e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1200, 630);
+
+  /* ─── Cercles décoratifs subtils ────────────────── */
+  const circles = [[1050, -60, 340], [1150, 560, 200], [-90, 600, 260], [180, -70, 190], [600, 780, 300]];
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  circles.forEach(([x, y, r]) => {
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  });
+
+  /* ─── Patte décorative ──────────────────────────── */
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '68px serif';
+  ctx.globalAlpha = 0.9;
+  ctx.fillText('🐾', 600, 168);
+  ctx.globalAlpha = 1;
+
+  /* ─── Logo : "Youpi" blanc + "Zoo" blanc atténué ── */
+  ctx.font = 'bold 118px Syne, "Arial Black", Impact, sans-serif';
+  ctx.textBaseline = 'alphabetic';
+
+  const youpiW = ctx.measureText('Youpi').width;
+  const zooW   = ctx.measureText('Zoo').width;
+  const logoX  = 600 - (youpiW + zooW) / 2;
+  const logoY  = 318;
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('Youpi', logoX, logoY);
+  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  ctx.fillText('Zoo',   logoX + youpiW, logoY);
+
+  /* ─── Ligne séparatrice ─────────────────────────── */
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth   = 1.5;
+  ctx.lineCap     = 'round';
+  ctx.beginPath();
+  ctx.moveTo(600 - 240, 348);
+  ctx.lineTo(600 + 240, 348);
+  ctx.stroke();
+
+  /* ─── Tagline ────────────────────────────────────── */
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font         = '400 35px "DM Sans", "Helvetica Neue", Arial, sans-serif';
+  ctx.fillStyle    = 'rgba(255,255,255,0.88)';
+  ctx.fillText('Annonces animaux entre particuliers en France', 600, 400);
+
+  /* ─── Rangée d'animaux ──────────────────────────── */
+  ctx.font = '50px serif';
+  ctx.globalAlpha = 0.85;
+  const animals = ['🐕','🐈','🐇','🦜','🐟','🦎'];
+  const step     = 82;
+  const rowX     = 600 - (animals.length - 1) * step / 2;
+  animals.forEach((e, i) => ctx.fillText(e, rowX + i * step, 498));
+  ctx.globalAlpha = 1;
+
+  /* ─── URL ────────────────────────────────────────── */
+  ctx.font      = '300 24px "DM Sans", "Helvetica Neue", Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.fillText('www.youpizoo.fr', 600, 588);
+}
+
+function download() {
+  const a = document.createElement('a');
+  a.download = 'og-image.jpg';
+  a.href     = canvas.toDataURL('image/jpeg', 0.95);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+</script>
+</body>
+</html>
