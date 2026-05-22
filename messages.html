@@ -193,9 +193,8 @@
   /* Messages area */
   .chat-messages {
     flex: 1; overflow-y: auto;
-    /* padding horizontal dynamique : cap à 720px centré sur grand écran */
-    padding: 20px max(20px, calc((100% - 720px) / 2));
-    display: flex; flex-direction: column; gap: 8px;
+    padding: 20px 24px;
+    display: flex; flex-direction: column; gap: 6px;
     scrollbar-width: thin; scrollbar-color: var(--border) transparent;
   }
   .chat-messages::-webkit-scrollbar { width: 4px; }
@@ -212,49 +211,65 @@
     content: ''; flex: 1; height: 1px; background: var(--border);
   }
 
-  /* Message bubbles */
+  /* Message bubbles — centré sur 680px max pour rester lisible sur grand écran */
   .msg-wrap {
     display: flex;
     align-items: flex-end; gap: 8px;
+    width: 100%;
+    max-width: 680px;
+    align-self: center;
   }
+  /* messages envoyés : alignés à droite */
   .msg-wrap.mine { flex-direction: row-reverse; }
 
   .msg-mini-avatar {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: var(--border);
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--green-light);
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 700; font-family: var(--font-display);
-    color: var(--text-muted); flex-shrink: 0;
+    color: var(--green); flex-shrink: 0;
   }
   .msg-wrap.mine .msg-mini-avatar { display: none; }
 
   .msg-content {
-    max-width: 68%;
+    max-width: 72%;
   }
+  /* bulle commune */
   .msg-bubble {
-    padding: 10px 14px;
-    border-radius: 16px;
-    font-size: 13px; line-height: 1.5;
+    padding: 9px 14px;
+    border-radius: 18px;
+    font-size: 13.5px; line-height: 1.55;
     word-break: break-word;
     overflow-wrap: break-word;
   }
+  /* ── bulle reçue : gris clair bien visible ── */
   .msg-wrap.theirs .msg-bubble {
-    background: #edf2f7;
-    border-bottom-left-radius: 4px;
-    color: var(--text);
+    background: #e4e4e4;
+    border-bottom-left-radius: 5px;
+    color: #1a1a1a;
   }
+  /* ── bulle envoyée : vert de la marque ── */
   .msg-wrap.mine .msg-bubble {
     background: var(--green);
-    color: white;
-    border-bottom-right-radius: 4px;
+    color: #ffffff;
+    border-bottom-right-radius: 5px;
   }
   .msg-time {
-    font-size: 10px; color: var(--text-muted);
-    margin-top: 3px; text-align: right;
-    padding: 0 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    padding: 0 2px;
+    text-align: right;
   }
-  .msg-wrap.theirs .msg-time { text-align: left; }
-  .msg-wrap.theirs .msg-time { color: #718096; }
+  .msg-wrap.mine  .msg-time { text-align: right; opacity: .75; }
+  .msg-wrap.theirs .msg-time { text-align: left;  color: #888; }
+
+  /* séparateur de date aussi centré dans les 680px */
+  .msg-date-sep {
+    align-self: center;
+    width: 100%;
+    max-width: 680px;
+  }
 
   /* Typing indicator */
   .typing-indicator {
@@ -704,8 +719,29 @@ async function openConversation(convId) {
   // Mark active in list
   renderConvList(document.getElementById('convSearchInput').value);
 
-  const conv = conversations.find(c => c.id === convId);
-  if (!conv) return;
+  // Recherche d'abord dans le cache local (déjà filtré par participant)
+  let conv = conversations.find(c => c.id === convId);
+
+  // Si pas trouvé localement (liste pas encore chargée), vérification Firestore
+  if (!conv) {
+    try {
+      const doc = await db.collection('conversations').doc(convId).get();
+      if (!doc.exists) { activeConvId = null; return; }
+      const data = doc.data();
+      // Contrôle d'accès : l'utilisateur doit être participant
+      if (!data.participants?.includes(currentUser.uid)) {
+        console.warn('[Security] Accès refusé à la conversation', convId);
+        activeConvId = null;
+        document.getElementById('chatEmpty').style.display = 'flex';
+        document.getElementById('chatActive').style.display = 'none';
+        return;
+      }
+      conv = { id: doc.id, ...data };
+    } catch(e) {
+      activeConvId = null;
+      return;
+    }
+  }
 
   // Mark as read
   await db.collection('conversations').doc(convId).update({
