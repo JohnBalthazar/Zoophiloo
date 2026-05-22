@@ -512,7 +512,10 @@ let currentUser    = null;
 let conversations  = [];
 let activeConvId   = null;
 let unsubMessages  = null;
-let unsubConvs     = null;
+let _unsubByUid    = null;
+let _unsubByEmail  = null;
+let _convsByUid    = [];
+let _convsByEmail  = [];
 
 // Rate limiting: max 5 messages per 10 seconds
 const RATE_WINDOW_MS = 10000;
@@ -567,7 +570,6 @@ auth.onAuthStateChanged(user => {
     db.collection('users').doc(user.uid).set({
       email: user.email, displayName: user.displayName || ''
     }, { merge: true });
-    patchEmailToUid(user);
 
     const params = new URLSearchParams(location.search);
     const openConvId = params.get('conv');
@@ -585,66 +587,49 @@ auth.onAuthStateChanged(user => {
   }, 800);
 });
 
-/* ────────────────────────── PATCH EMAIL→UID ────────────────────────── */
-// When a user logs in, replace their email placeholder in participants with their real UID
-async function patchEmailToUid(user) {
-  try {
-    const snap = await db.collection('conversations')
-      .where('participants', 'array-contains', user.email)
-      .get();
-    const batch = db.batch();
-    snap.docs.forEach(doc => {
-      const data = doc.data();
-      const parts = data.participants.map(p => p === user.email ? user.uid : p);
-      const update = { participants: parts };
-      // Also update participantB uid if it matched the email
-      if (data.participantB?.uid === user.email) {
-        update['participantB.uid'] = user.uid;
-        update['participantB.name'] = user.displayName || data.participantB.name || '';
-      }
-      batch.update(doc.ref, update);
-    });
-    if (!snap.empty) await batch.commit();
-  } catch(e) { console.warn('patchEmailToUid error', e); }
-}
-
 /* ────────────────────────── CONVERSATIONS LISTENER ────────────────────────── */
+// Deux requêtes parallèles : par UID (acheteur) ET par email (vendeur stocké par email)
 function listenConversations(autoOpenId = null) {
-  if (unsubConvs) unsubConvs();
+  if (_unsubByUid)   { _unsubByUid();   _unsubByUid   = null; }
+  if (_unsubByEmail) { _unsubByEmail(); _unsubByEmail = null; }
+  _convsByUid = []; _convsByEmail = [];
 
-  unsubConvs = db.collection('conversations')
-    .where('participants', 'array-contains', currentUser.uid)
-    .onSnapshot(snapshot => {
-      conversations = snapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) => {
-          const ta = a.lastMessageAt?.toMillis?.() ?? 0;
-          const tb = b.lastMessageAt?.toMillis?.() ?? 0;
-          return tb - ta;
-        });
-      renderConvList();
+  let _opened = false;
 
-      // Count unread
-      const unread = conversations.filter(c => {
-        const reads = c.readBy || {};
-        return !reads[currentUser.uid];
-      }).length;
-      const badge = document.getElementById('unreadBadge');
-      badge.textContent = unread;
-      badge.classList.toggle('show', unread > 0);
-
-      if (autoOpenId) {
-        openConversation(autoOpenId);
-        autoOpenId = null;
-      }
-    }, err => {
-      console.error('Firestore error:', err);
-      document.getElementById('convList').innerHTML = `
-        <div class="conv-empty">
-          <div class="icon">⚠️</div>
-          <p>Erreur de chargement. Vérifiez votre connexion.</p>
-        </div>`;
+  function mergeAndRender() {
+    const map = new Map();
+    [..._convsByUid, ..._convsByEmail].forEach(c => map.set(c.id, c));
+    conversations = [...map.values()].sort((a, b) => {
+      const ta = a.lastMessageAt?.toMillis?.() ?? 0;
+      const tb = b.lastMessageAt?.toMillis?.() ?? 0;
+      return tb - ta;
     });
+    renderConvList();
+
+    const unread = conversations.filter(c => !(c.readBy || {})[currentUser.uid]).length;
+    const badge = document.getElementById('unreadBadge');
+    badge.textContent = unread;
+    badge.classList.toggle('show', unread > 0);
+
+    if (autoOpenId && !_opened) {
+      _opened = true;
+      openConversation(autoOpenId);
+    }
+  }
+
+  _unsubByUid = db.collection('conversations')
+    .where('participants', 'array-contains', currentUser.uid)
+    .onSnapshot(snap => {
+      _convsByUid = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      mergeAndRender();
+    }, err => console.error('[conv:uid]', err));
+
+  _unsubByEmail = db.collection('conversations')
+    .where('participants', 'array-contains', currentUser.email)
+    .onSnapshot(snap => {
+      _convsByEmail = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      mergeAndRender();
+    }, err => console.error('[conv:email]', err));
 }
 
 /* ────────────────────────── RENDER CONV LIST ────────────────────────── */
@@ -729,7 +714,7 @@ async function openConversation(convId) {
       if (!doc.exists) { activeConvId = null; return; }
       const data = doc.data();
       // Contrôle d'accès : l'utilisateur doit être participant
-      if (!data.participants?.includes(currentUser.uid)) {
+      if (!data.participants?.includes(currentUser.uid) && !data.participants?.includes(currentUser.email)) {
         console.warn('[Security] Accès refusé à la conversation', convId);
         activeConvId = null;
         document.getElementById('chatEmpty').style.display = 'flex';
