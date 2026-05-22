@@ -748,7 +748,7 @@ const REPORT_LABELS = {
   autre: 'Autre raison',
 };
 
-function sendReport() {
+async function sendReport() {
   const selected = document.querySelector('input[name="report_reason"]:checked');
   const errEl = document.getElementById('reportError');
 
@@ -772,26 +772,34 @@ function sendReport() {
     detail = txt;
   }
 
-  const adUrl = window.location.href;
-  const subject = encodeURIComponent(`[Signalement] ${_currentAdTitle} — ${motifLabel}`);
-  const body = encodeURIComponent(
-    `Bonjour,\n\nJe souhaite signaler l'annonce suivante :\n\n` +
-    `Titre : ${_currentAdTitle}\n` +
-    `ID : ${_currentAdId}\n` +
-    `URL : ${adUrl}\n\n` +
-    `Motif : ${motifLabel}` +
-    (detail ? `\n\nPrécision : ${detail}` : '') +
-    `\n\nCordialement.`
-  );
+  const sendBtn = document.querySelector('.btn-modal-send');
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Envoi…'; }
 
-  window.location.href = `mailto:zoophiloocontact@gmail.com?subject=${subject}&body=${body}`;
+  try {
+    await db.collection('reports').add({
+      type:          'annonce',
+      adId:          _currentAdId,
+      adTitle:       _currentAdTitle,
+      adUrl:         window.location.href,
+      reasonCode:    selected.value,
+      reason:        motifLabel,
+      detail:        detail,
+      status:        'pending',
+      reporterUid:   _authUser ? _authUser.uid   : null,
+      reporterEmail: _authUser ? _authUser.email : null,
+      createdAt:     firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-  // Show success feedback
-  document.getElementById('reportSuccess').classList.add('show');
-  document.getElementById('reportFooter').style.display = 'none';
-  document.getElementById('reportError').classList.remove('show');
-  // Auto-close after delay
-  setTimeout(closeReportModal, 3000);
+    document.getElementById('reportSuccess').classList.add('show');
+    document.getElementById('reportFooter').style.display = 'none';
+    document.getElementById('reportError').classList.remove('show');
+    setTimeout(closeReportModal, 3000);
+  } catch(e) {
+    console.error(e);
+    errEl.textContent = 'Erreur lors de l\'envoi du signalement. Réessayez.';
+    errEl.classList.add('show');
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Envoyer le signalement'; }
+  }
 }
 
 // Close on Escape

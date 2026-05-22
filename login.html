@@ -804,7 +804,14 @@ async function doSignIn() {
   if (!password) { showError('signin', 'Entrez votre mot de passe.'); return; }
   setLoading('btnSignin', true);
   try {
-    await auth.signInWithEmailAndPassword(email, password);
+    const cred = await auth.signInWithEmailAndPassword(email, password);
+    const snap = await db.collection('users').doc(cred.user.uid).get();
+    if (snap.exists && snap.data().isBanned === true) {
+      await auth.signOut();
+      showError('signin', 'Votre compte a été suspendu. Contactez l\'équipe YoupiZoo.');
+      setLoading('btnSignin', false);
+      return;
+    }
     redirectAfterLogin();
   } catch(e) {
     showError('signin', firebaseError(e.code));
@@ -904,11 +911,22 @@ async function doGoogleSignIn() {
     }
 
     let cguAccepted = false;
+    let isBanned = false;
     if (!isNew) {
       try {
         const snap = await db.collection('users').doc(user.uid).get();
-        cguAccepted = snap.exists && snap.data().cgu_accepted === true;
+        if (snap.exists) {
+          cguAccepted = snap.data().cgu_accepted === true;
+          isBanned    = snap.data().isBanned === true;
+        }
       } catch(e) {}
+    }
+
+    if (isBanned) {
+      await auth.signOut();
+      const panel = document.getElementById('panelSignin').classList.contains('active') ? 'signin' : 'signup';
+      showError(panel, 'Votre compte a été suspendu. Contactez l\'équipe YoupiZoo.');
+      return;
     }
 
     if (cguAccepted) {
