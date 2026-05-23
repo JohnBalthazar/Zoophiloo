@@ -499,10 +499,6 @@
 </div>
 
 <script>
-const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
-const BASE_ID = 'appepwMYbNUv2k3f9';
-const TABLE_NAME = 'Annonces';
-
 const ESPECE_EMOJI = {
   'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
   'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
@@ -686,25 +682,17 @@ function renderPage(record) {
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-
   if (!id) { showError('Aucun identifiant d\'annonce fourni.'); return; }
-
   try {
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE_NAME)}/${id}`,
-      { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const record = await res.json();
-    if (!record || !record.fields) throw new Error('Enregistrement vide');
-    renderPage(record);
+    const docSnap = await db.collection('annonces').doc(id).get();
+    if (!docSnap.exists) throw new Error('Annonce introuvable');
+    renderPage({ id: docSnap.id, fields: docSnap.data() });
   } catch (err) {
     console.error(err);
-    showError('Impossible de charger cette annonce. Vérifiez l\'identifiant ou réessayez plus tard.');
+    showError('Impossible de charger cette annonce. Elle a peut-être été supprimée.');
   }
 }
-
-init();
+// init() sera appelé par le 2e bloc script une fois db initialisé
 
 // ── SEO DYNAMIQUE ──
 function _setMeta(attr, value, content) {
@@ -918,6 +906,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+init(); // Firestore prêt — charger l'annonce
 
 // ── User menu styles (injected via JS to keep annonce.html self-contained) ──
 const styleEl = document.createElement('style');

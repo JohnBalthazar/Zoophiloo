@@ -234,6 +234,7 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
@@ -245,10 +246,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-
-const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
-const BASE_ID = 'appepwMYbNUv2k3f9';
-const TABLE = 'Annonces';
+const db   = firebase.firestore();
 
 const ESPECE_EMOJI = {
   'Chien':'🐕','Chat':'🐈','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
@@ -271,27 +269,22 @@ auth.onAuthStateChanged(user => {
 
 // ── Load annonces ──
 async function loadAnnonces() {
-  const email = currentUser.email;
-  let records = [], offset = null;
-  const fields = ['Titre','Espèce','Race','Type_annonce','Prix','Photos',
-                  'Ville','Date_creation','Date_expiration','Statut','Visible'];
   try {
-    do {
-      const params = new URLSearchParams({ pageSize: 100 });
-      fields.forEach(f => params.append('fields[]', f));
-      params.append('filterByFormula', `{Email_contact}="${email}"`);
-      if (offset) params.append('offset', offset);
-      const res = await fetch(
-        `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}?${params}`,
-        { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
-      );
-      const data = await res.json();
-      if (data.records) records = records.concat(data.records);
-      offset = data.offset || null;
-    } while (offset);
-
-    allRecords = records.sort((a,b) =>
-      new Date(b.fields['Date_creation']||0) - new Date(a.fields['Date_creation']||0)
+    // Requête par uid (annonces récentes) + par email (annonces migrées)
+    const [snapUid, snapEmail] = await Promise.all([
+      db.collection('annonces').where('uid', '==', currentUser.uid).get(),
+      db.collection('annonces').where('Email_contact', '==', currentUser.email).get()
+    ]);
+    const seen = new Set();
+    const records = [];
+    [...snapUid.docs, ...snapEmail.docs].forEach(doc => {
+      if (!seen.has(doc.id)) {
+        seen.add(doc.id);
+        records.push({ id: doc.id, fields: doc.data() });
+      }
+    });
+    allRecords = records.sort((a, b) =>
+      new Date(b.fields['Date_creation'] || 0) - new Date(a.fields['Date_creation'] || 0)
     );
     renderStats();
     renderList();
@@ -415,16 +408,11 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async () =
   const btn = document.getElementById('confirmDeleteBtn');
   btn.textContent = 'Suppression…'; btn.disabled = true;
   try {
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${recordToDelete}`,
-      { method: 'DELETE', headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
-    );
-    if (res.ok) {
-      allRecords = allRecords.filter(r => r.id !== recordToDelete);
-      renderStats(); renderList();
-      showToast('Annonce supprimée', 'success');
-    } else { showToast('Erreur lors de la suppression', 'error'); }
-  } catch(e) { showToast('Erreur réseau', 'error'); }
+    await db.collection('annonces').doc(recordToDelete).delete();
+    allRecords = allRecords.filter(r => r.id !== recordToDelete);
+    renderStats(); renderList();
+    showToast('Annonce supprimée', 'success');
+  } catch(e) { showToast('Erreur lors de la suppression', 'error'); }
   btn.textContent = 'Supprimer'; btn.disabled = false;
   closeDeleteModal();
 });

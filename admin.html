@@ -577,10 +577,6 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// ── AIRTABLE ──
-const AT_TOKEN = '__AIRTABLE_TOKEN__';
-const BASE_ID  = 'appepwMYbNUv2k3f9';
-const TABLE    = 'Annonces';
 
 // ── ADMIN EMAIL ──
 const ADMIN_EMAIL = 'jean.curt69@gmail.com';
@@ -926,7 +922,7 @@ function cfmDelAd(adId, title) {
   const reportIds = _reports.filter(r => r.adId === adId).map(r => r.id);
   showCfm({
     icon:'🗑️', title:'Supprimer cette annonce ?',
-    body:`L'annonce "${title}" sera supprimée définitivement d'Airtable. Les signalements seront marqués résolus.`,
+    body:`L'annonce "${title}" sera supprimée définitivement. Les signalements seront marqués résolus.`,
     okLabel:'Supprimer', okCls:'btn-cfm-danger',
     action: () => deleteAd(adId, reportIds, title)
   });
@@ -939,10 +935,8 @@ async function deleteAd(adId, reportIds, adTitle) {
     : null;
   const delai_ms = oldestMs ? Date.now() - oldestMs : null;
   try {
-    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${adId}`,
-      {method:'DELETE', headers:{Authorization:`Bearer ${AT_TOKEN}`}});
-    // 404 = déjà supprimé en dehors de l'admin → on nettoie quand même les reports Firestore
-    if (!res.ok && res.status !== 404) throw new Error(`Airtable HTTP ${res.status}`);
+    // Suppression Firestore (silencieuse si déjà supprimé)
+    await db.collection('annonces').doc(adId).delete().catch(() => {});
     if (reportIds?.length) {
       const batch=db.batch();
       reportIds.forEach(id=>batch.update(db.collection('reports').doc(id),{status:'resolved',resolvedAt:firebase.firestore.FieldValue.serverTimestamp(),resolvedBy:_me.uid}));
@@ -962,7 +956,7 @@ async function deleteAd(adId, reportIds, adTitle) {
     _reports  = _reports.filter(r=>r.adId!==adId);
     _annonces = _annonces.filter(a=>a.id!==adId);
     renderReports(); updateBadge(); renderAnnonces();
-    toast(res.status === 404 ? 'Signalement nettoyé (annonce déjà supprimée).' : 'Annonce supprimée.', 's');
+    toast('Annonce supprimée.', 's');
   } catch(e) { toast('Erreur: '+e.message,'e'); }
 }
 
@@ -970,24 +964,18 @@ async function deleteAd(adId, reportIds, adTitle) {
 async function loadAnnonces() {
   document.getElementById('aTableWrap').innerHTML = `<div class="tloading"><div class="tspinner"></div><div style="font-size:13px;margin-top:6px">Chargement…</div></div>`;
   try {
-    const recs=[]; let offset=null;
-    do {
-      let url=`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}?pageSize=100&sort[0][field]=Date_creation&sort[0][direction]=desc`;
-      if (offset) url+=`&offset=${encodeURIComponent(offset)}`;
-      const res=await fetch(url,{headers:{Authorization:`Bearer ${AT_TOKEN}`}});
-      const data=await res.json();
-      if (!res.ok) throw new Error(data.error?.message||`HTTP ${res.status}`);
-      recs.push(...(data.records||[])); offset=data.offset;
-    } while(offset);
-    _annonces=recs;
-    const esp=[...new Set(recs.map(r=>r.fields?.Espèce).filter(Boolean))].sort();
-    const sel=document.getElementById('espFilter');
-    esp.forEach(e=>{ const o=new Option(e,e); sel.appendChild(o); });
-    document.getElementById('stAds').textContent=recs.length;
-    document.getElementById('dbA').textContent=recs.length+' annonces';
+    const snap = await db.collection('annonces').get();
+    const recs = snap.docs.map(doc => ({ id: doc.id, fields: doc.data() }));
+    recs.sort((a, b) => new Date(b.fields.Date_creation || 0) - new Date(a.fields.Date_creation || 0));
+    _annonces = recs;
+    const esp = [...new Set(recs.map(r => r.fields?.Espèce).filter(Boolean))].sort();
+    const sel = document.getElementById('espFilter');
+    esp.forEach(e => { const o = new Option(e, e); sel.appendChild(o); });
+    document.getElementById('stAds').textContent = recs.length;
+    document.getElementById('dbA').textContent = recs.length + ' annonces';
     renderAnnonces();
   } catch(e) {
-    document.getElementById('aTableWrap').innerHTML=`<div class="empty"><div class="empty-ico">❌</div><h3>Erreur</h3><p>${esc(e.message)}</p></div>`;
+    document.getElementById('aTableWrap').innerHTML = `<div class="empty"><div class="empty-ico">❌</div><h3>Erreur</h3><p>${esc(e.message)}</p></div>`;
   }
 }
 function renderAnnonces() {

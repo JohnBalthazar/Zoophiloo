@@ -331,6 +331,7 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "__FIREBASE_API_KEY__", authDomain: "__FIREBASE_AUTH_DOMAIN__",
@@ -339,10 +340,8 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db   = firebase.firestore();
 
-const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
-const BASE_ID = 'appepwMYbNUv2k3f9';
-const TABLE = 'Annonces';
 const IMGBB_KEY = '__IMGBB_KEY__';
 
 let currentUser = null;
@@ -562,28 +561,15 @@ async function submitAnnonce() {
       fields['Photos'] = photoUrls.map(url => ({ url }));
     }
 
-    // Create in Airtable
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}`,
-      {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields })
-      }
-    );
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || 'Erreur Airtable');
+    // Créer dans Firestore
+    fields['Date_creation'] = new Date().toISOString();
+    fields['uid'] = currentUser.uid;
 
-    // Set slug
-    const slug = makeSlug(fields['Titre'], data.id);
-    await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${data.id}`,
-      {
-        method: 'PATCH',
-        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Slug': slug } })
-      }
-    );
+    const ref = await db.collection('annonces').add(fields);
+
+    // Mettre à jour le slug avec l'ID Firestore
+    const slug = makeSlug(fields['Titre'], ref.id);
+    await db.collection('annonces').doc(ref.id).update({ Slug: slug });
 
     showSuccess('Annonce publiée ! Elle est maintenant visible. Redirection…');
     setTimeout(() => window.location.href = 'mon-espace.html', 2500);

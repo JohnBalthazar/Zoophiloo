@@ -683,10 +683,6 @@
 </div>
 
 <script>
-const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
-const BASE_ID = 'appepwMYbNUv2k3f9';
-const TABLE_NAME = 'Annonces';
-
 const ESPECE_EMOJI = {
   'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
   'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
@@ -833,24 +829,13 @@ function initMap() {
 }
 
 async function fetchAnnonces() {
-  let records = [], offset = null;
-  const fields = ['Titre','Description','Espèce','Race','Type_annonce','Prix','Photos',
-                  'Ville','Code_postal','Latitude','Longitude','Nom_contact','Prenom_contact',
-                  'Email_contact','Telephone','Date_creation','Statut','Visible','Slug'];
-  do {
-    const params = new URLSearchParams({ pageSize: 100, filterByFormula: '{Visible}=TRUE()' });
-    fields.forEach(f => params.append('fields[]', f));
-    if (offset) params.append('offset', offset);
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE_NAME)}?${params}`,
-      { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
-    );
-    const data = await res.json();
-    if (data.records) records = records.concat(data.records);
-    offset = data.offset || null;
-  } while (offset);
-  // Double sécurité côté JS : Airtable n'inclut pas les champs checkbox à false
-  return records.filter(r => r.fields['Visible'] === true);
+  // Firestore — attend que db soit disponible (initialisé dans le 2e bloc script)
+  if (typeof db === 'undefined') {
+    await new Promise(r => setTimeout(r, 100));
+    return fetchAnnonces();
+  }
+  const snap = await db.collection('annonces').where('Visible', '==', true).get();
+  return snap.docs.map(doc => ({ id: doc.id, fields: doc.data() }));
 }
 
 function formatPrice(val, type) {
@@ -1222,10 +1207,7 @@ async function init() {
   } catch(err) {
     document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Vérifiez votre clé API</span></div>`;
   }
-  // Les URLs signées Airtable expirent en ~2h — on rafraîchit avant expiry
-  setInterval(async () => {
-    try { allRecords = await fetchAnnonces(); applyFilters(); } catch(e) {}
-  }, 90 * 60 * 1000);
+  // imgbb ne signe pas les URLs — pas besoin de rafraîchissement
 }
 init();
 </script>

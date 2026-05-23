@@ -147,6 +147,7 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "__FIREBASE_API_KEY__", authDomain: "__FIREBASE_AUTH_DOMAIN__",
@@ -155,10 +156,8 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db   = firebase.firestore();
 
-const AIRTABLE_TOKEN = '__AIRTABLE_TOKEN__';
-const BASE_ID = 'appepwMYbNUv2k3f9';
-const TABLE = 'Annonces';
 const IMGBB_KEY = '__IMGBB_KEY__';
 
 let currentUser = null;
@@ -178,17 +177,16 @@ auth.onAuthStateChanged(user => {
 
 async function loadRecord() {
   try {
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${recordId}`,
-      { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
-    );
-    const data = await res.json();
-    if (!res.ok) throw new Error('Annonce introuvable');
-    // Security: check ownership
-    if (data.fields['Email_contact'] !== currentUser.email) {
+    const docSnap = await db.collection('annonces').doc(recordId).get();
+    if (!docSnap.exists) throw new Error('Annonce introuvable');
+    const data = docSnap.data();
+    // Vérification de propriété : uid ou email
+    const ownerByUid   = data.uid && data.uid === currentUser.uid;
+    const ownerByEmail = data.Email_contact && data.Email_contact === currentUser.email;
+    if (!ownerByUid && !ownerByEmail) {
       window.location.href = 'mon-espace.html'; return;
     }
-    renderForm(data.fields);
+    renderForm(data);
   } catch(e) {
     document.getElementById('pageContent').innerHTML = `
       <div style="text-align:center;padding:64px 24px;color:var(--text-muted)">
@@ -490,15 +488,10 @@ async function submitEdit() {
     if (lng) fields['Longitude'] = parseFloat(lng);
     if (allPhotos.length > 0) fields['Photos'] = allPhotos;
 
-    const res = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}/${recordId}`,
-      {
-        method: 'PATCH',
-        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields })
-      }
-    );
-    if (!res.ok) { const d = await res.json(); throw new Error(d.error?.message || 'Erreur Airtable'); }
+    await db.collection('annonces').doc(recordId).update({
+      ...fields,
+      updatedAt: new Date().toISOString()
+    });
 
     document.getElementById('alertSuccessMsg').textContent = 'Annonce mise à jour ! Redirection…';
     document.getElementById('alertSuccess').classList.add('show');
