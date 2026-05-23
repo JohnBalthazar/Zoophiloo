@@ -352,6 +352,15 @@ auth.onAuthStateChanged(user => {
   if (!user) { window.location.href = 'login.html?next=deposer.html'; return; }
   currentUser = user;
   document.getElementById('email_contact').value = user.email;
+
+  // Pré-remplir les champs d'adresse depuis la dernière annonce
+  const savedVille = localStorage.getItem('zph_ville');
+  const savedAdresse = localStorage.getItem('zph_adresse');
+  const savedCp = localStorage.getItem('zph_code_postal');
+  if (savedVille)   document.getElementById('ville').value = savedVille;
+  if (savedAdresse) document.getElementById('adresse').value = savedAdresse;
+  if (savedCp)      document.getElementById('code_postal').value = savedCp;
+  if (savedVille || savedCp) geocodeAddress(); // recalcule lat/lng si nécessaire
 });
 
 // ── Photo handling ──
@@ -570,6 +579,14 @@ async function submitAnnonce() {
     // Mettre à jour le slug avec l'ID Firestore
     const slug = makeSlug(fields['Titre'], ref.id);
     await db.collection('annonces').doc(ref.id).update({ Slug: slug });
+
+    // Mémoriser l'adresse pour les prochaines annonces
+    const v = document.getElementById('ville').value.trim();
+    const a = document.getElementById('adresse').value.trim();
+    const c = document.getElementById('code_postal').value.trim();
+    if (v) localStorage.setItem('zph_ville', v);
+    if (a) localStorage.setItem('zph_adresse', a);
+    if (c) localStorage.setItem('zph_code_postal', c);
 
     showSuccess('Annonce publiée ! Elle est maintenant visible. Redirection…');
     setTimeout(() => window.location.href = 'mon-espace.html', 2500);
