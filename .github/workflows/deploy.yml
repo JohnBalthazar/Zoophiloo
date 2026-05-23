@@ -23,15 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Inject Airtable token (migration only)
-        run: |
-          if [ -f "migration.html" ]; then
-            sed -i "s|__AIRTABLE_TOKEN__|${{ secrets.AIRTABLE_TOKEN }}|g" migration.html
-          fi
-
       - name: Inject imgbb key
         run: |
-          for file in deposer.html editer.html migration.html; do
+          for file in deposer.html editer.html; do
             if [ -f "$file" ]; then
               sed -i "s|__IMGBB_KEY__|${{ secrets.IMGBB_KEY }}|g" $file
             fi
@@ -39,7 +33,7 @@ jobs:
 
       - name: Inject Firebase config
         run: |
-          for file in index.html annonce.html login.html mon-espace.html deposer.html editer.html compte.html messages.html reset-password.html admin.html migration.html; do
+          for file in index.html annonce.html login.html mon-espace.html deposer.html editer.html compte.html messages.html reset-password.html admin.html; do
             if [ -f "$file" ]; then
               sed -i "s|__FIREBASE_API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g" $file
               sed -i "s|__FIREBASE_AUTH_DOMAIN__|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g" $file
