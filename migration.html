@@ -72,28 +72,57 @@ let _isAdmin = false;
 // On affiche un indicateur de chargement et on attend onAuthStateChanged.
 const _authStatusEl = document.getElementById('authStatus');
 
+// Détection config Firebase non injectée (placeholder non remplacé par CI/CD)
+if (firebaseConfig.apiKey.startsWith('__')) {
+  _authStatusEl.innerHTML = '❌ <strong>Config Firebase non injectée</strong> — accédez à cette page depuis <a href="https://www.youpizoo.fr/migration.html" style="color:#58a6ff">www.youpizoo.fr/migration.html</a> (pas en local).';
+} else {
+
 auth.onAuthStateChanged(async user => {
   if (!user) {
-    _authStatusEl.innerHTML = '🔒 Non connecté — <a href="login.html?next=migration.html" style="color:#58a6ff">Se connecter</a>';
+    _authStatusEl.innerHTML = `
+      🔒 Non connecté (Firebase ne voit aucune session active).<br>
+      <a href="login.html?next=migration.html" style="color:#58a6ff;margin-top:4px;display:inline-block">→ Se connecter</a>`;
     document.getElementById('btnStart').disabled = true;
     return;
   }
-  _authStatusEl.textContent = '⏳ Vérification des droits admin…';
+
+  // Utilisateur détecté
+  _authStatusEl.innerHTML = `⏳ Connecté : <strong style="color:#c9d1d9">${user.email || user.uid}</strong> — vérification admin en cours…`;
+
   try {
     const snap = await db.collection('users').doc(user.uid).get();
-    _isAdmin = snap.exists && snap.data().isAdmin === true;
+
+    if (!snap.exists) {
+      _authStatusEl.innerHTML = `⚠️ Profil Firestore introuvable.<br>
+        <small style="color:#8b949e">Email : ${user.email} | UID : ${user.uid}<br>
+        Le document users/${user.uid} n'existe pas dans Firestore.</small>`;
+      return;
+    }
+
+    const data = snap.data();
+    _isAdmin = data.isAdmin === true;
+
+    if (!_isAdmin) {
+      _authStatusEl.innerHTML = `🔒 Compte non admin.<br>
+        <small style="color:#8b949e">
+          Email : ${user.email}<br>
+          Valeur isAdmin dans Firestore : <strong style="color:#f85149">${JSON.stringify(data.isAdmin ?? 'champ absent')}</strong><br>
+          → Dans Firebase Console, allez dans Firestore → users → ${user.uid} → modifier le champ <code>isAdmin</code> à <code>true</code>
+        </small>`;
+      document.getElementById('btnStart').disabled = true;
+      return;
+    }
+
+    _authStatusEl.textContent = '✅ Admin confirmé : ' + user.email;
+    document.getElementById('btnStart').disabled = false;
+
   } catch(e) {
-    _authStatusEl.textContent = '⚠️ Erreur lecture profil : ' + e.message;
-    return;
+    _authStatusEl.innerHTML = `⚠️ Erreur lecture Firestore : ${e.message}<br>
+      <small style="color:#8b949e">Code : ${e.code || 'inconnu'} | User : ${user.email}</small>`;
   }
-  if (!_isAdmin) {
-    _authStatusEl.innerHTML = '🔒 Accès refusé — compte non admin.';
-    document.getElementById('btnStart').disabled = true;
-    return;
-  }
-  _authStatusEl.textContent = '✅ Connecté en tant qu\'admin · ' + (user.email || user.uid);
-  document.getElementById('btnStart').disabled = false;
 });
+
+}
 
 function log(msg, cls = '') {
   const el = document.getElementById('log');
