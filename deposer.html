@@ -348,19 +348,31 @@ let currentUser = null;
 let photoFiles = []; // {file, previewUrl, cloudUrl}
 
 // ── Auth guard ──
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(async user => {
   if (!user) { window.location.href = 'login.html?next=deposer.html'; return; }
   currentUser = user;
   document.getElementById('email_contact').value = user.email;
 
-  // Pré-remplir les champs d'adresse depuis la dernière annonce
-  const savedVille = localStorage.getItem('zph_ville');
-  const savedAdresse = localStorage.getItem('zph_adresse');
-  const savedCp = localStorage.getItem('zph_code_postal');
-  if (savedVille)   document.getElementById('ville').value = savedVille;
-  if (savedAdresse) document.getElementById('adresse').value = savedAdresse;
-  if (savedCp)      document.getElementById('code_postal').value = savedCp;
-  if (savedVille || savedCp) geocodeAddress(); // recalcule lat/lng si nécessaire
+  // Pré-remplir les champs d'adresse depuis le profil Firestore
+  try {
+    const snap = await db.collection('users').doc(user.uid).get();
+    if (snap.exists) {
+      const d = snap.data();
+      if (d.ville)       document.getElementById('ville').value        = d.ville;
+      if (d.adresse_rue) document.getElementById('adresse').value      = d.adresse_rue;
+      if (d.code_postal) document.getElementById('code_postal').value  = d.code_postal;
+      if (d.ville || d.code_postal) geocodeAddress();
+    }
+  } catch(e) {
+    // Fallback : localStorage si Firestore inaccessible
+    const v = localStorage.getItem('zph_ville');
+    const a = localStorage.getItem('zph_adresse');
+    const c = localStorage.getItem('zph_code_postal');
+    if (v) document.getElementById('ville').value       = v;
+    if (a) document.getElementById('adresse').value     = a;
+    if (c) document.getElementById('code_postal').value = c;
+    if (v || c) geocodeAddress();
+  }
 });
 
 // ── Photo handling ──
