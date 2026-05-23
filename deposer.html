@@ -102,6 +102,26 @@
   }
   .form-group.has-error .error-msg { display: block; }
 
+  /* PEDIGREE */
+  .pedigree-block {
+    display: none;
+    border-top: 1px dashed var(--border);
+    margin-top: 8px;
+    padding-top: 10px;
+  }
+  .pedigree-toggle-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .pedigree-checkbox {
+    display: inline-flex; align-items: center; gap: 7px;
+    cursor: pointer; font-size: 13px; color: var(--text); user-select: none;
+  }
+  .pedigree-checkbox input[type="checkbox"] {
+    width: 15px; height: 15px; accent-color: var(--green);
+    cursor: pointer; flex-shrink: 0;
+  }
+  .pedigree-extra { display: none; margin-top: 10px; }
+
   /* PHOTO UPLOAD */
   .photo-zone {
     border: 2px dashed var(--border); border-radius: 10px;
@@ -223,6 +243,38 @@
         <input type="text" id="race" placeholder="Ex: Golden Retriever, Persan…">
       </div>
     </div>
+
+    <!-- Pedigree — Chien, Chat, Cheval uniquement — masqué par défaut -->
+    <div class="pedigree-block" id="pedigreeBlock">
+      <div class="pedigree-toggle-row">
+        <label class="pedigree-checkbox">
+          <input type="checkbox" id="pedigree" onchange="onPedigreeChange()">
+          <span>🏆 Animal inscrit au pedigree</span>
+        </label>
+        <span class="field-hint" style="margin:0">(LOF, LOOF, studbook…)</span>
+      </div>
+      <div class="pedigree-extra" id="pedigreeExtra">
+        <div class="form-row cols-2" style="margin-bottom:0">
+          <div class="form-group">
+            <label>Registre / organisme</label>
+            <select id="organisme_race">
+              <option value="">Choisir…</option>
+              <option value="LOF">LOF (chien — France)</option>
+              <option value="LOOF">LOOF (chat — France)</option>
+              <option value="IFCE">Studbook IFCE (cheval)</option>
+              <option value="TICA">TICA (chat — international)</option>
+              <option value="CFA">CFA (chat — international)</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>N° d'inscription <span style="font-weight:400;color:var(--text-muted)">(optionnel)</span></label>
+            <input type="text" id="numero_inscription" placeholder="Ex: LOF 123456">
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="form-row">
       <div class="form-group">
         <label>Description</label>
@@ -374,6 +426,28 @@ auth.onAuthStateChanged(async user => {
     if (v || c) geocodeAddress();
   }
 });
+
+// ── Pedigree — affichage conditionnel par espèce ──
+const PEDIGREE_ESPECES = new Set(['Chien', 'Chat', 'Cheval']);
+
+document.getElementById('espece').addEventListener('change', onEspeceChange);
+
+function onEspeceChange() {
+  const espece = document.getElementById('espece').value;
+  const block = document.getElementById('pedigreeBlock');
+  const eligible = PEDIGREE_ESPECES.has(espece);
+  block.style.display = eligible ? 'block' : 'none';
+  if (!eligible) {
+    // Reset si on change pour une espèce non éligible
+    document.getElementById('pedigree').checked = false;
+    document.getElementById('pedigreeExtra').style.display = 'none';
+  }
+}
+
+function onPedigreeChange() {
+  const checked = document.getElementById('pedigree').checked;
+  document.getElementById('pedigreeExtra').style.display = checked ? 'block' : 'none';
+}
 
 // ── Photo handling ──
 const fileInput = document.getElementById('fileInput');
@@ -563,6 +637,7 @@ async function submitAnnonce() {
       'Prenom_contact': localStorage.getItem('zph_prenom') || '',
       'Nom_contact': localStorage.getItem('zph_nom') || '',
       'Telephone': document.getElementById('telephone').value.trim() || null,
+      'Pedigree': document.getElementById('pedigree').checked,
       'Visible': true,
       'Statut': 'Active',
     };
@@ -577,6 +652,14 @@ async function submitAnnonce() {
     const lng = document.getElementById('longitude').value;
     if (lat) fields['Latitude'] = parseFloat(lat);
     if (lng) fields['Longitude'] = parseFloat(lng);
+
+    // Pedigree — champs supplémentaires si cochés
+    if (fields['Pedigree']) {
+      const org = document.getElementById('organisme_race').value;
+      const num = document.getElementById('numero_inscription').value.trim();
+      if (org) fields['Organisme_race'] = org;
+      if (num) fields['Numero_inscription'] = num;
+    }
 
     if (photoUrls.length > 0) {
       fields['Photos'] = photoUrls.map(url => ({ url }));

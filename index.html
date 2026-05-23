@@ -336,6 +336,7 @@
   .tag-dist { background: #f0fdf8; color: #0d7a55; border: 1px solid #a7f3d0; font-size: 10px; }
   .tag-perdu { background: #fef2f2; color: #dc2626; }
   .tag-trouve { background: #f5f3ff; color: #7c3aed; }
+  .tag-pedigree { background: #fefce8; color: #713f12; border: 1px solid #fde68a; }
 
   @media (max-width: 680px) {
     .filters-bar-2 { padding: 6px 12px; }
@@ -660,6 +661,9 @@
     <span class="price-sep">€</span>
   </div>
   <div class="divider"></div>
+  <span class="filter-label">🏆 Race</span>
+  <button class="chip" id="pedigreeChip" onclick="togglePedigreeFilter()">Avec pedigree</button>
+  <div class="divider"></div>
   <button class="filter-reset-btn" id="filterResetBtn" onclick="resetAdvancedFilters()">
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     Effacer
@@ -709,7 +713,7 @@ const ESPECE_EMOJI = {
 
 let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
-let activeDate = '', priceMin = null, priceMax = null;
+let activeDate = '', priceMin = null, priceMax = null, activePedigree = false;
 let geoCenter = null, geoRadius = null; // {lat, lng}, km
 let markers = {}, map, clusterGroup;
 
@@ -932,6 +936,10 @@ function renderList() {
     const isAdopterType = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
     const typeClass = isDonType?'tag-don':isAdopterType?'tag-adoption':f['Type_annonce']==='Perdu'?'tag-perdu':f['Type_annonce']==='Trouvé'?'tag-trouve':'tag-vente';
     const typeLabel = isDonType?'Don':isAdopterType?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
+    // Pedigree badge
+    const pedigreeBadge = f['Pedigree']
+      ? `<span class="tag tag-pedigree">🏆 ${f['Organisme_race'] || 'Pedigree'}</span>`
+      : '';
     // Distance badge
     let distBadge = '';
     if (geoCenter) {
@@ -949,7 +957,7 @@ function renderList() {
         <div class="ad-title">${f['Titre']||'Sans titre'}</div>
         <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
         <div class="ad-price ${price.cls}">${price.text}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${distBadge}</div>
+        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${pedigreeBadge}${distBadge}</div>
       </div>
       <span class="ad-date">${formatDate(f['Date_creation'])}</span>
     </div>`;
@@ -1065,6 +1073,11 @@ function applyFilters() {
     });
   }
 
+  // Pedigree
+  if (activePedigree) {
+    results = results.filter(r => r.fields['Pedigree'] === true);
+  }
+
   const sort = document.getElementById('sortSelect').value;
   if (sort==='price_asc') results.sort((a,b)=>(parseFloat(String(a.fields['Prix']||0).replace(/[^0-9.]/g,''))||0)-(parseFloat(String(b.fields['Prix']||0).replace(/[^0-9.]/g,''))||0));
   else if (sort==='price_desc') results.sort((a,b)=>(parseFloat(String(b.fields['Prix']||0).replace(/[^0-9.]/g,''))||0)-(parseFloat(String(a.fields['Prix']||0).replace(/[^0-9.]/g,''))||0));
@@ -1078,8 +1091,15 @@ function applyFilters() {
 
 function updateResetBtn() {
   const sliderActive = parseInt(document.getElementById('geoRadiusSlider').value) > 0;
-  const hasAdvanced = (geoCenter && sliderActive) || activeDate || priceMin !== null || priceMax !== null;
+  const hasAdvanced = (geoCenter && sliderActive) || activeDate || priceMin !== null || priceMax !== null || activePedigree;
   document.getElementById('filterResetBtn').classList.toggle('visible', !!hasAdvanced);
+}
+
+function togglePedigreeFilter() {
+  activePedigree = !activePedigree;
+  document.getElementById('pedigreeChip').classList.toggle('active', activePedigree);
+  applyFilters();
+  updateResetBtn();
 }
 
 function resetAdvancedFilters() {
@@ -1099,6 +1119,9 @@ function resetAdvancedFilters() {
   priceMin = null; priceMax = null;
   document.getElementById('priceMin').value = '';
   document.getElementById('priceMax').value = '';
+  // Pedigree
+  activePedigree = false;
+  document.getElementById('pedigreeChip').classList.remove('active');
   applyFilters();
 }
 
