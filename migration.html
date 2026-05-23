@@ -28,7 +28,9 @@
 <h1>🔄 Migration Airtable → Firestore</h1>
 <p class="sub">Outil one-shot — réservé admin. Recopie toutes les annonces Airtable vers Firestore et ré-héberge les photos sur imgbb.</p>
 
-<button id="btnStart" onclick="startMigration()">▶ Lancer la migration</button>
+<div id="authStatus" style="margin-bottom:16px;font-size:13px;color:#8b949e">⏳ Vérification de la session Firebase…</div>
+
+<button id="btnStart" onclick="startMigration()" disabled>▶ Lancer la migration</button>
 
 <div id="progress">
   <span id="progTxt">En attente…</span>
@@ -66,16 +68,31 @@ const IMGBB_KEY      = '__IMGBB_KEY__';
 
 let _isAdmin = false;
 
+// Pas de redirect automatique (évite la boucle login↔migration).
+// On affiche un indicateur de chargement et on attend onAuthStateChanged.
+const _authStatusEl = document.getElementById('authStatus');
+
 auth.onAuthStateChanged(async user => {
   if (!user) {
-    window.location.href = 'login.html?next=migration.html';
+    _authStatusEl.innerHTML = '🔒 Non connecté — <a href="login.html?next=migration.html" style="color:#58a6ff">Se connecter</a>';
+    document.getElementById('btnStart').disabled = true;
     return;
   }
-  const snap = await db.collection('users').doc(user.uid).get();
-  _isAdmin = snap.exists && snap.data().isAdmin === true;
-  if (!_isAdmin) {
-    document.body.innerHTML = '<div style="text-align:center;padding:80px 24px;color:#f85149"><h2>🔒 Accès refusé</h2><p>Réservé aux administrateurs.</p></div>';
+  _authStatusEl.textContent = '⏳ Vérification des droits admin…';
+  try {
+    const snap = await db.collection('users').doc(user.uid).get();
+    _isAdmin = snap.exists && snap.data().isAdmin === true;
+  } catch(e) {
+    _authStatusEl.textContent = '⚠️ Erreur lecture profil : ' + e.message;
+    return;
   }
+  if (!_isAdmin) {
+    _authStatusEl.innerHTML = '🔒 Accès refusé — compte non admin.';
+    document.getElementById('btnStart').disabled = true;
+    return;
+  }
+  _authStatusEl.textContent = '✅ Connecté en tant qu\'admin · ' + (user.email || user.uid);
+  document.getElementById('btnStart').disabled = false;
 });
 
 function log(msg, cls = '') {
