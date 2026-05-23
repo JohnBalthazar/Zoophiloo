@@ -1233,6 +1233,7 @@ init();
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:            "__FIREBASE_API_KEY__",
@@ -1244,6 +1245,8 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db   = firebase.firestore();
+let _unreadUnsub = null; // listener Firestore messages non lus
 
 function renderHeaderAuth(user) {
   const el = document.getElementById('headerAuth');
@@ -1275,6 +1278,11 @@ function renderHeaderAuth(user) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           Mon profil
         </a>
+        <a href="messages.html" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Ma messagerie
+          <span id="msgUnreadBadge" style="display:none;margin-left:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:18px;text-align:center">0</span>
+        </a>
         <a href="deposer.html" class="user-dropdown-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Déposer une annonce
@@ -1297,11 +1305,48 @@ document.addEventListener('click', e => {
   }
 });
 async function doSignOut() {
+  if (_unreadUnsub) { _unreadUnsub(); _unreadUnsub = null; }
   await auth.signOut();
 }
+
+/** Écoute en temps réel les conversations non lues et met à jour le badge du menu */
+function watchUnreadCount(uid, email) {
+  if (_unreadUnsub) { _unreadUnsub(); _unreadUnsub = null; }
+
+  // Firestore ne supporte pas OR sur deux champs array-contains → deux listeners fusionnés
+  const unreadMap = { byUid: 0, byEmail: 0 };
+
+  function updateBadge() {
+    const total = unreadMap.byUid + unreadMap.byEmail;
+    const badge = document.getElementById('msgUnreadBadge');
+    if (!badge) return;
+    badge.textContent = total > 9 ? '9+' : total;
+    badge.style.display = total > 0 ? 'inline-flex' : 'none';
+  }
+
+  const unsubUid = db.collection('conversations')
+    .where('participants', 'array-contains', uid)
+    .onSnapshot(snap => {
+      unreadMap.byUid = snap.docs.filter(d => !(d.data().readBy || {})[uid]).length;
+      updateBadge();
+    }, () => {});
+
+  const unsubEmail = email
+    ? db.collection('conversations')
+        .where('participants', 'array-contains', email)
+        .onSnapshot(snap => {
+          unreadMap.byEmail = snap.docs.filter(d => !(d.data().readBy || {})[uid]).length;
+          updateBadge();
+        }, () => {})
+    : null;
+
+  _unreadUnsub = () => { unsubUid(); if (unsubEmail) unsubEmail(); };
+}
+
 auth.onAuthStateChanged(user => {
   renderHeaderAuth(user);
   if (user) {
+    watchUnreadCount(user.uid, user.email);
     const lat = parseFloat(localStorage.getItem('zph_lat'));
     const lng = parseFloat(localStorage.getItem('zph_lng'));
     if (!isNaN(lat) && !isNaN(lng) && map) {
