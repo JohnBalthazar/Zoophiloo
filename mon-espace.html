@@ -437,9 +437,10 @@ async function loadUserFavorites() {
   try {
     const doc = await db.collection('users').doc(currentUser.uid).get();
     userFavIds = doc.exists ? (doc.data().favorites || []) : [];
-    // Met à jour le chip avec le count
     const chip = document.getElementById('chipFavoris');
-    if (chip && userFavIds.length > 0) chip.textContent = `❤️ Mes favoris (${userFavIds.length})`;
+    if (chip) chip.textContent = userFavIds.length > 0 ? `❤️ Mes favoris (${userFavIds.length})` : '❤️ Mes favoris';
+    // Si l'onglet favoris est déjà actif (via #favoris), on charge
+    if (activeFilter === '__favoris__') renderFavorites();
   } catch(e) { /* silencieux */ }
 }
 
@@ -554,6 +555,14 @@ function showToast(msg, type = '') {
 document.getElementById('deleteModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeDeleteModal();
 });
+
+// Ouvrir directement l'onglet favoris si #favoris dans l'URL
+if (window.location.hash === '#favoris') {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.getElementById('chipFavoris');
+  if (chip) { chip.classList.add('active'); activeFilter = '__favoris__'; }
+  // renderFavorites() sera appelé une fois loadUserFavorites() terminé
+}
 </script>
 
 <!-- BANDEAU COOKIES RGPD — YoupiZoo -->

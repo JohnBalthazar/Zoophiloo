@@ -1597,6 +1597,11 @@ function renderHeaderAuth(user) {
           Ma messagerie
           <span id="msgUnreadBadge" style="display:none;margin-left:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:18px;text-align:center">0</span>
         </a>
+        <a href="mon-espace.html#favoris" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Mes favoris
+          <span id="favCountBadge" style="display:none;margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:18px;text-align:center">0</span>
+        </a>
         <a href="deposer.html" class="user-dropdown-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Déposer une annonce
@@ -1678,6 +1683,12 @@ async function loadFavorites(uid) {
     const doc = await db.collection('users').doc(uid).get();
     const favs = doc.exists ? (doc.data().favorites || []) : [];
     userFavorites = new Set(favs);
+    // Badge dans le menu
+    const badge = document.getElementById('favCountBadge');
+    if (badge) {
+      badge.textContent = favs.length;
+      badge.style.display = favs.length > 0 ? 'inline-block' : 'none';
+    }
     renderList(); // met à jour les cœurs
   } catch(e) { /* silencieux */ }
 }
