@@ -376,6 +376,10 @@
   .tag-adoption { background: #dbeafe; color: #1d4ed8; }
   .tag-don { background: #fef3c7; color: #92400e; }
   .ad-date { position: absolute; top: 12px; right: 14px; font-size: 10px; color: var(--text-muted); }
+  .classic-fav { position: absolute; bottom: 10px; right: 12px; background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px; line-height: 1; transition: transform 0.15s; }
+  .classic-fav:hover { transform: scale(1.2); }
+  .une-fav { background: none; border: none; cursor: pointer; font-size: 14px; padding: 2px; line-height: 1; transition: transform 0.15s; flex-shrink: 0; }
+  .une-fav:hover { transform: scale(1.2); }
 
   /* STATES */
   .loading-state, .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; color: var(--text-muted); font-size: 13px; gap: 8px; text-align: center; }
@@ -915,6 +919,7 @@ const ESPECE_EMOJI = {
 let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
 let currentView = localStorage.getItem('yz_view') || 'classic';
+let userFavorites = new Set(); // IDs Firestore des annonces likées
 
 function setView(v) {
   currentView = v;
@@ -1206,6 +1211,7 @@ function renderList() {
           <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDon||isAdopt)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}</div>
         </div>
         <span class="ad-date">${formatDate(f['Date_creation'])}</span>
+        <button class="fav-btn classic-fav" data-id="${safeId}" onclick="toggleFavorite('${safeId}',event)" title="${userFavorites.has(record.id)?'Retirer des favoris':'Ajouter aux favoris'}">${userFavorites.has(record.id)?'❤️':'🤍'}</button>
       </div>`;
     }).join('');
   }
@@ -1223,7 +1229,7 @@ function renderCardSPA(record) {
   return `<div class="spa-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
     <div class="spa-photo" data-fb="${emoji}">
       ${photoUrl?`<img src="${escHTML(photoUrl)}" alt="${escHTML(f['Titre']||'')}" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}
-      <button class="spa-heart" onclick="event.stopPropagation()" title="Favori" aria-label="Ajouter aux favoris">🤍</button>
+      <button class="spa-heart fav-btn" data-id="${safeId}" onclick="toggleFavorite('${safeId}',event)" title="${userFavorites.has(record.id)?'Retirer des favoris':'Ajouter aux favoris'}" aria-label="Favori">${userFavorites.has(record.id)?'❤️':'🤍'}</button>
       <span class="spa-type-badge ${typeCls}">${typeLabel}</span>
     </div>
     <div class="spa-body">
@@ -1268,7 +1274,10 @@ function renderCardUne(record) {
       <div class="une-race">${race}</div>
       <div class="une-bottom">
         <span class="une-loc">📍 ${ville}${dept ? ' ' + dept : ''}</span>
-        <span class="une-price ${price.cls}">${escHTML(price.text)}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="une-price ${price.cls}">${escHTML(price.text)}</span>
+          <button class="fav-btn une-fav" data-id="${safeId}" onclick="toggleFavorite('${safeId}',event)" title="${userFavorites.has(record.id)?'Retirer des favoris':'Ajouter aux favoris'}">${userFavorites.has(record.id)?'❤️':'🤍'}</button>
+        </div>
       </div>
     </div>
   </div>`;
@@ -1652,13 +1661,50 @@ auth.onAuthStateChanged(user => {
   renderHeaderAuth(user);
   if (user) {
     watchUnreadCount(user.uid, user.email);
+    loadFavorites(user.uid);
     const lat = parseFloat(localStorage.getItem('zph_lat'));
     const lng = parseFloat(localStorage.getItem('zph_lng'));
     if (!isNaN(lat) && !isNaN(lng) && map) {
       map.flyTo([lat, lng], 11, { duration: 1.5 });
     }
+  } else {
+    userFavorites = new Set();
+    renderList();
   }
 });
+
+async function loadFavorites(uid) {
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    const favs = doc.exists ? (doc.data().favorites || []) : [];
+    userFavorites = new Set(favs);
+    renderList(); // met à jour les cœurs
+  } catch(e) { /* silencieux */ }
+}
+
+async function toggleFavorite(recordId, e) {
+  e.stopPropagation();
+  const user = auth.currentUser;
+  if (!user) {
+    window.location.href = 'login.html?next=index.html';
+    return;
+  }
+  const isFav = userFavorites.has(recordId);
+  const userRef = db.collection('users').doc(user.uid);
+  if (isFav) {
+    userFavorites.delete(recordId);
+    await userRef.set({ favorites: firebase.firestore.FieldValue.arrayRemove(recordId) }, { merge: true });
+  } else {
+    userFavorites.add(recordId);
+    await userRef.set({ favorites: firebase.firestore.FieldValue.arrayUnion(recordId) }, { merge: true });
+  }
+  // Mise à jour ciblée du cœur sans re-render complet
+  document.querySelectorAll(`.fav-btn[data-id="${recordId}"]`).forEach(btn => {
+    btn.textContent   = userFavorites.has(recordId) ? '❤️' : '🤍';
+    btn.title         = userFavorites.has(recordId) ? 'Retirer des favoris' : 'Ajouter aux favoris';
+    btn.dataset.faved = userFavorites.has(recordId) ? '1' : '';
+  });
+}
 </script>
 
 <!-- ================================================

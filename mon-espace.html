@@ -155,12 +155,49 @@
   .toast.success { background: var(--green-dark); }
   .toast.error { background: var(--red); }
 
+  /* FAVORIS GRID */
+  .favs-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px; margin-top: 4px;
+  }
+  .fav-card {
+    border-radius: 12px; overflow: hidden; background: var(--white);
+    border: 1px solid var(--border); cursor: pointer;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+    transition: transform 0.15s, box-shadow 0.15s; text-decoration: none; display: block;
+  }
+  .fav-card:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.10); }
+  .fav-photo {
+    width: 100%; aspect-ratio: 4/5; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; overflow: hidden; position: relative;
+  }
+  .fav-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .fav-remove {
+    position: absolute; top: 7px; right: 7px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,0.9); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; z-index: 2; transition: transform 0.15s;
+  }
+  .fav-remove:hover { transform: scale(1.15); }
+  .fav-body { padding: 8px 10px 10px; }
+  .fav-name {
+    font-family: var(--font-display); font-size: 13px; font-weight: 700;
+    color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px;
+  }
+  .fav-sub { font-size: 10px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; }
+  .fav-price { font-size: 12px; font-weight: 700; color: var(--green); }
+  .fav-price.don { color: var(--orange); }
+  .fav-price.gratuit { color: var(--blue); }
+
   /* RESPONSIVE */
   @media (max-width: 600px) {
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .annonce-img { width: 72px; height: 60px; }
     .annonce-title { font-size: 13px; }
     .page { padding: 20px 14px; }
+    .favs-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
   }
 </style>
 <link rel="stylesheet" href="cookies.css">
@@ -202,9 +239,10 @@
     <button class="filter-chip" data-filter="En attente">En attente</button>
     <button class="filter-chip" data-filter="Expirée">Expirées</button>
     <button class="filter-chip" data-filter="Inactive">Inactives</button>
+    <button class="filter-chip" data-filter="__favoris__" id="chipFavoris">❤️ Mes favoris</button>
   </div>
 
-  <!-- List -->
+  <!-- List / Favoris -->
   <div class="annonces-list" id="annoncesList">
     <div class="state-box">
       <div class="loading-spinner"></div>
@@ -255,6 +293,18 @@ let currentUser = null;
 let allRecords = [];
 let activeFilter = '';
 let recordToDelete = null;
+let userFavIds = []; // IDs des annonces likées
+
+const ESPECE_EMOJI_ALL = {
+  'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
+  'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
+  'Insecte':'🐛','Araignée':'🕷️','Plante':'🌿','Autre':'🔵'
+};
+
+function escHTML(s) {
+  if (s == null || s === '') return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 // ── Auth guard ──
 auth.onAuthStateChanged(user => {
@@ -262,6 +312,7 @@ auth.onAuthStateChanged(user => {
   currentUser = user;
   document.getElementById('userInfo').textContent = user.displayName || user.email;
   loadAnnonces();
+  loadUserFavorites();
 });
 
 // ── Load annonces ──
@@ -381,6 +432,80 @@ function renderList() {
   }).join('');
 }
 
+// ── Favoris ──
+async function loadUserFavorites() {
+  try {
+    const doc = await db.collection('users').doc(currentUser.uid).get();
+    userFavIds = doc.exists ? (doc.data().favorites || []) : [];
+    // Met à jour le chip avec le count
+    const chip = document.getElementById('chipFavoris');
+    if (chip && userFavIds.length > 0) chip.textContent = `❤️ Mes favoris (${userFavIds.length})`;
+  } catch(e) { /* silencieux */ }
+}
+
+async function renderFavorites() {
+  const list = document.getElementById('annoncesList');
+  if (!userFavIds.length) {
+    list.innerHTML = `<div class="state-box"><div class="icon">🤍</div><h3>Aucun favori</h3><p>Cliquez sur le cœur d'une annonce pour la retrouver ici.</p><a href="index.html" class="btn-primary">Explorer les annonces</a></div>`;
+    return;
+  }
+  list.innerHTML = `<div class="state-box"><div class="loading-spinner"></div><p>Chargement des favoris…</p></div>`;
+  try {
+    // Firestore limite les batch à 30 "in" → on découpe si nécessaire
+    const chunks = [];
+    for (let i = 0; i < userFavIds.length; i += 30) chunks.push(userFavIds.slice(i, i + 30));
+    const docs = [];
+    for (const chunk of chunks) {
+      const snap = await db.collection('annonces').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+      snap.docs.forEach(d => docs.push({ id: d.id, fields: d.data() }));
+    }
+    if (!docs.length) {
+      list.innerHTML = `<div class="state-box"><div class="icon">🤍</div><h3>Annonces introuvables</h3><p>Les annonces likées ont peut-être été supprimées.</p></div>`;
+      return;
+    }
+    list.innerHTML = `<div class="favs-grid">${docs.map(r => {
+      const f = r.fields;
+      const emoji    = ESPECE_EMOJI_ALL[f['Espèce']] || '🐾';
+      const photoUrl = f['Photos']?.[0]?.url || null;
+      const isDon    = f['Type_annonce']==='A donner' || f['Type_annonce']==='À donner';
+      const isAdopt  = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
+      const priceCls = isDon||isAdopt ? 'don' : '';
+      const priceText = isDon||isAdopt ? 'Gratuit 😊' : (f['Prix'] ? parseFloat(String(f['Prix']).replace(/[^0-9.]/g,'')).toLocaleString('fr-FR') + ' €' : '—');
+      const sub = [escHTML(f['Espèce']||''), escHTML(f['Race']||''), escHTML(f['Ville']||'')].filter(Boolean).join(' · ');
+      return `<div style="position:relative">
+        <a href="annonce.html?id=${escHTML(r.id)}" class="fav-card">
+          <div class="fav-photo" data-fb="${emoji}">
+            ${photoUrl ? `<img src="${escHTML(photoUrl)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">` : emoji}
+          </div>
+          <div class="fav-body">
+            <div class="fav-name">${escHTML(f['Titre'])||'Sans titre'}</div>
+            <div class="fav-sub">${sub}</div>
+            <div class="fav-price ${priceCls}">${priceText}</div>
+          </div>
+        </a>
+        <button class="fav-remove" onclick="removeFavorite('${escHTML(r.id)}',this)" title="Retirer des favoris">❤️</button>
+      </div>`;
+    }).join('')}</div>`;
+  } catch(e) {
+    list.innerHTML = `<div class="state-box"><div class="icon">⚠️</div><h3>Erreur</h3><p>Impossible de charger vos favoris.</p></div>`;
+  }
+}
+
+async function removeFavorite(id, btn) {
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    await db.collection('users').doc(currentUser.uid).update({
+      favorites: firebase.firestore.FieldValue.arrayRemove(id)
+    });
+    userFavIds = userFavIds.filter(x => x !== id);
+    const chip = document.getElementById('chipFavoris');
+    if (chip) chip.textContent = userFavIds.length > 0 ? `❤️ Mes favoris (${userFavIds.length})` : '❤️ Mes favoris';
+    // Retire la card du DOM
+    btn.closest('[style]').remove();
+    showToast('Retiré des favoris', 'success');
+  } catch(e) { btn.disabled = false; btn.textContent = '❤️'; showToast('Erreur', 'error'); }
+}
+
 // ── Filters ──
 document.querySelector('.filters').addEventListener('click', e => {
   const chip = e.target.closest('.filter-chip');
@@ -388,7 +513,11 @@ document.querySelector('.filters').addEventListener('click', e => {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active');
   activeFilter = chip.dataset.filter;
-  renderList();
+  if (activeFilter === '__favoris__') {
+    renderFavorites();
+  } else {
+    renderList();
+  }
 });
 
 // ── Delete modal ──
