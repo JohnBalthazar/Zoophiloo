@@ -1,0 +1,160 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────
+    // FONCTIONS UTILITAIRES
+    // ─────────────────────────────────────────────────────────
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Lecture du doc user courant pour vérifier isAdmin.
+    // Utilise "get()" — ne s'applique qu'aux collections sensibles.
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ANNONCES
+    // ─────────────────────────────────────────────────────────
+    match /annonces/{annonceId} {
+
+      // Lecture : annonce visible (public) ou propriétaire ou admin
+      allow read: if resource.data.Visible == true
+                  || (isAuth() && isOwner(resource.data.uid))
+                  || isAdmin();
+
+      // Création : authentifié, uid cohérent, champs obligatoires présents
+      allow create: if isAuth()
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.Titre is string
+                    && request.resource.data.Titre.size() >= 2
+                    && request.resource.data.Titre.size() <= 100
+                    && request.resource.data.Espèce is string
+                    && request.resource.data.Type_annonce is string
+                    && request.resource.data.Ville is string;
+
+      // Modification : propriétaire (ne peut pas changer uid) ou admin
+      allow update: if (isAuth() && isOwner(resource.data.uid)
+                        && request.resource.data.uid == resource.data.uid)
+                    || isAdmin();
+
+      // Suppression : propriétaire ou admin
+      allow delete: if (isAuth() && isOwner(resource.data.uid)) || isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // UTILISATEURS
+    // ─────────────────────────────────────────────────────────
+    match /users/{userId} {
+
+      // Lecture : soi-même ou admin
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Création : soi-même uniquement
+      allow create: if isOwner(userId)
+                    && !('isAdmin' in request.resource.data);
+
+      // Modification : soi-même (ne peut PAS s'auto-promouvoir admin)
+      //                ou admin (peut tout modifier)
+      allow update: if (isOwner(userId)
+                        && !request.resource.data.diff(resource.data).affectedKeys()
+                            .hasAny(['isAdmin']))
+                    || isAdmin();
+
+      // Suppression : admin uniquement
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // CONVERSATIONS
+    // ─────────────────────────────────────────────────────────
+    match /conversations/{convId} {
+
+      // Les participants sont stockés sous forme [uid_acheteur, email_vendeur]
+      function isParticipant() {
+        return request.auth.uid in resource.data.participants
+            || request.auth.token.email in resource.data.participants;
+      }
+      function isParticipantNew() {
+        return request.auth.uid in request.resource.data.participants
+            || request.auth.token.email in request.resource.data.participants;
+      }
+
+      // Lecture : participants ou admin
+      allow read: if isAuth() && (isParticipant() || isAdmin());
+
+      // Création : authentifié, doit être l'un des participants
+      allow create: if isAuth() && isParticipantNew();
+
+      // Modification : participants (pour readBy, lastMessage…) ou admin
+      allow update: if isAuth() && (isParticipant() || isAdmin());
+
+      // Suppression : admin uniquement
+      allow delete: if isAdmin();
+
+      // Sous-collection messages
+      match /messages/{msgId} {
+
+        function convParticipants() {
+          return get(/databases/$(database)/documents/conversations/$(convId)).data.participants;
+        }
+
+        // Lecture : participants de la conversation
+        allow read: if isAuth()
+                    && (request.auth.uid in convParticipants()
+                        || request.auth.token.email in convParticipants());
+
+        // Création : authentifié + senderId == uid courant
+        allow create: if isAuth()
+                      && request.resource.data.senderId == request.auth.uid
+                      && (request.auth.uid in convParticipants()
+                          || request.auth.token.email in convParticipants());
+
+        // Messages immuables — ni update ni delete
+        allow update, delete: if false;
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // SIGNALEMENTS (reports)
+    // ─────────────────────────────────────────────────────────
+    match /reports/{reportId} {
+
+      // Lecture : admin uniquement
+      allow read: if isAdmin();
+
+      // Création : tout visiteur authentifié peut signaler
+      // Le reporterUid doit correspondre à l'utilisateur connecté (anti-usurpation)
+      allow create: if isAuth()
+                    && request.resource.data.reporterUid == request.auth.uid;
+
+      // Modification / suppression : admin uniquement
+      allow update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // CONFIGURATION ADMIN
+    // ─────────────────────────────────────────────────────────
+    match /adminConfig/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // LOGS DE MODÉRATION
+    // ─────────────────────────────────────────────────────────
+    match /moderation_logs/{logId} {
+      allow read:          if isAdmin();
+      allow create:        if isAdmin();
+      allow update, delete: if false; // logs immuables
+    }
+
+  }
+}

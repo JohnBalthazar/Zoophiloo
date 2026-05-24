@@ -71,6 +71,7 @@
   ]
 }
 </script>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <!-- Cookies RGPD -->
 <link rel="stylesheet" href="cookies.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -735,6 +736,17 @@
 </div>
 
 <script>
+/* ── Échappement HTML — protection XSS ── */
+function escHTML(s) {
+  if (s == null || s === '') return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const ESPECE_EMOJI = {
   'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
   'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
@@ -807,7 +819,10 @@ async function geocodeCity(cityName) {
   status.textContent = '…';
   status.className = 'geo-status loading';
   try {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&countrycodes=fr&format=json&limit=1`);
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&countrycodes=fr&format=json&limit=1`,
+      { headers: { 'Accept-Language': 'fr', 'User-Agent': 'YoupiZoo/1.0 (www.youpizoo.fr)' } }
+    );
     const data = await res.json();
     if (data.length === 0) {
       geoCenter = null;
@@ -888,11 +903,12 @@ function initMap() {
   clusterGroup.addTo(map);
 }
 
-async function fetchAnnonces() {
+async function fetchAnnonces(retries = 0) {
   // Firestore — attend que db soit disponible (initialisé dans le 2e bloc script)
   if (typeof db === 'undefined') {
+    if (retries >= 30) throw new Error('Firebase SDK non disponible après 3 s');
     await new Promise(r => setTimeout(r, 100));
-    return fetchAnnonces();
+    return fetchAnnonces(retries + 1);
   }
   const snap = await db.collection('annonces').where('Visible', '==', true).get();
   return snap.docs.map(doc => ({ id: doc.id, fields: doc.data() }));
@@ -924,7 +940,7 @@ function createMarker(record) {
   const icon = L.divIcon({
     className: '',
     html: `<div class="custom-marker">
-      <div class="marker-bubble ${price.cls||''}" id="bubble-${record.id}">${emoji} ${price.text}</div>
+      <div class="marker-bubble ${price.cls||''}" id="bubble-${record.id}">${emoji} ${escHTML(price.text)}</div>
       <div class="marker-pin ${price.cls||''}"></div>
     </div>`,
     iconAnchor: [40, 28]
@@ -933,12 +949,12 @@ function createMarker(record) {
   const marker = L.marker([lat, lng], { icon });
   const photoUrl = f['Photos']?.[0]?.url || null;
   marker.bindPopup(`
-    <div class="popup-img">${photoUrl ? `<img src="${photoUrl}" alt="">` : emoji}</div>
+    <div class="popup-img">${photoUrl ? `<img src="${escHTML(photoUrl)}" alt="">` : emoji}</div>
     <div class="popup-body">
-      <div class="popup-title">${f['Titre'] || 'Sans titre'}</div>
-      <div class="popup-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}</div>
-      <div class="popup-price">${price.text}</div>
-      <a class="popup-btn" href="annonce.html?id=${record.id}">Voir l'annonce →</a>
+      <div class="popup-title">${escHTML(f['Titre']) || 'Sans titre'}</div>
+      <div class="popup-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}</div>
+      <div class="popup-price">${escHTML(price.text)}</div>
+      <a class="popup-btn" href="annonce.html?id=${encodeURIComponent(record.id)}">Voir l'annonce →</a>
     </div>`, { maxWidth: 220 });
   marker.on('click', () => {
     setActiveCard(record.id);
@@ -968,7 +984,7 @@ function renderList() {
     const typeLabel = isDonType?'Don':isAdopterType?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
     // Pedigree badge
     const pedigreeBadge = f['Pedigree']
-      ? `<span class="tag tag-pedigree">🏆 ${f['Organisme_race'] || 'Pedigree'}</span>`
+      ? `<span class="tag tag-pedigree">🏆 ${escHTML(f['Organisme_race']) || 'Pedigree'}</span>`
       : '';
     // Distance badge
     let distBadge = '';
@@ -978,25 +994,26 @@ function renderList() {
       const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw||'').replace(',','.'));
       if (!isNaN(lat) && !isNaN(lng)) {
         const d = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
-        distBadge = `<span class="tag tag-dist">📍 ${d < 1 ? '<1' : Math.round(d)} km</span>`;
+        distBadge = `<span class="tag tag-dist">📍 ${d < 1 ? '&lt;1' : Math.round(d)} km</span>`;
       }
     }
     // Sexe + Âge sur la carte (uniquement si renseignés)
     const sexeStr = f['Sexe'] === 'Mâle' ? '♂ Mâle' : f['Sexe'] === 'Femelle' ? '♀ Femelle' : '';
     const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
-      ? `${f['Age_valeur']} ${f['Age_unite'] || ''}`.trim() : '';
+      ? `${escHTML(f['Age_valeur'])} ${escHTML(f['Age_unite'] || '')}`.trim() : '';
     const caracParts = [sexeStr, ageStr].filter(Boolean);
     const caracHtml = caracParts.length
       ? `<div class="ad-carac">${caracParts.join('<span class="carac-sep">·</span>')}</div>` : '';
 
-    return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${record.id}" onclick="handleCardClick('${record.id}')">
-      <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${photoUrl}" alt="" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
+    const safeId = escHTML(record.id);
+    return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
+      <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${escHTML(photoUrl)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
       <div class="ad-body">
-        <div class="ad-title">${f['Titre']||'Sans titre'}</div>
-        <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
+        <div class="ad-title">${escHTML(f['Titre'])||'Sans titre'}</div>
+        <div class="ad-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</div>
         ${caracHtml}
-        <div class="ad-price ${price.cls}">${price.text}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">🌿 Éco</span>`:''  }${pedigreeBadge}${distBadge}</div>
+        <div class="ad-price ${price.cls}">${escHTML(price.text)}</div>
+        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">🌿 Éco</span>`:''}${pedigreeBadge}${distBadge}</div>
       </div>
       <span class="ad-date">${formatDate(f['Date_creation'])}</span>
     </div>`;
@@ -1254,7 +1271,7 @@ async function init() {
     renderList();
     renderMarkers();
   } catch(err) {
-    document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Vérifiez votre clé API</span></div>`;
+    document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Impossible de charger les annonces. Rechargez la page.</span></div>`;
   }
   // imgbb ne signe pas les URLs — pas besoin de rafraîchissement
 }

@@ -1,6 +1,6 @@
 /* ================================================
    YOUPIZOO — Gestion du consentement cookies
-   RGPD / CNIL — v1.0
+   RGPD / CNIL — v1.1
    ================================================
    Cookies gérés :
    1. Firebase Auth      → fonctionnels, toujours actifs
@@ -20,7 +20,21 @@
   function getPrefs() {
     try {
       var raw = localStorage.getItem(KEY_PREFS);
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+
+      // RGPD / CNIL : le consentement expire après 13 mois (≈ 395 jours)
+      var savedDate = localStorage.getItem(KEY_DATE);
+      if (savedDate) {
+        var ageMs    = Date.now() - new Date(savedDate).getTime();
+        var limitMs  = 13 * 30 * 24 * 60 * 60 * 1000; // 13 mois
+        if (ageMs > limitMs) {
+          localStorage.removeItem(KEY_PREFS);
+          localStorage.removeItem(KEY_DATE);
+          return null; // expiration → re-demander le consentement
+        }
+      }
+
+      return JSON.parse(raw);
     } catch (e) {
       return null;
     }
@@ -127,9 +141,15 @@
     if (panel) panel.style.display = 'none';
   }
 
-  /* ---- Liaison des boutons ---- */
+  /* ---- Liaison des boutons (idempotente) ---- */
+  // Utilise un flag pour éviter les doublons d'écouteurs si appelée plusieurs fois
+
+  var _buttonsBound = false;
 
   function bindButtons() {
+    if (_buttonsBound) return;
+    _buttonsBound = true;
+
     function on(id, fn) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('click', fn);
@@ -154,6 +174,8 @@
     if (elAnalytics) elAnalytics.checked = prefs ? !!prefs.analytics : false;
     if (elBrevo)     elBrevo.checked     = prefs ? !!prefs.brevo     : false;
 
+    // S'assurer que les boutons sont liés (cas où init() a court-circuité)
+    bindButtons();
     showMain();
     showBanner();
   };
@@ -161,6 +183,9 @@
   /* ---- Initialisation ---- */
 
   function init() {
+    // Les boutons sont TOUJOURS liés — la fonction est idempotente
+    bindButtons();
+
     var prefs = getPrefs();
 
     if (prefs !== null) {
@@ -169,9 +194,8 @@
       return;
     }
 
-    // Aucun choix enregistré → afficher le bandeau après un court délai
+    // Aucun choix enregistré (ou consentement expiré) → afficher le bandeau après un court délai
     setTimeout(showBanner, 900);
-    bindButtons();
   }
 
   // Attendre que le DOM soit prêt

@@ -22,6 +22,7 @@
 <meta name="twitter:title" content="Annonce — YoupiZoo">
 <meta name="twitter:description" content="Annonce animaux sur YoupiZoo.">
 <meta name="twitter:image" content="https://www.youpizoo.fr/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
@@ -564,6 +565,17 @@
 </div>
 
 <script>
+/* ── Échappement HTML — protection XSS ── */
+function escHTML(s) {
+  if (s == null || s === '') return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const ESPECE_EMOJI = {
   'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
   'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
@@ -699,16 +711,16 @@ function renderPage(record) {
   // Badges sexe / âge pour la meta row
   const sexeIcon = f['Sexe'] === 'Mâle' ? '♂' : f['Sexe'] === 'Femelle' ? '♀' : '';
   const sexeBadge = f['Sexe']
-    ? `<span class="meta-pill">${sexeIcon} ${f['Sexe']}</span>` : '';
+    ? `<span class="meta-pill">${sexeIcon} ${escHTML(f['Sexe'])}</span>` : '';
   const ageBadge = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
-    ? `<span class="meta-pill">🕐 ${f['Age_valeur']} ${f['Age_unite'] || ''}</span>` : '';
+    ? `<span class="meta-pill">🕐 ${escHTML(f['Age_valeur'])} ${escHTML(f['Age_unite'] || '')}</span>` : '';
 
   document.getElementById('adMetaRow').innerHTML = `
     <span class="tag ${typeClass}">${typeLabel}</span>
-    ${f['Espèce'] ? `<span class="tag tag-espece">${emoji} ${f['Espèce']}</span>` : ''}
-    ${f['Race'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${f['Race']}</span>` : ''}
+    ${f['Espèce'] ? `<span class="tag tag-espece">${emoji} ${escHTML(f['Espèce'])}</span>` : ''}
+    ${f['Race'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${escHTML(f['Race'])}</span>` : ''}
     ${sexeBadge}${ageBadge}
-    ${f['Ville'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${f['Ville']}${f['Code_postal']?' ('+f['Code_postal']+')':''}</span>` : ''}
+    ${f['Ville'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escHTML(f['Ville'])}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</span>` : ''}
   `;
 
   // Description
@@ -717,18 +729,18 @@ function renderPage(record) {
 
   // Details grid
   const details = [];
-  if (f['Espèce'])        details.push({ label: 'Espèce',      value: `${emoji} ${f['Espèce']}` });
-  if (f['Race'])          details.push({ label: 'Race',         value: f['Race'] });
+  if (f['Espèce'])        details.push({ label: 'Espèce',      value: `${emoji} ${escHTML(f['Espèce'])}` });
+  if (f['Race'])          details.push({ label: 'Race',         value: escHTML(f['Race']) });
 
   // ── Caractéristiques animal ──
   if (f['Sexe']) {
     const sexeIcon = f['Sexe'] === 'Mâle' ? '♂' : f['Sexe'] === 'Femelle' ? '♀' : '';
-    details.push({ label: 'Sexe', value: `${sexeIcon} ${f['Sexe']}`.trim() });
+    details.push({ label: 'Sexe', value: `${sexeIcon} ${escHTML(f['Sexe'])}`.trim() });
   }
   if (f['Age_valeur'] != null && f['Age_valeur'] !== '') {
-    details.push({ label: 'Âge', value: `${f['Age_valeur']} ${f['Age_unite'] || ''}`.trim() });
+    details.push({ label: 'Âge', value: `${escHTML(f['Age_valeur'])} ${escHTML(f['Age_unite'] || '')}`.trim() });
   }
-  if (f['Couleur'])   details.push({ label: 'Couleur / robe', value: f['Couleur'] });
+  if (f['Couleur'])   details.push({ label: 'Couleur / robe', value: escHTML(f['Couleur']) });
   if (f['Sterilise'] && f['Sterilise'] !== 'Non précisé')
     details.push({ label: 'Stérilisé(e)', value: f['Sterilise'] === 'Oui' ? '✓ Oui' : '✗ Non' });
   if (f['Vaccine'] && f['Vaccine'] !== 'Non précisé')
@@ -736,12 +748,12 @@ function renderPage(record) {
   if (f['Puce'] && f['Puce'] !== 'Non précisé')
     details.push({ label: 'Identifié(e)', value: f['Puce']      === 'Oui' ? '✓ Oui' : '✗ Non' });
 
-  if (f['Type_annonce'])  details.push({ label: "Type d'annonce", value: f['Type_annonce'] });
-  if (f['Prix'])          details.push({ label: 'Prix',         value: price.text });
-  if (f['Ville'])         details.push({ label: 'Ville',        value: f['Ville'] });
-  if (f['Code_postal'])   details.push({ label: 'Code postal',  value: f['Code_postal'] });
+  if (f['Type_annonce'])  details.push({ label: "Type d'annonce", value: escHTML(f['Type_annonce']) });
+  if (f['Prix'])          details.push({ label: 'Prix',         value: escHTML(price.text) });
+  if (f['Ville'])         details.push({ label: 'Ville',        value: escHTML(f['Ville']) });
+  if (f['Code_postal'])   details.push({ label: 'Code postal',  value: escHTML(f['Code_postal']) });
   if (f['Date_creation']) details.push({ label: 'Publié le',    value: formatDate(f['Date_creation']) });
-  if (f['Statut'])        details.push({ label: 'Statut',       value: f['Statut'] });
+  if (f['Statut'])        details.push({ label: 'Statut',       value: escHTML(f['Statut']) });
 
   document.getElementById('detailsGrid').innerHTML = details.map(d =>
     `<div class="detail-item">
@@ -787,13 +799,13 @@ function renderPage(record) {
 
   const actions = [];
   if (f['Telephone']) {
-    actions.push(`<a href="tel:${f['Telephone']}" class="btn-contact btn-contact-primary">
+    actions.push(`<a href="tel:${escHTML(f['Telephone'])}" class="btn-contact btn-contact-primary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.1 4.17 2 2 0 015.1 2H8a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91A16 16 0 0015.09 15.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      Appeler : ${f['Telephone']}
+      Appeler : ${escHTML(f['Telephone'])}
     </a>`);
   }
   if (f['Email_contact']) {
-    actions.push(`<a href="mailto:${f['Email_contact']}?subject=Annonce YoupiZoo : ${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
+    actions.push(`<a href="mailto:${escHTML(f['Email_contact'])}?subject=Annonce%20YoupiZoo%20%3A%20${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Envoyer un email
     </a>`);
