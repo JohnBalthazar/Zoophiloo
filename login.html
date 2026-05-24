@@ -46,7 +46,8 @@
     align-items: center;
     flex-shrink: 0;
   }
-  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 34px; width: auto; display: block; }
   .logo .z { color: var(--green); }
   .logo .rest { color: var(--orange); }
 
@@ -363,7 +364,7 @@
 <body>
 
 <header>
-  <a href="index.html" class="logo"><span class="rest">Youpi</span><span class="z">Zoo</span></a>
+  <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
 </header>
 
 <main>

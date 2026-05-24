@@ -65,7 +65,8 @@
     top: 0;
     z-index: 100;
   }
-  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 34px; width: auto; display: block; }
   .logo .z { color: var(--green); }
   .logo .rest { color: var(--orange); }
   .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
@@ -388,7 +389,7 @@
 
 <header>
   <div class="header-left">
-    <a href="index.html" class="logo"><span class="rest">Youpi</span><span class="z">Zoo</span></a>
+    <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
     <span class="tagline">Trouvez vos animaux près de chez vous</span>
   </div>
   <div class="header-right">

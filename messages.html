@@ -34,7 +34,8 @@
     display: flex; align-items: center; justify-content: space-between;
     flex-shrink: 0; z-index: 100;
   }
-  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 34px; width: auto; display: block; }
   .logo .z { color: var(--green); }
   .logo .rest { color: var(--orange); }
   .header-right { display: flex; align-items: center; gap: 8px; }
@@ -406,7 +407,7 @@
 <body>
 
 <header>
-  <a href="index.html" class="logo"><span class="rest">Youpi</span><span class="z">Zoo</span></a>
+  <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
   <div class="header-right">
     <a href="mon-espace.html" class="btn-ghost">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>

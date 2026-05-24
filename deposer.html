@@ -58,7 +58,8 @@
     display: flex; align-items: center; justify-content: space-between;
     position: sticky; top: 0; z-index: 100;
   }
-  .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 34px; width: auto; display: block; }
   .logo .z { color: var(--green); } .logo .rest { color: var(--orange); }
   .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
   .btn-ghost:hover { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
@@ -265,7 +266,7 @@
 </div>
 
 <header>
-  <a href="index.html" class="logo"><span class="rest">Youpi</span><span class="z">Zoo</span></a>
+  <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
   <a href="mon-espace.html" class="btn-ghost">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
     Mon espace
