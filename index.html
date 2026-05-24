@@ -572,8 +572,8 @@
     .eco-banner { font-size: 11px; padding: 6px 36px 6px 10px; }
   }
 
-  /* ── TAG ECO (Don / Adoption) ── */
-  .tag-eco { background: #e4f8c0; color: #3a6010; border: 1px solid #9ae050; }
+  /* ── TAG SMILE (Don / Adoption) ── */
+  .tag-eco { background: #fff3e0; color: #e8622a; border: 1px solid #f4a96a; }
 </style>
 </head>
 <body>
@@ -1014,7 +1014,7 @@ function renderList() {
         <div class="ad-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</div>
         ${caracHtml}
         <div class="ad-price ${price.cls}">${escHTML(price.text)}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">🌿 Éco</span>`:''}${pedigreeBadge}${distBadge}</div>
+        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}</div>
       </div>
       <span class="ad-date">${formatDate(f['Date_creation'])}</span>
     </div>`;
