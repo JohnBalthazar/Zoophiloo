@@ -548,6 +548,153 @@
     .mobile-tab.active .mobile-tab-bar { background: var(--green); }
   }
 
+  /* ══════════════════════════════════════
+     VIEW TOGGLE
+  ══════════════════════════════════════ */
+  .view-toggle { display: flex; gap: 3px; margin: 0 8px; }
+  .view-btn {
+    width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 6px;
+    background: transparent; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; color: var(--text-muted); transition: all 0.12s; padding: 0;
+  }
+  .view-btn:hover { border-color: var(--green); color: var(--green); }
+  .view-btn.active { background: var(--green); border-color: var(--green); color: white; }
+
+  /* ══════════════════════════════════════
+     SPA GRID VIEW
+  ══════════════════════════════════════ */
+  .list-scroll.view-spa {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; padding: 10px; align-content: start;
+  }
+  .list-scroll.view-spa .loading-state,
+  .list-scroll.view-spa .empty-state { grid-column: 1 / -1; }
+
+  .spa-card {
+    border-radius: 12px; overflow: hidden; background: var(--white);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07); cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s; position: relative;
+    border: 1px solid var(--border);
+  }
+  .spa-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.11); }
+  .spa-card.active { box-shadow: 0 0 0 2px var(--green), 0 4px 16px rgba(0,0,0,0.08); border-color: var(--green); }
+
+  .spa-photo {
+    width: 100%; aspect-ratio: 4/5; background: var(--bg); overflow: hidden;
+    position: relative; display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+  }
+  .spa-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .spa-heart {
+    position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
+    border-radius: 50%; background: rgba(255,255,255,0.9); border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; z-index: 2; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: transform 0.15s;
+  }
+  .spa-heart:hover { transform: scale(1.15); }
+
+  .spa-type-badge {
+    position: absolute; bottom: 8px; left: 8px;
+    font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: 0.05em; z-index: 2;
+  }
+  .spa-type-vente  { background: #f0f8e6; color: #478015; }
+  .spa-type-don    { background: #fef3c7; color: #92400e; }
+  .spa-type-adopt  { background: #dbeafe; color: #1d4ed8; }
+  .spa-type-perdu  { background: #fef2f2; color: #dc2626; }
+  .spa-type-trouve { background: #f5f3ff; color: #7c3aed; }
+
+  .spa-body { padding: 9px 11px 11px; }
+  .spa-name {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--text); margin-bottom: 2px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .spa-sub {
+    font-size: 10px; color: var(--text-muted);
+    margin-bottom: 7px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .spa-footer { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .spa-price { font-size: 13px; font-weight: 700; color: var(--green); }
+  .spa-price.don    { color: var(--orange); }
+  .spa-price.gratuit { color: var(--blue); }
+  .spa-price.perdu  { color: #dc2626; }
+  .spa-price.trouve { color: #7c3aed; }
+  .spa-carac { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+  /* ══════════════════════════════════════
+     "À LA UNE" LIST VIEW
+  ══════════════════════════════════════ */
+  .list-scroll.view-une { display: flex; flex-direction: column; }
+
+  .une-card {
+    display: flex; background: var(--white);
+    border-bottom: 1px solid var(--border); cursor: pointer;
+    transition: background 0.12s; position: relative; overflow: hidden;
+  }
+  .une-card:hover, .une-card.active { background: var(--green-light); }
+  .une-card.active { border-left: 3px solid var(--green); }
+
+  .une-photo-wrap { position: relative; flex-shrink: 0; width: 130px; }
+  .une-photo {
+    width: 130px; height: 105px; background: var(--bg); overflow: hidden;
+    display: flex; align-items: center; justify-content: center; font-size: 36px;
+  }
+  .une-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .une-badge-top {
+    position: absolute; top: 6px; left: 6px;
+    font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em; z-index: 2;
+  }
+  .une-badge-top.urgent { background: #dc2626; color: white; }
+  .une-badge-top.une    { background: var(--orange); color: white; }
+
+  .une-badge-type {
+    position: absolute; bottom: 6px; left: 6px;
+    font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.04em; z-index: 2;
+  }
+  .une-type-vente  { background: rgba(90,158,26,0.85); color: white; }
+  .une-type-don    { background: rgba(232,98,42,0.85); color: white; }
+  .une-type-adopt  { background: rgba(37,99,168,0.85); color: white; }
+  .une-type-perdu  { background: rgba(220,38,38,0.85); color: white; }
+  .une-type-trouve { background: rgba(124,58,237,0.85); color: white; }
+
+  .une-body {
+    flex: 1; min-width: 0; padding: 9px 12px 9px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .une-top { display: flex; align-items: center; gap: 5px; }
+  .une-date  { font-size: 10px; color: var(--text-muted); }
+  .une-dot   { font-size: 10px; color: var(--border); }
+  .une-espece { font-size: 10px; color: var(--text-muted); }
+  .une-title {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .une-race { font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .une-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
+  .une-loc { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .une-price {
+    font-size: 12px; font-weight: 700; color: var(--green);
+    background: var(--green-light); padding: 2px 9px; border-radius: 10px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .une-price.don    { color: var(--orange); background: #fff3e0; }
+  .une-price.gratuit { color: var(--blue); background: #eff6ff; }
+  .une-price.perdu  { color: #dc2626; background: #fef2f2; }
+  .une-price.trouve { color: #7c3aed; background: #f5f3ff; }
+
+  @media (max-width: 680px) {
+    .list-scroll.view-spa { grid-template-columns: 1fr 1fr; gap: 7px; padding: 7px; }
+    .une-photo-wrap { width: 100px; }
+    .une-photo { width: 100px; height: 90px; }
+    .view-toggle { margin: 0 4px; }
+  }
+
   /* ── ECO BANNER ── */
   .eco-banner {
     background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%);
@@ -706,6 +853,17 @@
   <div class="list-panel tab-active" id="listPanel">
     <div class="list-header">
       <span class="result-count" id="resultCount">Chargement…</span>
+      <div class="view-toggle" role="group" aria-label="Mode d'affichage">
+        <button class="view-btn active" id="vbtn-classic" onclick="setView('classic')" title="Liste classique" aria-label="Liste classique">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="6" height="6" rx="1"/><line x1="12" y1="6" x2="21" y2="6"/><line x1="12" y1="9" x2="18" y2="9"/><rect x="3" y="14" width="6" height="6" rx="1"/><line x1="12" y1="16" x2="21" y2="16"/><line x1="12" y1="19" x2="18" y2="19"/></svg>
+        </button>
+        <button class="view-btn" id="vbtn-spa" onclick="setView('spa')" title="Grille photos" aria-label="Grille photos">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="8" height="11" rx="1.5"/><rect x="13" y="3" width="8" height="11" rx="1.5"/><rect x="3" y="16" width="8" height="5" rx="1.5"/><rect x="13" y="16" width="8" height="5" rx="1.5"/></svg>
+        </button>
+        <button class="view-btn" id="vbtn-une" onclick="setView('une')" title="Vue à la une" aria-label="Vue à la une">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="5" height="5" rx="1"/><line x1="10" y1="6.5" x2="21" y2="6.5"/><line x1="10" y1="9" x2="16" y2="9"/><rect x="3" y="14" width="5" height="5" rx="1"/><line x1="10" y1="15.5" x2="21" y2="15.5"/><line x1="10" y1="18" x2="16" y2="18"/></svg>
+        </button>
+      </div>
       <select class="sort-select" id="sortSelect">
         <option value="recent">Les plus récentes</option>
         <option value="price_asc">Prix croissant</option>
@@ -756,6 +914,20 @@ const ESPECE_EMOJI = {
 
 let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
+let currentView = localStorage.getItem('yz_view') || 'classic';
+
+function setView(v) {
+  currentView = v;
+  localStorage.setItem('yz_view', v);
+  ['classic','spa','une'].forEach(n => {
+    document.getElementById('vbtn-' + n).classList.toggle('active', n === v);
+  });
+  const scroll = document.getElementById('listScroll');
+  scroll.classList.remove('view-spa','view-une');
+  if (v === 'spa') scroll.classList.add('view-spa');
+  if (v === 'une') scroll.classList.add('view-une');
+  renderList();
+}
 let activeDate = '', priceMin = null, priceMax = null, activePedigree = false;
 let geoCenter = null, geoRadius = null; // {lat, lng}, km
 let markers = {}, map, clusterGroup;
@@ -965,60 +1137,141 @@ function createMarker(record) {
 }
 
 
+/* ── Helpers communs aux 3 renderers ── */
+function _cardExtras(f, recordId) {
+  const price    = formatPrice(f['Prix'], f['Type_annonce']);
+  const emoji    = ESPECE_EMOJI[f['Espèce']] || '🐾';
+  const photoUrl = f['Photos']?.[0]?.url || null;
+  const isDon    = f['Type_annonce']==='A donner' || f['Type_annonce']==='À donner';
+  const isAdopt  = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
+  const isPerdu  = f['Type_annonce']==='Perdu';
+  const isTrouve = f['Type_annonce']==='Trouvé';
+  const typeClass = isDon?'tag-don':isAdopt?'tag-adoption':isPerdu?'tag-perdu':isTrouve?'tag-trouve':'tag-vente';
+  const typeLabel = isDon?'Don':isAdopt?'Adoption':isPerdu?'Perdu':isTrouve?'Trouvé':'Vente';
+  const pedigreeBadge = f['Pedigree']
+    ? `<span class="tag tag-pedigree">🏆 ${escHTML(f['Organisme_race'])||'Pedigree'}</span>` : '';
+  let distBadge = '', distKm = null;
+  if (geoCenter) {
+    const lat = typeof f['Latitude']==='number' ? f['Latitude'] : parseFloat(String(f['Latitude']||'').replace(',','.'));
+    const lng = typeof f['Longitude']==='number' ? f['Longitude'] : parseFloat(String(f['Longitude']||'').replace(',','.'));
+    if (!isNaN(lat) && !isNaN(lng)) {
+      distKm = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
+      distBadge = `<span class="tag tag-dist">📍 ${distKm < 1 ? '&lt;1' : Math.round(distKm)} km</span>`;
+    }
+  }
+  const sexeStr = f['Sexe']==='Mâle' ? '♂' : f['Sexe']==='Femelle' ? '♀' : '';
+  const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
+    ? `${escHTML(String(f['Age_valeur']))} ${escHTML(f['Age_unite']||'')}`.trim() : '';
+  return { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeClass, typeLabel, pedigreeBadge, distBadge, distKm, sexeStr, ageStr };
+}
+
 function renderList() {
   const container = document.getElementById('listScroll');
-  const count = document.getElementById('resultCount');
+  const count     = document.getElementById('resultCount');
+
+  // Sync classes on container
+  container.classList.remove('view-spa','view-une');
+  if (currentView === 'spa') container.classList.add('view-spa');
+  if (currentView === 'une') container.classList.add('view-une');
+
   if (filteredRecords.length === 0) {
     container.innerHTML = `<div class="empty-state"><span style="font-size:32px">🔍</span><strong>Aucune annonce trouvée</strong><span>Essayez d'autres filtres</span></div>`;
     count.innerHTML = '<strong>0</strong> annonce';
     return;
   }
   count.innerHTML = `<strong>${filteredRecords.length}</strong> annonce${filteredRecords.length>1?'s':''}`;
-  container.innerHTML = filteredRecords.map(record => {
-    const f = record.fields;
-    const price = formatPrice(f['Prix'], f['Type_annonce']);
-    const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
-    const photoUrl = f['Photos']?.[0]?.url || null;
-    const isDonType = f['Type_annonce']==='A donner' || f['Type_annonce']==='À donner';
-    const isAdopterType = f['Type_annonce']==='A adopter' || f['Type_annonce']==='À adopter';
-    const typeClass = isDonType?'tag-don':isAdopterType?'tag-adoption':f['Type_annonce']==='Perdu'?'tag-perdu':f['Type_annonce']==='Trouvé'?'tag-trouve':'tag-vente';
-    const typeLabel = isDonType?'Don':isAdopterType?'Adoption':f['Type_annonce']==='Perdu'?'Perdu':f['Type_annonce']==='Trouvé'?'Trouvé':'Vente';
-    // Pedigree badge
-    const pedigreeBadge = f['Pedigree']
-      ? `<span class="tag tag-pedigree">🏆 ${escHTML(f['Organisme_race']) || 'Pedigree'}</span>`
-      : '';
-    // Distance badge
-    let distBadge = '';
-    if (geoCenter) {
-      const latRaw = f['Latitude'], lngRaw = f['Longitude'];
-      const lat = typeof latRaw === 'number' ? latRaw : parseFloat(String(latRaw||'').replace(',','.'));
-      const lng = typeof lngRaw === 'number' ? lngRaw : parseFloat(String(lngRaw||'').replace(',','.'));
-      if (!isNaN(lat) && !isNaN(lng)) {
-        const d = haversineKm(geoCenter.lat, geoCenter.lng, lat, lng);
-        distBadge = `<span class="tag tag-dist">📍 ${d < 1 ? '&lt;1' : Math.round(d)} km</span>`;
-      }
-    }
-    // Sexe + Âge sur la carte (uniquement si renseignés)
-    const sexeStr = f['Sexe'] === 'Mâle' ? '♂ Mâle' : f['Sexe'] === 'Femelle' ? '♀ Femelle' : '';
-    const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
-      ? `${escHTML(f['Age_valeur'])} ${escHTML(f['Age_unite'] || '')}`.trim() : '';
-    const caracParts = [sexeStr, ageStr].filter(Boolean);
-    const caracHtml = caracParts.length
-      ? `<div class="ad-carac">${caracParts.join('<span class="carac-sep">·</span>')}</div>` : '';
 
-    const safeId = escHTML(record.id);
-    return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
-      <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${escHTML(photoUrl)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
-      <div class="ad-body">
-        <div class="ad-title">${escHTML(f['Titre'])||'Sans titre'}</div>
-        <div class="ad-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</div>
-        ${caracHtml}
-        <div class="ad-price ${price.cls}">${escHTML(price.text)}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}</div>
+  if (currentView === 'spa') {
+    container.innerHTML = filteredRecords.map(r => renderCardSPA(r)).join('');
+  } else if (currentView === 'une') {
+    container.innerHTML = filteredRecords.map(r => renderCardUne(r)).join('');
+  } else {
+    container.innerHTML = filteredRecords.map(record => {
+      const f = record.fields;
+      const { price, emoji, photoUrl, isDon, isAdopt, typeClass, typeLabel, pedigreeBadge, distBadge } = _cardExtras(f, record.id);
+      const sexeStr = f['Sexe']==='Mâle' ? '♂ Mâle' : f['Sexe']==='Femelle' ? '♀ Femelle' : '';
+      const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
+        ? `${escHTML(String(f['Age_valeur']))} ${escHTML(f['Age_unite']||'')}`.trim() : '';
+      const caracParts = [sexeStr, ageStr].filter(Boolean);
+      const caracHtml = caracParts.length
+        ? `<div class="ad-carac">${caracParts.join('<span class="carac-sep">·</span>')}</div>` : '';
+      const safeId = escHTML(record.id);
+      return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
+        <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${escHTML(photoUrl)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
+        <div class="ad-body">
+          <div class="ad-title">${escHTML(f['Titre'])||'Sans titre'}</div>
+          <div class="ad-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</div>
+          ${caracHtml}
+          <div class="ad-price ${price.cls}">${escHTML(price.text)}</div>
+          <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDon||isAdopt)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}</div>
+        </div>
+        <span class="ad-date">${formatDate(f['Date_creation'])}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+function renderCardSPA(record) {
+  const f  = record.fields;
+  const { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeLabel, sexeStr, ageStr } = _cardExtras(f, record.id);
+  const safeId = escHTML(record.id);
+  const typeCls = isDon?'spa-type-don':isAdopt?'spa-type-adopt':isPerdu?'spa-type-perdu':isTrouve?'spa-type-trouve':'spa-type-vente';
+  const caracParts = [sexeStr, ageStr].filter(Boolean);
+  const espece = escHTML(f['Espèce'])||'';
+  const ville  = escHTML(f['Ville'])||'';
+  const sub    = [espece, f['Race']?escHTML(f['Race']):'', ville].filter(Boolean).join(' · ');
+  return `<div class="spa-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
+    <div class="spa-photo" data-fb="${emoji}">
+      ${photoUrl?`<img src="${escHTML(photoUrl)}" alt="${escHTML(f['Titre']||'')}" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}
+      <button class="spa-heart" onclick="event.stopPropagation()" title="Favori" aria-label="Ajouter aux favoris">🤍</button>
+      <span class="spa-type-badge ${typeCls}">${typeLabel}</span>
+    </div>
+    <div class="spa-body">
+      <div class="spa-name">${escHTML(f['Titre'])||'Sans titre'}</div>
+      <div class="spa-sub">${sub}</div>
+      <div class="spa-footer">
+        <span class="spa-price ${price.cls}">${escHTML(price.text)}</span>
+        ${caracParts.length ? `<span class="spa-carac">${caracParts.join(' · ')}</span>` : `<span class="spa-carac">${formatDate(f['Date_creation'])}</span>`}
       </div>
-      <span class="ad-date">${formatDate(f['Date_creation'])}</span>
-    </div>`;
-  }).join('');
+    </div>
+  </div>`;
+}
+
+function renderCardUne(record) {
+  const f  = record.fields;
+  const { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeLabel } = _cardExtras(f, record.id);
+  const safeId   = escHTML(record.id);
+  const typeCls  = isDon?'une-type-don':isAdopt?'une-type-adopt':isPerdu?'une-type-perdu':isTrouve?'une-type-trouve':'une-type-vente';
+  const isUrgent = f['Urgence'] === true;
+  const isUne    = f['Mise_en_avant'] === true;
+  const badgeTop = isUrgent
+    ? `<span class="une-badge-top urgent">Urgent</span>`
+    : isUne ? `<span class="une-badge-top une">À la une</span>` : '';
+  const ville = escHTML(f['Ville'])||'';
+  const dept  = f['Code_postal'] ? `(${escHTML(f['Code_postal'])})` : '';
+  const race  = f['Race'] ? escHTML(f['Race']) : escHTML(f['Espèce']||'');
+  return `<div class="une-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
+    <div class="une-photo-wrap">
+      <div class="une-photo" data-fb="${emoji}">
+        ${photoUrl?`<img src="${escHTML(photoUrl)}" alt="${escHTML(f['Titre']||'')}" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}
+      </div>
+      ${badgeTop}
+      <span class="une-badge-type ${typeCls}">${typeLabel}</span>
+    </div>
+    <div class="une-body">
+      <div class="une-top">
+        <span class="une-date">${formatDate(f['Date_creation'])}</span>
+        <span class="une-dot">·</span>
+        <span class="une-espece">${escHTML(f['Espèce'])||''}</span>
+      </div>
+      <div class="une-title">${escHTML(f['Titre'])||'Sans titre'}</div>
+      <div class="une-race">${race}</div>
+      <div class="une-bottom">
+        <span class="une-loc">📍 ${ville}${dept ? ' ' + dept : ''}</span>
+        <span class="une-price ${price.cls}">${escHTML(price.text)}</span>
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderMarkers() {
@@ -1256,6 +1509,9 @@ document.getElementById('priceMin').addEventListener('input', onPriceInput);
 document.getElementById('priceMax').addEventListener('input', onPriceInput);
 
 async function init() {
+  // Restore saved view mode
+  setView(currentView);
+
   initMap();
   initGeoSlider();
   try {
