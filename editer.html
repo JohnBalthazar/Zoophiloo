@@ -113,8 +113,25 @@
   .loading-page { text-align: center; padding: 80px 24px; }
   .loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 16px; }
 
+  /* ── CARACTÉRISTIQUES ANIMAL ── */
+  .carac-block {
+    display: none;
+    border-top: 1px dashed var(--border);
+    margin-top: 10px;
+    padding-top: 12px;
+  }
+  .carac-block-title {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
+  }
+  .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .age-input-wrap { display: flex; gap: 6px; }
+  .age-input-wrap input[type="number"] { width: 80px; flex-shrink: 0; }
+  .age-input-wrap select { flex: 1; min-width: 90px; }
+
   @media (max-width: 600px) {
-    .form-row.cols-2 { grid-template-columns: 1fr; }
+    .form-row.cols-2, .form-row.cols-3 { grid-template-columns: 1fr; }
     .existing-photos, .new-previews { grid-template-columns: repeat(3, 1fr); }
     .page { padding: 20px 14px 48px; }
   }
@@ -221,7 +238,7 @@ function renderForm(f) {
       <div class="form-row cols-2">
         <div class="form-group" id="grp-espece">
           <label>Espèce <span class="req">*</span></label>
-          <select id="espece">${especeOptions(f['Espèce'])}</select>
+          <select id="espece" onchange="onEspeceChange()">${especeOptions(f['Espèce'])}</select>
           <span class="error-msg">Obligatoire</span>
         </div>
         <div class="form-group">
@@ -229,6 +246,50 @@ function renderForm(f) {
           <input type="text" id="race" value="${esc(f['Race']||'')}">
         </div>
       </div>
+
+      <!-- Caractéristiques animal — affiché conditionnellement selon l'espèce -->
+      <div class="carac-block" id="caracBlock">
+        <div class="carac-block-title">🐾 Caractéristiques</div>
+        <div class="form-row cols-2" id="carac-sexe-age-row">
+          <div class="form-group" id="carac-sexe-wrap">
+            <label>Sexe</label>
+            <select id="sexe">${yesNoOptions(['','Mâle','Femelle'], f['Sexe']||'', ['Non précisé','♂ Mâle','♀ Femelle'])}</select>
+          </div>
+          <div class="form-group" id="carac-age-wrap">
+            <label>Âge</label>
+            <div class="age-input-wrap">
+              <input type="number" id="age_valeur" placeholder="Ex : 2" min="0" max="999" value="${f['Age_valeur']!=null?f['Age_valeur']:''}">
+              <select id="age_unite">
+                <option value="jours" ${f['Age_unite']==='jours'?'selected':''}>jour(s)</option>
+                <option value="semaines" ${f['Age_unite']==='semaines'?'selected':''}>semaine(s)</option>
+                <option value="mois" ${(!f['Age_unite']||f['Age_unite']==='mois')?'selected':''}>mois</option>
+                <option value="ans" ${f['Age_unite']==='ans'?'selected':''}>an(s)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" id="carac-couleur-row">
+          <div class="form-group">
+            <label>Couleur / robe</label>
+            <input type="text" id="couleur" value="${esc(f['Couleur']||'')}" placeholder="Ex : Roux et blanc, Tabby, Bai…" maxlength="80">
+          </div>
+        </div>
+        <div class="form-row cols-3" id="carac-sante-row">
+          <div class="form-group" id="carac-sterilise-wrap">
+            <label>Stérilisé(e)</label>
+            <select id="sterilise">${yesNoOptions(['','Oui','Non'], f['Sterilise']||'', ['Non précisé','Oui','Non'])}</select>
+          </div>
+          <div class="form-group" id="carac-vaccine-wrap">
+            <label>Vacciné(e)</label>
+            <select id="vaccine">${yesNoOptions(['','Oui','Non'], f['Vaccine']||'', ['Non précisé','Oui','Non'])}</select>
+          </div>
+          <div class="form-group" id="carac-puce-wrap">
+            <label>Identifié(e) (puce)</label>
+            <select id="puce">${yesNoOptions(['','Oui','Non'], f['Puce']||'', ['Non précisé','Oui','Non'])}</select>
+          </div>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>Description</label>
@@ -320,6 +381,9 @@ function renderForm(f) {
     </div>
   `;
 
+  // Initialiser l'affichage des caractéristiques selon l'espèce chargée
+  onEspeceChange();
+
   // Bind photo events
   document.getElementById('fileInput').addEventListener('change', e => handleNewFiles(Array.from(e.target.files)));
   const pz = document.getElementById('photoZone');
@@ -331,8 +395,12 @@ function renderForm(f) {
 function esc(str) { return String(str).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 function especeOptions(selected) {
-  const opts = ['','Chien','Chat','Poisson','Oiseau','Rongeur','Reptile','Furet','Amphibien','Crustacée','Insecte','Araignée','Plante','Autre'];
+  const opts = ['','Chien','Chat','Cheval','Poisson','Oiseau','Rongeur','Reptile','Furet','Amphibien','Crustacée','Insecte','Araignée','Plante','Autre'];
   return opts.map(o => `<option value="${o}" ${o===selected?'selected':''}>${o||'Choisir…'}</option>`).join('');
+}
+
+function yesNoOptions(vals, selected, labels) {
+  return vals.map((v, i) => `<option value="${v}" ${v===selected?'selected':''}>${labels[i]}</option>`).join('');
 }
 function typeOptions(selected) {
   const opts = ['','A vendre','A donner','A adopter','A echanger','Perdu','Trouvé'];
@@ -432,6 +500,41 @@ async function geocodeAddress() {
   } catch(e) {}
 }
 
+// ── Caractéristiques — champs visibles par espèce ──
+const CARAC_CONFIG = {
+  'Chien':     { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true, puce: true },
+  'Chat':      { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true, puce: true },
+  'Cheval':    { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true, puce: true },
+  'Oiseau':    { sexe: true, age: true, couleur: true },
+  'Rongeur':   { sexe: true, age: true, couleur: true },
+  'Furet':     { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true },
+  'Reptile':   { sexe: true, age: true, couleur: true },
+  'Amphibien': { sexe: true, age: true },
+  'Poisson':   { age: true },
+  'Araignée':  { sexe: true, age: true },
+};
+
+function _showField(id, visible) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = visible ? '' : 'none';
+}
+
+function onEspeceChange() {
+  const espece = document.getElementById('espece')?.value || '';
+  const cfg = CARAC_CONFIG[espece] || {};
+  const hasAny = cfg.sexe || cfg.age || cfg.couleur || cfg.sterilise || cfg.vaccine || cfg.puce;
+  document.getElementById('caracBlock').style.display = hasAny ? 'block' : 'none';
+  _showField('carac-sexe-age-row',   cfg.sexe || cfg.age   || false);
+  _showField('carac-sexe-wrap',      cfg.sexe              || false);
+  _showField('carac-age-wrap',       cfg.age               || false);
+  _showField('carac-couleur-row',    cfg.couleur           || false);
+  const hasSante = cfg.sterilise || cfg.vaccine || cfg.puce;
+  _showField('carac-sante-row',      hasSante              || false);
+  _showField('carac-sterilise-wrap', cfg.sterilise         || false);
+  _showField('carac-vaccine-wrap',   cfg.vaccine           || false);
+  _showField('carac-puce-wrap',      cfg.puce              || false);
+}
+
 function validate() {
   let ok = true;
   [['titre','grp-titre'],['espece','grp-espece'],['type_annonce','grp-type'],['ville','grp-ville']].forEach(([id, grp]) => {
@@ -481,6 +584,35 @@ async function submitEdit() {
     if (lat) fields['Latitude'] = parseFloat(lat);
     if (lng) fields['Longitude'] = parseFloat(lng);
     if (allPhotos.length > 0) fields['Photos'] = allPhotos;
+
+    // Caractéristiques animal
+    const caracCfg = CARAC_CONFIG[fields['Espèce']] || {};
+    if (caracCfg.sexe) {
+      const v = document.getElementById('sexe').value;
+      fields['Sexe'] = v || null;
+    } else { fields['Sexe'] = null; }
+    if (caracCfg.age) {
+      const av = parseInt(document.getElementById('age_valeur').value, 10);
+      const au = document.getElementById('age_unite').value;
+      fields['Age_valeur'] = !isNaN(av) && av >= 0 ? av : null;
+      fields['Age_unite']  = !isNaN(av) && av >= 0 ? au : null;
+    } else { fields['Age_valeur'] = null; fields['Age_unite'] = null; }
+    if (caracCfg.couleur) {
+      const v = document.getElementById('couleur').value.trim();
+      fields['Couleur'] = v || null;
+    } else { fields['Couleur'] = null; }
+    if (caracCfg.sterilise) {
+      const v = document.getElementById('sterilise').value;
+      fields['Sterilise'] = v || null;
+    } else { fields['Sterilise'] = null; }
+    if (caracCfg.vaccine) {
+      const v = document.getElementById('vaccine').value;
+      fields['Vaccine'] = v || null;
+    } else { fields['Vaccine'] = null; }
+    if (caracCfg.puce) {
+      const v = document.getElementById('puce').value;
+      fields['Puce'] = v || null;
+    } else { fields['Puce'] = null; }
 
     await db.collection('annonces').doc(recordId).update({
       ...fields,

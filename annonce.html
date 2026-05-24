@@ -696,10 +696,18 @@ function renderPage(record) {
   const t = f['Type_annonce'] || '';
   const typeClass = (t==='A donner'||t==='À donner')?'tag-don':(t==='A adopter'||t==='À adopter')?'tag-adoption':t==='Perdu'?'tag-perdu':t==='Trouvé'?'tag-trouve':'tag-vente';
   const typeLabel = (t==='A donner'||t==='À donner')?'Don':(t==='A adopter'||t==='À adopter')?'Adoption':t==='Perdu'?'Perdu':t==='Trouvé'?'Trouvé':'Vente';
+  // Badges sexe / âge pour la meta row
+  const sexeIcon = f['Sexe'] === 'Mâle' ? '♂' : f['Sexe'] === 'Femelle' ? '♀' : '';
+  const sexeBadge = f['Sexe']
+    ? `<span class="meta-pill">${sexeIcon} ${f['Sexe']}</span>` : '';
+  const ageBadge = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
+    ? `<span class="meta-pill">🕐 ${f['Age_valeur']} ${f['Age_unite'] || ''}</span>` : '';
+
   document.getElementById('adMetaRow').innerHTML = `
     <span class="tag ${typeClass}">${typeLabel}</span>
     ${f['Espèce'] ? `<span class="tag tag-espece">${emoji} ${f['Espèce']}</span>` : ''}
     ${f['Race'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${f['Race']}</span>` : ''}
+    ${sexeBadge}${ageBadge}
     ${f['Ville'] ? `<span class="meta-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${f['Ville']}${f['Code_postal']?' ('+f['Code_postal']+')':''}</span>` : ''}
   `;
 
@@ -711,6 +719,23 @@ function renderPage(record) {
   const details = [];
   if (f['Espèce'])        details.push({ label: 'Espèce',      value: `${emoji} ${f['Espèce']}` });
   if (f['Race'])          details.push({ label: 'Race',         value: f['Race'] });
+
+  // ── Caractéristiques animal ──
+  if (f['Sexe']) {
+    const sexeIcon = f['Sexe'] === 'Mâle' ? '♂' : f['Sexe'] === 'Femelle' ? '♀' : '';
+    details.push({ label: 'Sexe', value: `${sexeIcon} ${f['Sexe']}`.trim() });
+  }
+  if (f['Age_valeur'] != null && f['Age_valeur'] !== '') {
+    details.push({ label: 'Âge', value: `${f['Age_valeur']} ${f['Age_unite'] || ''}`.trim() });
+  }
+  if (f['Couleur'])   details.push({ label: 'Couleur / robe', value: f['Couleur'] });
+  if (f['Sterilise'] && f['Sterilise'] !== 'Non précisé')
+    details.push({ label: 'Stérilisé(e)', value: f['Sterilise'] === 'Oui' ? '✓ Oui' : '✗ Non' });
+  if (f['Vaccine'] && f['Vaccine'] !== 'Non précisé')
+    details.push({ label: 'Vacciné(e)',   value: f['Vaccine']   === 'Oui' ? '✓ Oui' : '✗ Non' });
+  if (f['Puce'] && f['Puce'] !== 'Non précisé')
+    details.push({ label: 'Identifié(e)', value: f['Puce']      === 'Oui' ? '✓ Oui' : '✗ Non' });
+
   if (f['Type_annonce'])  details.push({ label: "Type d'annonce", value: f['Type_annonce'] });
   if (f['Prix'])          details.push({ label: 'Prix',         value: price.text });
   if (f['Ville'])         details.push({ label: 'Ville',        value: f['Ville'] });

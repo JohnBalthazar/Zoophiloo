@@ -360,7 +360,9 @@
   .ad-img img { width: 100%; height: 100%; object-fit: cover; }
   .ad-body { flex: 1; min-width: 0; }
   .ad-title { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
-  .ad-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .ad-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+  .ad-carac { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; opacity: 0.85; }
+  .ad-carac .carac-sep { opacity: 0.4; margin: 0 3px; }
   .ad-price { font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 5px; }
   .ad-price.don { color: var(--orange); }
   .ad-price.gratuit { color: var(--blue); }
@@ -979,11 +981,20 @@ function renderList() {
         distBadge = `<span class="tag tag-dist">📍 ${d < 1 ? '<1' : Math.round(d)} km</span>`;
       }
     }
+    // Sexe + Âge sur la carte (uniquement si renseignés)
+    const sexeStr = f['Sexe'] === 'Mâle' ? '♂ Mâle' : f['Sexe'] === 'Femelle' ? '♀ Femelle' : '';
+    const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
+      ? `${f['Age_valeur']} ${f['Age_unite'] || ''}`.trim() : '';
+    const caracParts = [sexeStr, ageStr].filter(Boolean);
+    const caracHtml = caracParts.length
+      ? `<div class="ad-carac">${caracParts.join('<span class="carac-sep">·</span>')}</div>` : '';
+
     return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${record.id}" onclick="handleCardClick('${record.id}')">
       <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${photoUrl}" alt="" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
       <div class="ad-body">
         <div class="ad-title">${f['Titre']||'Sans titre'}</div>
         <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
+        ${caracHtml}
         <div class="ad-price ${price.cls}">${price.text}</div>
         <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">🌿 Éco</span>`:''  }${pedigreeBadge}${distBadge}</div>
       </div>

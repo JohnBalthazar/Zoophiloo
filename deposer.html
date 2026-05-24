@@ -115,6 +115,22 @@
   }
   .pedigree-extra { display: none; margin-top: 10px; }
 
+  /* ── CARACTÉRISTIQUES ANIMAL ── */
+  .carac-block {
+    display: none;
+    border-top: 1px dashed var(--border);
+    margin-top: 10px;
+    padding-top: 12px;
+  }
+  .carac-block-title {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
+  }
+  .age-input-wrap { display: flex; gap: 6px; }
+  .age-input-wrap input[type="number"] { width: 80px; flex-shrink: 0; }
+  .age-input-wrap select { flex: 1; min-width: 90px; }
+
   /* PHOTO UPLOAD */
   .photo-zone {
     border: 2px dashed var(--border); border-radius: 10px;
@@ -326,10 +342,75 @@
       </div>
     </div>
 
+    <!-- Caractéristiques animal — affiché conditionnellement selon l'espèce -->
+    <div class="carac-block" id="caracBlock">
+      <div class="carac-block-title">🐾 Caractéristiques</div>
+
+      <!-- Sexe + Âge -->
+      <div class="form-row cols-2" id="carac-sexe-age-row">
+        <div class="form-group" id="carac-sexe-wrap">
+          <label>Sexe</label>
+          <select id="sexe">
+            <option value="">Non précisé</option>
+            <option value="Mâle">♂ Mâle</option>
+            <option value="Femelle">♀ Femelle</option>
+          </select>
+        </div>
+        <div class="form-group" id="carac-age-wrap">
+          <label>Âge</label>
+          <div class="age-input-wrap">
+            <input type="number" id="age_valeur" placeholder="Ex : 2" min="0" max="999">
+            <select id="age_unite">
+              <option value="jours">jour(s)</option>
+              <option value="semaines">semaine(s)</option>
+              <option value="mois" selected>mois</option>
+              <option value="ans">an(s)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Couleur / Robe -->
+      <div class="form-row" id="carac-couleur-row">
+        <div class="form-group">
+          <label>Couleur / robe</label>
+          <input type="text" id="couleur" placeholder="Ex : Roux et blanc, Tabby, Bai…" maxlength="80">
+        </div>
+      </div>
+
+      <!-- Stérilisé · Vacciné · Identifié -->
+      <div class="form-row cols-3" id="carac-sante-row">
+        <div class="form-group" id="carac-sterilise-wrap">
+          <label>Stérilisé(e)</label>
+          <select id="sterilise">
+            <option value="">Non précisé</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+          </select>
+        </div>
+        <div class="form-group" id="carac-vaccine-wrap">
+          <label>Vacciné(e)</label>
+          <select id="vaccine">
+            <option value="">Non précisé</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+          </select>
+        </div>
+        <div class="form-group" id="carac-puce-wrap">
+          <label>Identifié(e) (puce)</label>
+          <select id="puce">
+            <option value="">Non précisé</option>
+            <option value="Oui">Oui</option>
+            <option value="Non">Non</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div class="form-row">
       <div class="form-group">
         <label>Description</label>
-        <textarea id="description" placeholder="Décrivez l'animal : âge, caractère, santé, conditions de vie…"></textarea>
+        <textarea id="description" placeholder="Décrivez l'animal : caractère, santé, conditions de vie…"></textarea>
       </div>
     </div>
   </div>
@@ -514,18 +595,63 @@ document.getElementById('type_annonce').addEventListener('change', function() {
 // ── Pedigree — affichage conditionnel par espèce ──
 const PEDIGREE_ESPECES = new Set(['Chien', 'Chat', 'Cheval']);
 
+// ── Caractéristiques — champs visibles par espèce ──
+// true = visible, false/absent = masqué
+const CARAC_CONFIG = {
+  'Chien':     { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true, puce: true },
+  'Chat':      { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true, puce: true },
+  'Cheval':    { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true, puce: true },
+  'Oiseau':    { sexe: true, age: true, couleur: true },
+  'Rongeur':   { sexe: true, age: true, couleur: true },
+  'Furet':     { sexe: true, age: true, couleur: true, sterilise: true, vaccine: true },
+  'Reptile':   { sexe: true, age: true, couleur: true },
+  'Amphibien': { sexe: true, age: true },
+  'Poisson':   { age: true },
+  'Araignée':  { sexe: true, age: true },
+  // Plante, Crustacée, Insecte, Autre → bloc non affiché
+};
+
 document.getElementById('espece').addEventListener('change', onEspeceChange);
+
+function _showField(id, visible) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = visible ? '' : 'none';
+}
 
 function onEspeceChange() {
   const espece = document.getElementById('espece').value;
-  const block = document.getElementById('pedigreeBlock');
-  const eligible = PEDIGREE_ESPECES.has(espece);
-  block.style.display = eligible ? 'block' : 'none';
-  if (!eligible) {
-    // Reset si on change pour une espèce non éligible
+
+  // — Pedigree —
+  const pBlock = document.getElementById('pedigreeBlock');
+  const pEligible = PEDIGREE_ESPECES.has(espece);
+  pBlock.style.display = pEligible ? 'block' : 'none';
+  if (!pEligible) {
     document.getElementById('pedigree').checked = false;
     document.getElementById('pedigreeExtra').style.display = 'none';
   }
+
+  // — Caractéristiques —
+  const cfg = CARAC_CONFIG[espece] || {};
+  const hasAny = cfg.sexe || cfg.age || cfg.couleur || cfg.sterilise || cfg.vaccine || cfg.puce;
+  document.getElementById('caracBlock').style.display = hasAny ? 'block' : 'none';
+
+  _showField('carac-sexe-age-row',   cfg.sexe || cfg.age       || false);
+  _showField('carac-sexe-wrap',      cfg.sexe                  || false);
+  _showField('carac-age-wrap',       cfg.age                   || false);
+  _showField('carac-couleur-row',    cfg.couleur               || false);
+  const hasSante = cfg.sterilise || cfg.vaccine || cfg.puce;
+  _showField('carac-sante-row',      hasSante                  || false);
+  _showField('carac-sterilise-wrap', cfg.sterilise             || false);
+  _showField('carac-vaccine-wrap',   cfg.vaccine               || false);
+  _showField('carac-puce-wrap',      cfg.puce                  || false);
+
+  // Reset des champs masqués pour ne pas envoyer de données parasites
+  if (!cfg.sexe)      document.getElementById('sexe').value = '';
+  if (!cfg.age)       { document.getElementById('age_valeur').value = ''; }
+  if (!cfg.couleur)   document.getElementById('couleur').value = '';
+  if (!cfg.sterilise) document.getElementById('sterilise').value = '';
+  if (!cfg.vaccine)   document.getElementById('vaccine').value = '';
+  if (!cfg.puce)      document.getElementById('puce').value = '';
 }
 
 function onPedigreeChange() {
@@ -743,6 +869,34 @@ async function submitAnnonce() {
       const num = document.getElementById('numero_inscription').value.trim();
       if (org) fields['Organisme_race'] = org;
       if (num) fields['Numero_inscription'] = num;
+    }
+
+    // Caractéristiques animal — selon espèce
+    const caracCfg = CARAC_CONFIG[fields['Espèce']] || {};
+    if (caracCfg.sexe) {
+      const v = document.getElementById('sexe').value;
+      if (v) fields['Sexe'] = v;
+    }
+    if (caracCfg.age) {
+      const av = parseInt(document.getElementById('age_valeur').value, 10);
+      const au = document.getElementById('age_unite').value;
+      if (!isNaN(av) && av >= 0) { fields['Age_valeur'] = av; fields['Age_unite'] = au; }
+    }
+    if (caracCfg.couleur) {
+      const v = document.getElementById('couleur').value.trim();
+      if (v) fields['Couleur'] = v;
+    }
+    if (caracCfg.sterilise) {
+      const v = document.getElementById('sterilise').value;
+      if (v) fields['Sterilise'] = v;
+    }
+    if (caracCfg.vaccine) {
+      const v = document.getElementById('vaccine').value;
+      if (v) fields['Vaccine'] = v;
+    }
+    if (caracCfg.puce) {
+      const v = document.getElementById('puce').value;
+      if (v) fields['Puce'] = v;
     }
 
     if (photoUrls.length > 0) {
