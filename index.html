@@ -699,6 +699,79 @@
     .view-toggle { margin: 0 4px; }
   }
 
+  /* ══════════════════════════════════════
+     ALERTES
+  ══════════════════════════════════════ */
+  .alert-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-body); font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--orange); color: var(--orange);
+    background: #fff8f5; cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .alert-btn:hover { background: var(--orange); color: white; }
+  .alert-btn svg { flex-shrink: 0; }
+
+  .alert-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.38); z-index: 600;
+    align-items: center; justify-content: center; padding: 16px;
+  }
+  .alert-modal-overlay.open { display: flex; }
+  .alert-modal {
+    background: var(--white); border-radius: 16px; padding: 28px;
+    max-width: 420px; width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .alert-modal h3 {
+    font-family: var(--font-display); font-size: 18px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .alert-modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .alert-criteria-chips {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px;
+    background: var(--bg); border-radius: 10px; padding: 10px;
+    border: 1px solid var(--border);
+  }
+  .alert-chip {
+    font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px;
+    background: var(--white); border: 1px solid var(--border); color: var(--text);
+  }
+  .alert-chip.active { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+  .alert-name-label { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 5px; display: block; }
+  .alert-name-input {
+    width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+    border-radius: 8px; font-family: var(--font-body); font-size: 14px;
+    background: var(--bg); color: var(--text); margin-bottom: 18px;
+    transition: border-color 0.15s;
+  }
+  .alert-name-input:focus { outline: none; border-color: var(--orange); }
+  .alert-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-alert-save {
+    font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    padding: 9px 20px; border: none; border-radius: 8px;
+    background: var(--orange); color: white; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-alert-save:hover { opacity: 0.88; }
+  .btn-alert-save:disabled { opacity: 0.5; }
+
+  .alert-notif-banner {
+    display: none; background: linear-gradient(90deg, #fff3e0, #fff8f5);
+    border-bottom: 1px solid #f4a96a; padding: 7px 40px 7px 16px;
+    font-size: 12px; color: #b84a00; text-align: center;
+    font-family: var(--font-body); position: relative; flex-shrink: 0;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+  .alert-notif-banner.show { display: flex; }
+  .alert-notif-banner a { color: #b84a00; font-weight: 600; text-decoration: underline; }
+  .alert-notif-close {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%; border: none;
+    background: rgba(184,74,0,0.12); color: #b84a00; cursor: pointer;
+    font-size: 11px; display: flex; align-items: center; justify-content: center;
+  }
+
   /* ── ECO BANNER ── */
   .eco-banner {
     background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%);
@@ -728,6 +801,14 @@
 </style>
 </head>
 <body>
+
+<!-- BANNIÈRE ALERTES -->
+<div class="alert-notif-banner" id="alertNotifBanner">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  <span id="alertNotifText"></span>
+  <a href="mon-espace.html#alertes">Voir mes alertes</a>
+  <button class="alert-notif-close" onclick="document.getElementById('alertNotifBanner').classList.remove('show')">✕</button>
+</div>
 
 <!-- ECO BANNER -->
 <div class="eco-banner" id="ecoBanner">
@@ -857,6 +938,10 @@
   <div class="list-panel tab-active" id="listPanel">
     <div class="list-header">
       <span class="result-count" id="resultCount">Chargement…</span>
+      <button class="alert-btn" id="alertBtn" onclick="openAlertModal()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Créer une alerte
+      </button>
       <div class="view-toggle" role="group" aria-label="Mode d'affichage">
         <button class="view-btn active" id="vbtn-classic" onclick="setView('classic')" title="Liste classique" aria-label="Liste classique">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="6" height="6" rx="1"/><line x1="12" y1="6" x2="21" y2="6"/><line x1="12" y1="9" x2="18" y2="9"/><rect x="3" y="14" width="6" height="6" rx="1"/><line x1="12" y1="16" x2="21" y2="16"/><line x1="12" y1="19" x2="18" y2="19"/></svg>
@@ -920,6 +1005,7 @@ let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
 let currentView = localStorage.getItem('yz_view') || 'classic';
 let userFavorites = new Set(); // IDs Firestore des annonces likées
+let currentUserUid = null;
 
 function setView(v) {
   currentView = v;
@@ -1520,6 +1606,8 @@ document.getElementById('priceMax').addEventListener('input', onPriceInput);
 async function init() {
   // Restore saved view mode
   setView(currentView);
+  // Apply URL params (from alert "Voir les annonces")
+  applyUrlParams();
 
   initMap();
   initGeoSlider();
@@ -1527,21 +1615,185 @@ async function init() {
     allRecords = await fetchAnnonces();
     filteredRecords = allRecords;
 
-    // fitBounds AVANT renderList/renderMarkers pour éviter que Leaflet
-    // déclenche un resize qui efface la liste juste après l'avoir peuplée
     const coords = allRecords
       .filter(r => r.fields['Latitude'] && r.fields['Longitude'])
       .map(r => [parseFloat(r.fields['Latitude']), parseFloat(r.fields['Longitude'])]);
     if (coords.length > 0) map.fitBounds(L.latLngBounds(coords), { padding:[40,40], maxZoom:12, animate: false });
 
-    renderList();
+    applyFilters();
     renderMarkers();
+
+    // Vérification alertes (une seule fois par session)
+    if (currentUserUid && !sessionStorage.getItem('alertsChecked')) {
+      checkUserAlerts(currentUserUid);
+    }
   } catch(err) {
     document.getElementById('listScroll').innerHTML = `<div class="empty-state"><span style="font-size:32px">⚠️</span><strong>Erreur de chargement</strong><span>Impossible de charger les annonces. Rechargez la page.</span></div>`;
   }
-  // imgbb ne signe pas les URLs — pas besoin de rafraîchissement
 }
 init();
+
+/* ══════════════════════════════════════════════════
+   ALERTES — Création, vérification, URL params
+══════════════════════════════════════════════════ */
+function buildAlertName(c) {
+  const parts = [];
+  if (c.espece) parts.push(c.espece);
+  if (c.query)  parts.push(c.query);
+  if (c.type)   parts.push(c.type);
+  if (c.ville)  parts.push(c.ville);
+  return parts.length ? parts.join(' · ') : 'Toutes les annonces';
+}
+
+function openAlertModal() {
+  const user = auth.currentUser;
+  if (!user) { window.location.href = 'login.html?next=index.html'; return; }
+
+  const c = getCurrentCriteria();
+  const name = buildAlertName(c);
+  document.getElementById('alertNameInput').value = name;
+
+  // Affiche les chips critères
+  const chips = document.getElementById('alertCriteriaChips');
+  const GEO_STEPS_LOCAL = [0,1,5,10,20,30,50,75,100,99999];
+  const items = [
+    c.espece && { label: '🐾 ' + c.espece },
+    c.type   && { label: c.type },
+    c.query  && { label: '🔍 "' + c.query + '"' },
+    c.ville  && { label: '📍 ' + c.ville + (c.rayon>0 ? ' ±' + (GEO_STEPS_LOCAL[c.rayon]||'?') + ' km' : '') },
+    c.prixMin !== null && { label: '≥ ' + c.prixMin + ' €' },
+    c.prixMax !== null && { label: '≤ ' + c.prixMax + ' €' },
+    c.pedigree && { label: '🏆 Pedigree' },
+  ].filter(Boolean);
+
+  chips.innerHTML = items.length
+    ? items.map(i => `<span class="alert-chip active">${escHTML(i.label)}</span>`).join('')
+    : `<span class="alert-chip">Toutes les annonces</span>`;
+
+  document.getElementById('alertModalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('alertNameInput').focus(), 80);
+}
+
+function closeAlertModal() {
+  document.getElementById('alertModalOverlay').classList.remove('open');
+}
+
+function getCurrentCriteria() {
+  return {
+    espece:  activeEspece,
+    type:    activeType,
+    query:   searchQuery,
+    ville:   document.getElementById('geoCityInput')?.value.trim() || '',
+    rayon:   parseInt(document.getElementById('geoRadiusSlider')?.value) || 0,
+    prixMin: priceMin,
+    prixMax: priceMax,
+    pedigree: activePedigree
+  };
+}
+
+async function saveAlert() {
+  const user = auth.currentUser;
+  if (!user) return;
+  const btn = document.getElementById('alertSaveBtn');
+  btn.disabled = true; btn.textContent = 'Enregistrement…';
+  try {
+    const criteria = getCurrentCriteria();
+    const name = document.getElementById('alertNameInput').value.trim() || buildAlertName(criteria);
+    await db.collection('users').doc(user.uid).collection('alertes').add({
+      name,
+      criteria,
+      active: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      checkedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      newCount: 0
+    });
+    closeAlertModal();
+    showToastAlert('✅ Alerte créée ! Vous serez notifié des nouvelles annonces.', 'success');
+  } catch(e) {
+    showToastAlert('Erreur lors de la création de l\'alerte', 'error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Créer l\'alerte';
+}
+
+function showToastAlert(msg, type='') {
+  // Réutilise le toast existant si présent, sinon crée-en un temporaire
+  let t = document.getElementById('yz-toast-alert');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'yz-toast-alert';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999;transition:transform .25s ease;white-space:nowrap;font-family:var(--font-body)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type==='success' ? 'var(--green-dark)' : type==='error' ? '#c0392b' : '#1a1a1a';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => { t.style.transform = 'translateX(-50%) translateY(80px)'; }, 3500);
+}
+
+async function checkUserAlerts(uid) {
+  if (!allRecords.length) return;
+  try {
+    const snap = await db.collection('users').doc(uid).collection('alertes').where('active','==',true).get();
+    if (snap.empty) return;
+    let totalNew = 0;
+    const batch = db.batch();
+    snap.docs.forEach(doc => {
+      const alerte = doc.data();
+      const checkedAt = alerte.checkedAt?.toDate() || new Date(0);
+      const c = alerte.criteria || {};
+      const newCount = allRecords.filter(r => {
+        const f = r.fields;
+        const created = new Date(f['Date_creation'] || 0);
+        if (isNaN(created) || created <= checkedAt) return false;
+        if (c.espece && f['Espèce'] !== c.espece) return false;
+        if (c.type   && f['Type_annonce'] !== c.type) return false;
+        if (c.query) {
+          const q = c.query.toLowerCase();
+          if (!(f['Titre']||'').toLowerCase().includes(q) &&
+              !(f['Race']||'').toLowerCase().includes(q) &&
+              !(f['Description']||'').toLowerCase().includes(q)) return false;
+        }
+        if (c.prixMax !== null && f['Prix'] && parseFloat(f['Prix']) > c.prixMax) return false;
+        if (c.prixMin !== null && f['Prix'] && parseFloat(f['Prix']) < c.prixMin) return false;
+        return true;
+      }).length;
+      totalNew += newCount;
+      batch.update(doc.ref, { checkedAt: firebase.firestore.FieldValue.serverTimestamp(), newCount });
+    });
+    await batch.commit();
+    sessionStorage.setItem('alertsChecked', '1');
+    if (totalNew > 0) {
+      document.getElementById('alertNotifText').textContent =
+        `🔔 ${totalNew} nouvelle${totalNew>1?'s':''} annonce${totalNew>1?'s':''} correspondent à vos alertes !`;
+      document.getElementById('alertNotifBanner').classList.add('show');
+    }
+  } catch(e) { /* silencieux */ }
+}
+
+function applyUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.has('espece')) {
+    activeEspece = p.get('espece');
+    document.querySelectorAll('#especeFilters .chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.val === activeEspece);
+    });
+  }
+  if (p.has('type')) {
+    activeType = p.get('type');
+    document.querySelectorAll('#typeFilters .chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.val === activeType);
+    });
+  }
+  if (p.has('q')) {
+    searchQuery = p.get('q');
+    const inp = document.getElementById('searchInput');
+    if (inp) inp.value = searchQuery;
+  }
+  if (p.has('prixMax')) { priceMax = parseFloat(p.get('prixMax')); const el = document.getElementById('priceMax'); if(el) el.value = priceMax; }
+  if (p.has('prixMin')) { priceMin = parseFloat(p.get('prixMin')); const el = document.getElementById('priceMin'); if(el) el.value = priceMin; }
+}
 </script>
 
 <!-- Firebase SDK -->
@@ -1596,6 +1848,10 @@ function renderHeaderAuth(user) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Ma messagerie
           <span id="msgUnreadBadge" style="display:none;margin-left:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:18px;text-align:center">0</span>
+        </a>
+        <a href="mon-espace.html#alertes" class="user-dropdown-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Mes alertes
         </a>
         <a href="mon-espace.html#favoris" class="user-dropdown-item">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -1665,6 +1921,7 @@ function watchUnreadCount(uid, email) {
 auth.onAuthStateChanged(user => {
   renderHeaderAuth(user);
   if (user) {
+    currentUserUid = user.uid;
     watchUnreadCount(user.uid, user.email);
     loadFavorites(user.uid);
     const lat = parseFloat(localStorage.getItem('zph_lat'));
@@ -1717,6 +1974,24 @@ async function toggleFavorite(recordId, e) {
   });
 }
 </script>
+
+<!-- MODAL ALERTE -->
+<div class="alert-modal-overlay" id="alertModalOverlay" onclick="if(event.target===this)closeAlertModal()">
+  <div class="alert-modal">
+    <h3>🔔 Créer une alerte</h3>
+    <p>Vous serez notifié dès qu'une annonce correspondant à ces critères est publiée.</p>
+    <div class="alert-criteria-chips" id="alertCriteriaChips"></div>
+    <label class="alert-name-label" for="alertNameInput">Nom de l'alerte</label>
+    <input class="alert-name-input" id="alertNameInput" type="text" maxlength="60" placeholder="ex : Chats à adopter Lyon">
+    <div class="alert-modal-actions">
+      <button class="btn-ghost" onclick="closeAlertModal()">Annuler</button>
+      <button class="btn-alert-save" id="alertSaveBtn" onclick="saveAlert()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Créer l'alerte
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- ================================================
      BANDEAU CONSENTEMENT COOKIES — YOUPIZOO

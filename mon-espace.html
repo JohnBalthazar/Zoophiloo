@@ -155,6 +155,71 @@
   .toast.success { background: var(--green-dark); }
   .toast.error { background: var(--red); }
 
+  /* ALERTES */
+  .alerte-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+    transition: box-shadow 0.15s;
+  }
+  .alerte-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  .alerte-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: #fff8f5; border: 1px solid #f4a96a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .alerte-icon.off { background: var(--bg); border-color: var(--border); filter: grayscale(1); }
+  .alerte-body { flex: 1; min-width: 0; }
+  .alerte-name {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--text); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .alerte-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+  .alerte-chip-item {
+    font-size: 10px; padding: 2px 7px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text-muted);
+  }
+  .alerte-meta { font-size: 11px; color: var(--text-muted); }
+  .alerte-new-badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
+    background: #fff3e0; color: var(--orange); border: 1px solid #f4a96a;
+    margin-left: 6px;
+  }
+  .alerte-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .alerte-see-btn {
+    font-family: var(--font-body); font-size: 12px; font-weight: 500;
+    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--green);
+    color: var(--green); background: var(--green-light); cursor: pointer;
+    text-decoration: none; white-space: nowrap; transition: all 0.12s;
+  }
+  .alerte-see-btn:hover { background: var(--green); color: white; }
+  /* toggle switch */
+  .alerte-toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+  .alerte-toggle input { opacity: 0; width: 0; height: 0; }
+  .alerte-toggle-slider {
+    position: absolute; inset: 0; border-radius: 20px;
+    background: var(--border); cursor: pointer; transition: background 0.2s;
+  }
+  .alerte-toggle-slider::before {
+    content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%;
+    left: 3px; top: 3px; background: white; transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .alerte-toggle input:checked + .alerte-toggle-slider { background: var(--orange); }
+  .alerte-toggle input:checked + .alerte-toggle-slider::before { transform: translateX(16px); }
+  .alerte-del-btn {
+    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--white); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; color: var(--text-muted); transition: all 0.12s;
+  }
+  .alerte-del-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .alerte-empty { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+  .alerte-empty .icon { font-size: 36px; margin-bottom: 12px; }
+  .alerte-empty h3 { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .alerte-empty p { font-size: 13px; margin-bottom: 18px; }
+
   /* FAVORIS GRID */
   .favs-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -240,6 +305,7 @@
     <button class="filter-chip" data-filter="Expirée">Expirées</button>
     <button class="filter-chip" data-filter="Inactive">Inactives</button>
     <button class="filter-chip" data-filter="__favoris__" id="chipFavoris">❤️ Mes favoris</button>
+    <button class="filter-chip" data-filter="__alertes__" id="chipAlertes">🔔 Mes alertes</button>
   </div>
 
   <!-- List / Favoris -->
@@ -313,6 +379,7 @@ auth.onAuthStateChanged(user => {
   document.getElementById('userInfo').textContent = user.displayName || user.email;
   loadAnnonces();
   loadUserFavorites();
+  if (activeFilter === '__alertes__') renderAlertes();
 });
 
 // ── Load annonces ──
@@ -516,10 +583,103 @@ document.querySelector('.filters').addEventListener('click', e => {
   activeFilter = chip.dataset.filter;
   if (activeFilter === '__favoris__') {
     renderFavorites();
+  } else if (activeFilter === '__alertes__') {
+    renderAlertes();
   } else {
     renderList();
   }
 });
+
+/* ═══════════════════════════
+   ALERTES
+═══════════════════════════ */
+let userAlertes = [];
+
+async function renderAlertes() {
+  const list = document.getElementById('annoncesList');
+  list.innerHTML = `<div class="state-box"><div class="loading-spinner"></div><p>Chargement des alertes…</p></div>`;
+  try {
+    const snap = await db.collection('users').doc(currentUser.uid).collection('alertes')
+      .orderBy('createdAt', 'desc').get();
+    userAlertes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const chip = document.getElementById('chipAlertes');
+    if (chip && userAlertes.length > 0) chip.textContent = `🔔 Mes alertes (${userAlertes.length})`;
+
+    if (!userAlertes.length) {
+      list.innerHTML = `<div class="alerte-empty"><div class="icon">🔔</div><h3>Aucune alerte</h3><p>Créez une alerte depuis la page d'accueil pour être notifié des nouvelles annonces.</p><a href="index.html" class="btn-primary">Explorer les annonces</a></div>`;
+      return;
+    }
+
+    const GEO_STEPS = [0,1,5,10,20,30,50,75,100,99999];
+    list.innerHTML = `<div class="annonces-list" style="gap:10px">${userAlertes.map(a => {
+      const c = a.criteria || {};
+      const chips = [
+        c.espece  && `<span class="alerte-chip-item">🐾 ${escHTML(c.espece)}</span>`,
+        c.type    && `<span class="alerte-chip-item">${escHTML(c.type)}</span>`,
+        c.query   && `<span class="alerte-chip-item">🔍 "${escHTML(c.query)}"</span>`,
+        c.ville   && `<span class="alerte-chip-item">📍 ${escHTML(c.ville)}${c.rayon>0?' ±'+(GEO_STEPS[c.rayon]||'?')+' km':''}</span>`,
+        c.prixMin !== null && `<span class="alerte-chip-item">≥ ${c.prixMin} €</span>`,
+        c.prixMax !== null && `<span class="alerte-chip-item">≤ ${c.prixMax} €</span>`,
+        c.pedigree && `<span class="alerte-chip-item">🏆 Pedigree</span>`,
+      ].filter(Boolean).join('');
+      const created = a.createdAt?.toDate ? a.createdAt.toDate().toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'}) : '';
+      const newBadge = a.newCount > 0 ? `<span class="alerte-new-badge">+${a.newCount} nouvelle${a.newCount>1?'s':''}</span>` : '';
+      const alertUrl = buildAlertUrl(c);
+      return `<div class="alerte-card" id="alerteCard-${escHTML(a.id)}">
+        <div class="alerte-icon ${a.active?'':'off'}">🔔</div>
+        <div class="alerte-body">
+          <div class="alerte-name">${escHTML(a.name)}${newBadge}</div>
+          <div class="alerte-chips">${chips || '<span class="alerte-chip-item">Toutes les annonces</span>'}</div>
+          <div class="alerte-meta">Créée le ${created}</div>
+        </div>
+        <div class="alerte-actions">
+          <a href="${alertUrl}" class="alerte-see-btn">Voir les annonces</a>
+          <label class="alerte-toggle" title="${a.active?'Désactiver':'Activer'} l'alerte">
+            <input type="checkbox" ${a.active?'checked':''} onchange="toggleAlerte('${escHTML(a.id)}',this.checked)">
+            <span class="alerte-toggle-slider"></span>
+          </label>
+          <button class="alerte-del-btn" onclick="deleteAlerte('${escHTML(a.id)}')" title="Supprimer l'alerte">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  } catch(e) {
+    list.innerHTML = `<div class="state-box"><div class="icon">⚠️</div><h3>Erreur</h3><p>Impossible de charger vos alertes.</p></div>`;
+  }
+}
+
+function buildAlertUrl(c) {
+  const p = new URLSearchParams();
+  if (c.espece) p.set('espece', c.espece);
+  if (c.type)   p.set('type', c.type);
+  if (c.query)  p.set('q', c.query);
+  if (c.prixMin !== null && c.prixMin !== undefined) p.set('prixMin', c.prixMin);
+  if (c.prixMax !== null && c.prixMax !== undefined) p.set('prixMax', c.prixMax);
+  return 'index.html' + (p.toString() ? '?' + p.toString() : '');
+}
+
+async function toggleAlerte(id, active) {
+  try {
+    await db.collection('users').doc(currentUser.uid).collection('alertes').doc(id).update({ active });
+    const icon = document.querySelector(`#alerteCard-${id} .alerte-icon`);
+    if (icon) icon.classList.toggle('off', !active);
+    showToast(active ? 'Alerte activée' : 'Alerte mise en pause', 'success');
+  } catch(e) { showToast('Erreur', 'error'); }
+}
+
+async function deleteAlerte(id) {
+  if (!confirm('Supprimer cette alerte ?')) return;
+  try {
+    await db.collection('users').doc(currentUser.uid).collection('alertes').doc(id).delete();
+    document.getElementById(`alerteCard-${id}`)?.remove();
+    userAlertes = userAlertes.filter(a => a.id !== id);
+    const chip = document.getElementById('chipAlertes');
+    if (chip) chip.textContent = userAlertes.length > 0 ? `🔔 Mes alertes (${userAlertes.length})` : '🔔 Mes alertes';
+    showToast('Alerte supprimée', 'success');
+  } catch(e) { showToast('Erreur', 'error'); }
+}
 
 // ── Delete modal ──
 function openDeleteModal(id) {
@@ -556,12 +716,17 @@ document.getElementById('deleteModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeDeleteModal();
 });
 
-// Ouvrir directement l'onglet favoris si #favoris dans l'URL
+// Ouvrir directement l'onglet favoris ou alertes si hash dans l'URL
 if (window.location.hash === '#favoris') {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   const chip = document.getElementById('chipFavoris');
   if (chip) { chip.classList.add('active'); activeFilter = '__favoris__'; }
-  // renderFavorites() sera appelé une fois loadUserFavorites() terminé
+}
+if (window.location.hash === '#alertes') {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  const chip = document.getElementById('chipAlertes');
+  if (chip) { chip.classList.add('active'); activeFilter = '__alertes__'; }
+  // renderAlertes() sera appelé après auth
 }
 </script>
 
