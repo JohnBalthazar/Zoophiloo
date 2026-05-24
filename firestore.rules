@@ -37,7 +37,7 @@ service cloud.firestore {
                     && request.resource.data.Titre is string
                     && request.resource.data.Titre.size() >= 2
                     && request.resource.data.Titre.size() <= 100
-                    && request.resource.data.Espèce is string
+                    && request.resource.data['Espèce'] is string
                     && request.resource.data.Type_annonce is string
                     && request.resource.data.Ville is string;
 
