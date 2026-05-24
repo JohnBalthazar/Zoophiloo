@@ -543,9 +543,42 @@
     }
     .mobile-tab.active .mobile-tab-bar { background: var(--green); }
   }
+
+  /* ── ECO BANNER ── */
+  .eco-banner {
+    background: linear-gradient(90deg, #d4f0e3 0%, #e8f8f0 100%);
+    border-bottom: 1px solid #a8e6c8;
+    padding: 6px 44px 6px 16px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 12px; color: #0f6e4a;
+    font-family: var(--font-body); position: relative; flex-shrink: 0;
+    text-align: center; line-height: 1.4;
+  }
+  .eco-banner a { color: #0f6e4a; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner a:hover { color: #0a5238; }
+  .eco-banner-dismiss {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%; border: none;
+    background: rgba(15,110,74,0.12); color: #0f6e4a; cursor: pointer;
+    font-size: 11px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+  .eco-banner-dismiss:hover { background: rgba(15,110,74,0.25); }
+  @media (max-width: 600px) {
+    .eco-banner { font-size: 11px; padding: 6px 36px 6px 10px; }
+  }
+
+  /* ── TAG ECO (Don / Adoption) ── */
+  .tag-eco { background: #dcfce7; color: #14532d; border: 1px solid #86efac; }
 </style>
 </head>
 <body>
+
+<!-- ECO BANNER -->
+<div class="eco-banner" id="ecoBanner">
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/hebergement/hebergement-vert" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
+</div>
 
 <header>
   <div class="header-left">
@@ -952,7 +985,7 @@ function renderList() {
         <div class="ad-title">${f['Titre']||'Sans titre'}</div>
         <div class="ad-meta">${f['Espèce']||''}${f['Race']?' · '+f['Race']:''} · ${f['Ville']||''}${f['Code_postal']?' ('+f['Code_postal']+')':''}</div>
         <div class="ad-price ${price.cls}">${price.text}</div>
-        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${pedigreeBadge}${distBadge}</div>
+        <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDonType||isAdopterType)?`<span class="tag tag-eco">🌿 Éco</span>`:''  }${pedigreeBadge}${distBadge}</div>
       </div>
       <span class="ad-date">${formatDate(f['Date_creation'])}</span>
     </div>`;
@@ -1435,5 +1468,19 @@ auth.onAuthStateChanged(user => {
 </div><!-- /yz-cookie-banner -->
 
 <script src="cookies.js"></script>
+<script>
+/* ── ECO BANNER ── */
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    var b = document.getElementById('ecoBanner');
+    if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  var b = document.getElementById('ecoBanner');
+  if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+</script>
 </body>
 </html>

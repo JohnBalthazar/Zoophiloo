@@ -184,10 +184,67 @@
     .photo-previews { grid-template-columns: repeat(3, 1fr); }
     .page { padding: 20px 14px 48px; }
   }
+
+  /* ── ECO BANNER ── */
+  .eco-banner {
+    background: linear-gradient(90deg, #d4f0e3 0%, #e8f8f0 100%);
+    border-bottom: 1px solid #a8e6c8;
+    padding: 6px 44px 6px 16px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 12px; color: #0f6e4a;
+    font-family: var(--font-body); position: relative;
+    text-align: center; line-height: 1.4;
+  }
+  .eco-banner a { color: #0f6e4a; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner a:hover { color: #0a5238; }
+  .eco-banner-dismiss {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%; border: none;
+    background: rgba(15,110,74,0.12); color: #0f6e4a; cursor: pointer;
+    font-size: 11px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .eco-banner-dismiss:hover { background: rgba(15,110,74,0.25); }
+  @media (max-width: 600px) { .eco-banner { font-size: 11px; padding: 6px 36px 6px 10px; } }
+
+  /* ── RAPPEL LÉGAL VENDEUR ── */
+  .legal-reminder {
+    background: #fff8f2;
+    border: 1px solid #fdd0a8; border-left: 4px solid var(--orange);
+    border-radius: 10px; padding: 14px 16px;
+    animation: legalIn 0.25s ease;
+  }
+  @keyframes legalIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+  .legal-reminder-header {
+    font-size: 13px; font-weight: 600; color: #7c3a10; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .legal-reminder-list {
+    list-style: none; display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px;
+  }
+  .legal-reminder-list li {
+    font-size: 12px; color: #6b3a1f;
+    display: flex; align-items: flex-start; gap: 7px; line-height: 1.5;
+  }
+  .legal-reminder-list li::before {
+    content: '⚖️'; flex-shrink: 0; font-size: 11px; margin-top: 1px;
+  }
+  .legal-reminder-link {
+    font-size: 12px; color: #7c3a10; text-decoration: none;
+    border-bottom: 1px solid rgba(124,58,16,0.3); padding-bottom: 1px;
+    transition: border-color 0.15s;
+  }
+  .legal-reminder-link:hover { border-bottom-color: #7c3a10; }
 </style>
 <link rel="stylesheet" href="cookies.css">
 </head>
 <body>
+
+<!-- ECO BANNER -->
+<div class="eco-banner" id="ecoBanner">
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/hebergement/hebergement-vert" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
+</div>
 
 <header>
   <a href="index.html" class="logo"><span class="rest">Youpi</span><span class="z">Zoo</span></a>
@@ -295,6 +352,20 @@
         <label>Prix (€)</label>
         <input type="number" id="prix" placeholder="0" min="0" step="0.01">
         <span class="field-hint">Laissez vide si don / adoption</span>
+      </div>
+    </div>
+
+    <!-- RAPPEL LÉGAL VENDEUR — visible uniquement si type = "A vendre" -->
+    <div id="legalReminderRow" style="display:none">
+      <div class="legal-reminder">
+        <div class="legal-reminder-header">⚖️ Rappel légal pour les vendeurs particuliers</div>
+        <ul class="legal-reminder-list">
+          <li>L'acquéreur doit signer un <strong>certificat d'engagement et de connaissance</strong> avant toute cession.</li>
+          <li>Un <strong>délai de réflexion de 7 jours</strong> est obligatoire — aucune cession ne peut avoir lieu avant.</li>
+          <li>Vous devez fournir les <strong>documents sanitaires</strong> (carnet de santé, vaccins, puce/tatouage…).</li>
+          <li>La vente d'espèces protégées sans autorisation est une <strong>infraction pénale</strong>.</li>
+        </ul>
+        <a class="legal-reminder-link" href="https://www.service-public.fr/particuliers/vosdroits/F37655" target="_blank" rel="noopener noreferrer">En savoir plus sur vos obligations légales →</a>
       </div>
     </div>
   </div>
@@ -419,6 +490,25 @@ auth.onAuthStateChanged(async user => {
     if (c) document.getElementById('code_postal').value = c;
     if (v || c) geocodeAddress();
   }
+});
+
+// ── Eco Banner ──
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    var b = document.getElementById('ecoBanner');
+    if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  var b = document.getElementById('ecoBanner');
+  if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+
+// ── Rappel légal vendeur ──
+document.getElementById('type_annonce').addEventListener('change', function() {
+  const isVente = this.value === 'A vendre';
+  document.getElementById('legalReminderRow').style.display = isVente ? 'block' : 'none';
 });
 
 // ── Pedigree — affichage conditionnel par espèce ──

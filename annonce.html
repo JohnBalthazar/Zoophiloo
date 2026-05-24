@@ -626,6 +626,53 @@ function renderGallery(photos, emoji) {
   showPhoto(0);
 }
 
+/* ── ECO BANNER ── */
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    var b = document.getElementById('ecoBanner');
+    if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  var b = document.getElementById('ecoBanner');
+  if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+
+/* ── ECO CARD ── */
+function renderEcoCard(type) {
+  const el = document.getElementById('ecoCard');
+  if (!el) return;
+  const isVente    = type === 'A vendre'  || type === 'À vendre';
+  const isDon      = type === 'A donner'  || type === 'À donner';
+  const isAdoption = type === 'A adopter' || type === 'À adopter';
+
+  if (isVente) {
+    el.innerHTML = `
+      <div class="eco-card">
+        <div class="eco-card-title">🌿 Adopter plutôt qu'acheter ?</div>
+        <ul class="eco-card-list">
+          <li>La <strong>loi du 1ᵉʳ octobre 2022</strong> interdit la vente d'animaux en animalerie — favorisez les éleveurs responsables et les refuges.</li>
+          <li>Un <strong>délai de réflexion de 7 jours</strong> s'applique obligatoirement avant toute cession d'animal de compagnie.</li>
+          <li>Un <strong>certificat d'engagement et de connaissance</strong> signé par l'acquéreur est désormais requis.</li>
+          <li>Des milliers d'animaux attendent en refuge — pensez à l'<strong>adoption</strong> avant l'achat 🐾</li>
+        </ul>
+        <a class="eco-card-link" href="https://www.service-public.fr/particuliers/vosdroits/F37655" target="_blank" rel="noopener noreferrer">
+          En savoir plus sur la loi 2022 →
+        </a>
+      </div>`;
+  } else if (isDon || isAdoption) {
+    el.innerHTML = `
+      <div class="eco-thanks-card">
+        <span class="eco-thanks-icon">${isDon ? '🎁' : '🏠'}</span>
+        <div>
+          <strong>Merci pour votre démarche responsable !</strong>
+          ${isDon ? 'Donner un animal' : "Proposer à l'adoption"} plutôt que de vendre, c'est une belle façon d'agir pour le bien-être animal. Votre geste compte 🌿
+        </div>
+      </div>`;
+  }
+}
+
 function renderPage(record) {
   const f = record.fields;
   const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
@@ -742,6 +789,9 @@ function renderPage(record) {
   // Show
   document.getElementById('loadingState').style.display = 'none';
   document.getElementById('pageContent').style.display = 'grid';
+
+  // Eco card
+  renderEcoCard(f['Type_annonce'] || '');
 }
 
 async function init() {
