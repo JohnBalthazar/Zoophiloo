@@ -1,0 +1,307 @@
+/* ================================================
+   YOUPIZOO — Bandeau consentement cookies
+   RGPD / CNIL — v1.0
+   ================================================ */
+
+/* --- Wrapper fixe bas de page --- */
+#yz-cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  display: none; /* masqué par défaut, affiché par JS */
+  justify-content: center;
+  padding: 0 1rem 1rem;
+  /* Slide-up : part d'en bas, monte jusqu'à 0 */
+  transform: translateY(calc(100% + 2rem));
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#yz-cookie-banner.yz-visible {
+  transform: translateY(0);
+}
+
+/* --- Carte (fond blanc arrondi) --- */
+.yz-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 20px 56px rgba(0, 0, 0, 0.10);
+  padding: 1.25rem 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  font-family: 'DM Sans', sans-serif;
+  color: #1a1a1a;
+}
+
+/* =============================
+   VUE PRINCIPALE (bandeau)
+   ============================= */
+.yz-main {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.yz-main-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  user-select: none;
+}
+
+.yz-main-body { flex: 1; min-width: 0; }
+
+.yz-main-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  color: #1a1a1a;
+}
+
+.yz-main-text {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: #5a5a5a;
+  margin: 0 0 1rem;
+}
+
+.yz-main-text a {
+  color: #1a9e6e;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.yz-main-text a:hover { color: #0f7a52; }
+
+/* --- Boutons --- */
+.yz-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.yz-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.48rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  white-space: nowrap;
+  line-height: 1;
+}
+.yz-btn:active { transform: scale(0.97); }
+
+/* Tout accepter */
+.yz-btn-accept {
+  background: #1a9e6e;
+  color: #ffffff;
+}
+.yz-btn-accept:hover { background: #0f7a52; }
+
+/* Personnaliser */
+.yz-btn-customize {
+  background: #f0f0ec;
+  color: #1a1a1a;
+}
+.yz-btn-customize:hover { background: #e4e4e0; }
+
+/* Refuser — discret mais visible (obligation CNIL) */
+.yz-btn-refuse {
+  background: transparent;
+  color: #8a8a8a;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  font-size: 0.73rem;
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.yz-btn-refuse:hover { color: #4a4a4a; }
+
+/* =============================
+   VUE PERSONNALISATION
+   ============================= */
+#yz-panel { display: none; }
+
+.yz-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e8e8e4;
+}
+
+.yz-back-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: #8a8a8a;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+.yz-back-btn:hover { color: #1a9e6e; }
+
+.yz-panel-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Catégories */
+.yz-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.yz-category {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8rem 0.9rem;
+  background: #f9f9f7;
+  border-radius: 10px;
+  border: 1px solid #e8e8e4;
+}
+
+.yz-cat-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.yz-cat-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.yz-cat-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 0.18rem;
+}
+
+.yz-cat-desc {
+  font-size: 0.72rem;
+  color: #7a7a7a;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Badge "Toujours actifs" */
+.yz-always-on {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: #1a9e6e;
+  background: #e6f7f0;
+  padding: 0.22rem 0.6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Toggle switch */
+.yz-toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.yz-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.yz-toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #d0d0cc;
+  border-radius: 22px;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.yz-toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.25s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.yz-toggle input:checked + .yz-toggle-slider { background: #1a9e6e; }
+.yz-toggle input:checked + .yz-toggle-slider::before { transform: translateX(18px); }
+.yz-toggle input:focus-visible + .yz-toggle-slider {
+  outline: 2px solid #1a9e6e;
+  outline-offset: 2px;
+}
+
+/* Actions du panneau */
+.yz-panel-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e8e8e4;
+}
+
+/* =============================
+   RESPONSIVE MOBILE ≤ 600px
+   ============================= */
+@media (max-width: 600px) {
+  #yz-cookie-banner {
+    padding: 0 0.5rem 0.5rem;
+    bottom: 50px; /* au-dessus de la barre d'onglets mobiles */
+  }
+
+  .yz-card {
+    padding: 1rem 1rem 0.85rem;
+    border-radius: 14px;
+  }
+
+  .yz-main { flex-direction: column; gap: 0.5rem; }
+  .yz-main-icon { display: none; }
+  .yz-main-title { font-size: 0.85rem; }
+
+  .yz-actions { gap: 0.4rem; }
+  .yz-btn { font-size: 0.75rem; padding: 0.42rem 0.85rem; }
+
+  .yz-panel-actions { justify-content: stretch; }
+  .yz-panel-actions .yz-btn { flex: 1; justify-content: center; text-align: center; }
+
+  .yz-category { padding: 0.65rem 0.75rem; }
+}
