@@ -1,14 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PYR4KQ6XLZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-PYR4KQ6XLZ');
-</script>
+<!-- Google Analytics : charg&#233; conditionnellement par cookies.js (RGPD) -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connexion — YoupiZoo</title>
@@ -363,6 +356,7 @@
     .auth-card { padding: 20px 16px; }
   }
 </style>
+<link rel="stylesheet" href="cookies.css">
 </head>
 <body>
 
@@ -969,5 +963,78 @@ document.getElementById('signinEmail').addEventListener('keydown', e => { if (e.
 document.getElementById('signupPassword').addEventListener('keydown', e => { if (e.key === 'Enter') doSignUp(); });
 document.getElementById('resetEmail').addEventListener('keydown', e => { if (e.key === 'Enter') doResetPassword(); });
 </script>
+
+<!-- BANDEAU COOKIES RGPD — YoupiZoo -->
+<div id="yz-cookie-banner" role="dialog" aria-label="Gestion des cookies" aria-modal="false">
+  <div class="yz-card">
+    <div id="yz-main" class="yz-main">
+      <div class="yz-main-icon" aria-hidden="true">&#x1F43E;</div>
+      <div class="yz-main-body">
+        <p class="yz-main-title">Votre navigation m&#233;rite d&#39;&#234;tre au poil &#x1F9B4;</p>
+        <p class="yz-main-text">
+          Comme un bon compagnon bien &#233;lev&#233;, nos cookies sont sages et utiles &#8212; pas
+          de traqueurs cach&#233;s, pas de mauvaises surprises. Firebase garde votre
+          session ouverte, Google Analytics nous aide &#224; am&#233;liorer YoupiZoo, et Brevo
+          assure vos notifications importantes.
+          <a href="cgu.html#cookies" target="_blank" rel="noopener">En savoir plus</a>
+        </p>
+        <div class="yz-actions">
+          <button id="yz-accept-all"  class="yz-btn yz-btn-accept">Tout accepter &#x1F436;</button>
+          <button id="yz-customize"   class="yz-btn yz-btn-customize">Personnaliser</button>
+          <button id="yz-refuse"      class="yz-btn yz-btn-refuse">Refuser</button>
+        </div>
+      </div>
+    </div>
+    <div id="yz-panel">
+      <div class="yz-panel-header">
+        <button id="yz-back" class="yz-back-btn" aria-label="Retour">&#8592; Retour</button>
+        <p class="yz-panel-title">&#x1F43E; Choisissez vos pr&#233;f&#233;rences</p>
+      </div>
+      <div class="yz-categories">
+        <div class="yz-category">
+          <div class="yz-cat-info">
+            <span class="yz-cat-icon" aria-hidden="true">&#x1F510;</span>
+            <span>
+              <strong class="yz-cat-name">Connexion s&#233;curis&#233;e</strong>
+              <span class="yz-cat-desc">Firebase Auth &#8212; maintient votre session ouverte et s&#233;curise votre compte.</span>
+            </span>
+          </div>
+          <span class="yz-always-on">Toujours actifs</span>
+        </div>
+        <div class="yz-category">
+          <div class="yz-cat-info">
+            <span class="yz-cat-icon" aria-hidden="true">&#x1F4CA;</span>
+            <span>
+              <strong class="yz-cat-name">Mesure d&#39;audience</strong>
+              <span class="yz-cat-desc">Google Analytics 4 &#8212; nous aide &#224; comprendre comment vous naviguez pour am&#233;liorer le site.</span>
+            </span>
+          </div>
+          <label class="yz-toggle" aria-label="Activer les cookies d'analyse">
+            <input type="checkbox" id="yz-toggle-analytics">
+            <span class="yz-toggle-slider"></span>
+          </label>
+        </div>
+        <div class="yz-category">
+          <div class="yz-cat-info">
+            <span class="yz-cat-icon" aria-hidden="true">&#x1F4E7;</span>
+            <span>
+              <strong class="yz-cat-name">Notifications e-mail</strong>
+              <span class="yz-cat-desc">Brevo &#8212; envoie vos e-mails transactionnels (confirmations, alertes nouvelles annonces).</span>
+            </span>
+          </div>
+          <label class="yz-toggle" aria-label="Activer les cookies Brevo">
+            <input type="checkbox" id="yz-toggle-brevo">
+            <span class="yz-toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="yz-panel-actions">
+        <button id="yz-accept-all-2" class="yz-btn yz-btn-customize">Tout accepter</button>
+        <button id="yz-save"         class="yz-btn yz-btn-accept">Enregistrer mes choix &#x1F43E;</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="cookies.js"></script>
 </body>
 </html>
