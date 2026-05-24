@@ -3,6 +3,7 @@
 <head>
 <!-- Google Analytics : charg&#233; conditionnellement par cookies.js (RGPD) -->
 <meta charset="UTF-8">
+  <meta name="theme-color" content="#e8622a">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Connexion — YoupiZoo</title>
 <meta name="robots" content="noindex, nofollow">
@@ -11,9 +12,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green: #1a9e6e;
-    --green-dark: #0f7a52;
-    --green-light: #e6f7f0;
+    --green: #5a9e1a;
+    --green-dark: #478015;
+    --green-light: #f0f8e6;
     --orange: #e8622a;
     --text: #1a1a1a;
     --text-muted: #6b6b6b;
@@ -47,7 +48,7 @@
   }
   .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
   .logo .z { color: var(--green); }
-  .logo .rest { color: var(--text); }
+  .logo .rest { color: var(--orange); }
 
   /* MAIN */
   main {
@@ -166,7 +167,7 @@
   }
   input:focus {
     border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(26,158,110,0.10);
+    box-shadow: 0 0 0 3px rgba(90,158,26,0.10);
   }
   input.error-input {
     border-color: var(--error);
@@ -260,7 +261,7 @@
   }
   .alert.show { display: flex; align-items: flex-start; gap: 8px; }
   .alert-error { background: var(--error-bg); color: var(--error); border: 1px solid rgba(192,57,43,0.2); }
-  .alert-success { background: var(--green-light); color: var(--green-dark); border: 1px solid rgba(26,158,110,0.25); }
+  .alert-success { background: var(--green-light); color: var(--green-dark); border: 1px solid rgba(90,158,26,0.25); }
 
   /* SPINNER */
   .spinner {
@@ -323,7 +324,7 @@
     background: none; box-shadow: none;
     border-radius: 3px;
   }
-  input[type="checkbox"]:focus { box-shadow: 0 0 0 3px rgba(26,158,110,0.15); }
+  input[type="checkbox"]:focus { box-shadow: 0 0 0 3px rgba(90,158,26,0.15); }
 
   /* PANELS */
   .panel { display: none; }
@@ -782,7 +783,7 @@ function checkPasswordStrength(pw) {
     { w: '40%', bg: '#e67e22', txt: 'Faible' },
     { w: '60%', bg: '#f1c40f', txt: 'Moyen' },
     { w: '80%', bg: '#2ecc71', txt: 'Fort' },
-    { w: '100%', bg: '#1a9e6e', txt: 'Très fort' },
+    { w: '100%', bg: '#5a9e1a', txt: 'Très fort' },
   ];
   const lvl = levels[Math.max(0, score - 1)] || levels[0];
   fill.style.width = lvl.w;

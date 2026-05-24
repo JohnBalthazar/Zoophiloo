@@ -3,6 +3,7 @@
 <head>
 <!-- Google Analytics : charg&#233; conditionnellement par cookies.js (RGPD) -->
 <meta charset="UTF-8">
+  <meta name="theme-color" content="#e8622a">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Annonce — YoupiZoo</title>
 <!-- SEO & Social — enrichis dynamiquement après chargement de l'annonce -->
@@ -27,9 +28,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green: #1a9e6e;
-    --green-dark: #0f7a52;
-    --green-light: #e6f7f0;
+    --green: #5a9e1a;
+    --green-dark: #478015;
+    --green-light: #f0f8e6;
     --orange: #e8622a;
     --blue: #2563a8;
     --text: #1a1a1a;
@@ -66,7 +67,7 @@
   }
   .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
   .logo .z { color: var(--green); }
-  .logo .rest { color: var(--text); }
+  .logo .rest { color: var(--orange); }
   .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
   .header-left { display: flex; align-items: center; }
   .header-right { display: flex; align-items: center; gap: 8px; }
@@ -124,7 +125,7 @@
   .ad-price-big.gratuit { color: var(--blue); }
   .ad-meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
   .tag { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .tag-vente { background: #e6f7f0; color: #0f7a52; }
+  .tag-vente { background: #f0f8e6; color: #478015; }
   .tag-adoption { background: #dbeafe; color: #1d4ed8; }
   .tag-don { background: #fef3c7; color: #92400e; }
   .tag-perdu { background: #fef2f2; color: #dc2626; }
@@ -261,7 +262,7 @@
     resize: vertical; min-height: 80px; outline: none;
     transition: border-color 0.15s;
   }
-  .report-autre-block textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,158,110,.1); }
+  .report-autre-block textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(90,158,26,.1); }
   .report-autre-block textarea.error { border-color: #c0392b; }
   .report-autre-label { font-size: 12px; font-weight: 500; margin-bottom: 5px; display: block; }
   .report-autre-label .req { color: var(--green); }
@@ -315,35 +316,35 @@
 
   /* ── ECO BANNER ── */
   .eco-banner {
-    background: linear-gradient(90deg, #d4f0e3 0%, #e8f8f0 100%);
-    border-bottom: 1px solid #a8e6c8;
+    background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%);
+    border-bottom: 1px solid #a0d860;
     padding: 6px 44px 6px 16px;
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; font-size: 12px; color: #0f6e4a;
+    gap: 6px; font-size: 12px; color: #4a7a12;
     font-family: var(--font-body); position: relative; flex-shrink: 0;
     text-align: center; line-height: 1.4;
   }
-  .eco-banner a { color: #0f6e4a; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
-  .eco-banner a:hover { color: #0a5238; }
+  .eco-banner a { color: #4a7a12; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner a:hover { color: #3a6010; }
   .eco-banner-dismiss {
     position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
     width: 22px; height: 22px; border-radius: 50%; border: none;
-    background: rgba(15,110,74,0.12); color: #0f6e4a; cursor: pointer;
+    background: rgba(90,158,26,0.12); color: #4a7a12; cursor: pointer;
     font-size: 11px; display: flex; align-items: center; justify-content: center;
     transition: background 0.15s;
   }
-  .eco-banner-dismiss:hover { background: rgba(15,110,74,0.25); }
+  .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
   @media (max-width: 600px) { .eco-banner { font-size: 11px; padding: 6px 36px 6px 10px; } }
 
   /* ── ECO CARD (annonce vente) ── */
   .eco-card {
-    background: linear-gradient(135deg, #f0fdf7 0%, #e6f7f0 100%);
-    border: 1px solid #a8e6c8; border-left: 4px solid var(--green);
+    background: linear-gradient(135deg, #f4fce8 0%, #f0f8e6 100%);
+    border: 1px solid #a0d860; border-left: 4px solid var(--green);
     border-radius: 12px; padding: 18px 20px;
   }
   .eco-card-title {
     font-family: var(--font-display); font-size: 14px; font-weight: 700;
-    color: #0a5238; margin-bottom: 12px;
+    color: #3a6010; margin-bottom: 12px;
     display: flex; align-items: center; gap: 8px;
   }
   .eco-card-list {
@@ -357,19 +358,19 @@
     content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px;
   }
   .eco-card-link {
-    font-size: 12px; color: #0a5238; text-decoration: none;
+    font-size: 12px; color: #3a6010; text-decoration: none;
     display: inline-flex; align-items: center; gap: 4px;
     border-bottom: 1px solid rgba(10,82,56,0.3); padding-bottom: 1px;
     transition: border-color 0.15s;
   }
-  .eco-card-link:hover { border-bottom-color: #0a5238; }
+  .eco-card-link:hover { border-bottom-color: #3a6010; }
 
   /* ── ECO THANKS CARD (don / adoption) ── */
   .eco-thanks-card {
-    background: linear-gradient(135deg, #f0fdf7 0%, #dcfce7 100%);
-    border: 1px solid #86efac; border-left: 4px solid #22c55e;
+    background: linear-gradient(135deg, #f4fce8 0%, #e4f8c0 100%);
+    border: 1px solid #9ae050; border-left: 4px solid #5a9e1a;
     border-radius: 12px; padding: 16px 20px;
-    font-size: 13px; color: #14532d;
+    font-size: 13px; color: #3a6010;
     display: flex; align-items: flex-start; gap: 12px;
   }
   .eco-thanks-icon { font-size: 26px; flex-shrink: 0; line-height: 1; }

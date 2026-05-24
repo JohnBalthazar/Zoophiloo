@@ -3,6 +3,7 @@
 <head>
 <!-- Google Analytics : chargé conditionnellement par cookies.js (RGPD) -->
 <meta charset="UTF-8">
+  <meta name="theme-color" content="#e8622a">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YoupiZoo — Annonces animaux entre particuliers en France</title>
 <!-- SEO & Social -->
@@ -83,9 +84,9 @@
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <style>
   :root {
-    --green: #1a9e6e;
-    --green-dark: #0f7a52;
-    --green-light: #e6f7f0;
+    --green: #5a9e1a;
+    --green-dark: #478015;
+    --green-light: #f0f8e6;
     --orange: #e8622a;
     --blue: #2563a8;
     --text: #1a1a1a;
@@ -122,7 +123,7 @@
   }
   .logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; text-decoration: none; }
   .logo .z { color: var(--green); }
-  .logo .rest { color: var(--text); }
+  .logo .rest { color: var(--orange); }
   .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
   .header-left { display: flex; align-items: center; }
   .header-right { display: flex; align-items: center; gap: 8px; }
@@ -329,7 +330,7 @@
   .chip-perdu.active { background: #dc2626; border-color: #dc2626; }
   .chip-trouve { --chip-color: #7c3aed; }
   .chip-trouve.active { background: #7c3aed; border-color: #7c3aed; }
-  .tag-dist { background: #f0fdf8; color: #0d7a55; border: 1px solid #a7f3d0; font-size: 10px; }
+  .tag-dist { background: #f4fce8; color: #478015; border: 1px solid #a0d860; font-size: 10px; }
   .tag-perdu { background: #fef2f2; color: #dc2626; }
   .tag-trouve { background: #f5f3ff; color: #7c3aed; }
   .tag-pedigree { background: #fefce8; color: #713f12; border: 1px solid #fde68a; }
@@ -371,7 +372,7 @@
   .ad-price.trouve { color: #7c3aed; }
   .ad-tags { display: flex; gap: 4px; }
   .tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.03em; }
-  .tag-vente { background: #e6f7f0; color: #0f7a52; }
+  .tag-vente { background: #f0f8e6; color: #478015; }
   .tag-adoption { background: #dbeafe; color: #1d4ed8; }
   .tag-don { background: #fef3c7; color: #92400e; }
   .ad-date { position: absolute; top: 12px; right: 14px; font-size: 10px; color: var(--text-muted); }
@@ -417,11 +418,11 @@
   /* Cluster markercluster — couleurs thème */
   .marker-cluster-small,
   .marker-cluster-medium,
-  .marker-cluster-large { background-color: rgba(26,158,110,0.18) !important; }
+  .marker-cluster-large { background-color: rgba(90,158,26,0.18) !important; }
   .marker-cluster-small div,
   .marker-cluster-medium div,
   .marker-cluster-large div {
-    background-color: rgba(26,158,110,0.9) !important;
+    background-color: rgba(90,158,26,0.9) !important;
     color: white !important;
     font-family: var(--font-body) !important;
     font-weight: 700 !important;
@@ -549,30 +550,30 @@
 
   /* ── ECO BANNER ── */
   .eco-banner {
-    background: linear-gradient(90deg, #d4f0e3 0%, #e8f8f0 100%);
-    border-bottom: 1px solid #a8e6c8;
+    background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%);
+    border-bottom: 1px solid #a0d860;
     padding: 6px 44px 6px 16px;
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; font-size: 12px; color: #0f6e4a;
+    gap: 6px; font-size: 12px; color: #4a7a12;
     font-family: var(--font-body); position: relative; flex-shrink: 0;
     text-align: center; line-height: 1.4;
   }
-  .eco-banner a { color: #0f6e4a; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
-  .eco-banner a:hover { color: #0a5238; }
+  .eco-banner a { color: #4a7a12; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner a:hover { color: #3a6010; }
   .eco-banner-dismiss {
     position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
     width: 22px; height: 22px; border-radius: 50%; border: none;
-    background: rgba(15,110,74,0.12); color: #0f6e4a; cursor: pointer;
+    background: rgba(90,158,26,0.12); color: #4a7a12; cursor: pointer;
     font-size: 11px; display: flex; align-items: center; justify-content: center;
     transition: background 0.15s; flex-shrink: 0;
   }
-  .eco-banner-dismiss:hover { background: rgba(15,110,74,0.25); }
+  .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
   @media (max-width: 600px) {
     .eco-banner { font-size: 11px; padding: 6px 36px 6px 10px; }
   }
 
   /* ── TAG ECO (Don / Adoption) ── */
-  .tag-eco { background: #dcfce7; color: #14532d; border: 1px solid #86efac; }
+  .tag-eco { background: #e4f8c0; color: #3a6010; border: 1px solid #9ae050; }
 </style>
 </head>
 <body>
@@ -862,8 +863,8 @@ function drawGeoCircle() {
     return;
   }
   window._geoCircle = L.circle([geoCenter.lat, geoCenter.lng], {
-    radius: km * 1000, color: '#1a9e6e', weight: 1.5,
-    fillColor: '#1a9e6e', fillOpacity: 0.06, dashArray: '5,5'
+    radius: km * 1000, color: '#5a9e1a', weight: 1.5,
+    fillColor: '#5a9e1a', fillOpacity: 0.06, dashArray: '5,5'
   }).addTo(map);
   map.flyToBounds(window._geoCircle.getBounds(), { padding: [50, 50], maxZoom: 14, animate: true, duration: 0.8 });
 }

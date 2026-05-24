@@ -72,11 +72,11 @@
 }
 
 .yz-main-text a {
-  color: #1a9e6e;
+  color: #5a9e1a;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
-.yz-main-text a:hover { color: #0f7a52; }
+.yz-main-text a:hover { color: #478015; }
 
 /* --- Boutons --- */
 .yz-actions {
@@ -102,10 +102,10 @@
 
 /* Tout accepter */
 .yz-btn-accept {
-  background: #1a9e6e;
+  background: #5a9e1a;
   color: #ffffff;
 }
-.yz-btn-accept:hover { background: #0f7a52; }
+.yz-btn-accept:hover { background: #478015; }
 
 /* Personnaliser */
 .yz-btn-customize {
@@ -154,7 +154,7 @@
   gap: 0.25rem;
   flex-shrink: 0;
 }
-.yz-back-btn:hover { color: #1a9e6e; }
+.yz-back-btn:hover { color: #5a9e1a; }
 
 .yz-panel-title {
   font-family: 'Syne', sans-serif;
@@ -216,8 +216,8 @@
 .yz-always-on {
   font-size: 0.68rem;
   font-weight: 500;
-  color: #1a9e6e;
-  background: #e6f7f0;
+  color: #5a9e1a;
+  background: #f0f8e6;
   padding: 0.22rem 0.6rem;
   border-radius: 20px;
   white-space: nowrap;
@@ -262,10 +262,10 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.yz-toggle input:checked + .yz-toggle-slider { background: #1a9e6e; }
+.yz-toggle input:checked + .yz-toggle-slider { background: #5a9e1a; }
 .yz-toggle input:checked + .yz-toggle-slider::before { transform: translateX(18px); }
 .yz-toggle input:focus-visible + .yz-toggle-slider {
-  outline: 2px solid #1a9e6e;
+  outline: 2px solid #5a9e1a;
   outline-offset: 2px;
 }
 

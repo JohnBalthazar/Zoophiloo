@@ -9,11 +9,11 @@
   body { background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; gap: 16px; font-family: sans-serif; }
   canvas { max-width: 100%; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,.6); }
   button {
-    padding: 13px 32px; background: #1a9e6e; color: white; border: none;
+    padding: 13px 32px; background: #5a9e1a; color: white; border: none;
     border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
     transition: background .15s; letter-spacing: .02em;
   }
-  button:hover { background: #0f7a52; }
+  button:hover { background: #478015; }
   p { color: #888; font-size: 13px; }
 </style>
 <link rel="stylesheet" href="cookies.css">
@@ -33,11 +33,11 @@ document.fonts.ready.then(draw);
 
 function draw() {
 
-  /* ─── Fond dégradé vert ─────────────────────────── */
+  /* ─── Fond dégradé orange → vert (nouveau logo) ─── */
   const bg = ctx.createLinearGradient(0, 0, 1200, 630);
-  bg.addColorStop(0,   '#083d25');
-  bg.addColorStop(0.5, '#0f6641');
-  bg.addColorStop(1,   '#1a9e6e');
+  bg.addColorStop(0,   '#c4471a');
+  bg.addColorStop(0.45, '#e8622a');
+  bg.addColorStop(1,   '#5a9e1a');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 1200, 630);
 
@@ -56,7 +56,7 @@ function draw() {
   ctx.fillText('🐾', 600, 168);
   ctx.globalAlpha = 1;
 
-  /* ─── Logo : "Youpi" blanc + "Zoo" blanc atténué ── */
+  /* ─── Logo : "Youpi" blanc + "Zoo" vert clair ───── */
   ctx.font = 'bold 118px Syne, "Arial Black", Impact, sans-serif';
   ctx.textBaseline = 'alphabetic';
 
@@ -68,7 +68,7 @@ function draw() {
   ctx.textAlign = 'left';
   ctx.fillStyle = '#ffffff';
   ctx.fillText('Youpi', logoX, logoY);
-  ctx.fillStyle = 'rgba(255,255,255,0.72)';
+  ctx.fillStyle = '#c8f080';
   ctx.fillText('Zoo',   logoX + youpiW, logoY);
 
   /* ─── Ligne séparatrice ─────────────────────────── */
