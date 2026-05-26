@@ -151,7 +151,8 @@ service cloud.firestore {
     // ─────────────────────────────────────────────────────────
     match /refuges/{refugeId} {
       // Lecture : public pour les fiches visibles, admin pour toutes
-      allow read: if resource.data.visible == true || isAdmin();
+      // resource == null couvre le cas d'un doc inexistant (retourne exists:false au client)
+      allow read: if resource == null || resource.data.visible == true || isAdmin();
 
       // Écriture : admin uniquement (pas d'auto-inscription)
       allow create, update, delete: if isAdmin();

@@ -845,7 +845,6 @@ document.addEventListener('click', e => {
   }
 });
 async function doSignOut() { await auth.signOut(); }
-auth.onAuthStateChanged(user => renderHeaderAuth(user));
 </script>
 
 <!-- Firebase SDK -->
@@ -864,6 +863,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+// ── Auth state (ici car auth n'est défini qu'après initializeApp) ──
+auth.onAuthStateChanged(user => renderHeaderAuth(user));
 init(); // Firestore prêt
 </script>
 </body>
