@@ -335,7 +335,10 @@
     transition: background 0.15s;
   }
   .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
-  @media (max-width: 600px) { .eco-banner { font-size: 11px; padding: 6px 36px 6px 10px; } }
+  @media (max-width: 680px) {
+    .eco-banner { display: none !important; }
+    footer { display: none !important; }
+  }
 
   /* ── ECO CARD (annonce vente) ── */
   .eco-card {
