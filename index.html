@@ -419,6 +419,30 @@
   .marker-pin.active { border-top-color: var(--text); }
   /* (classes .multi supprimées — remplacées par markercluster) */
 
+  /* ── REFUGE MARKERS ── */
+  .refuge-marker { display: flex; flex-direction: column; align-items: center; cursor: pointer; filter: drop-shadow(0 2px 6px rgba(124,58,237,0.35)); }
+  .refuge-bubble {
+    background: #7c3aed; color: white; border: 2px solid white;
+    border-radius: 20px; padding: 4px 10px 4px 8px;
+    font-family: var(--font-body); font-size: 11px; font-weight: 700;
+    white-space: nowrap; transition: transform 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .refuge-bubble:hover, .refuge-bubble.active { transform: scale(1.08); background: #6d28d9; }
+  .refuge-bubble-icon { font-size: 14px; line-height: 1; }
+  .refuge-pin { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid #7c3aed; margin-top: -1px; }
+  /* Popup refuge */
+  .popup-refuge-badge {
+    display: inline-block; background: #f5f3ff; color: #7c3aed;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 10px; margin-bottom: 5px;
+  }
+  .popup-btn-refuge { background: #7c3aed !important; }
+  .popup-btn-refuge:hover { background: #6d28d9 !important; }
+  /* Chip Refuges */
+  .chip-refuge:hover { border-color: #7c3aed !important; color: #7c3aed !important; }
+  .chip-refuge.active { background: #7c3aed !important; color: white !important; border-color: #7c3aed !important; }
+
   /* Cluster markercluster — couleurs thème */
   .marker-cluster-small,
   .marker-cluster-medium,
@@ -813,7 +837,7 @@
 
 <!-- ECO BANNER -->
 <div class="eco-banner" id="ecoBanner">
-  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/hebergement/hebergement-vert" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/ecologie" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
   <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
 </div>
 
@@ -886,6 +910,11 @@
     <button class="chip chip-perdu" data-val="Perdu">🚨 Perdu</button>
     <button class="chip chip-trouve" data-val="Trouvé">✅ Trouvé</button>
   </div>
+  <div class="divider"></div>
+  <button class="chip chip-refuge" id="chipRefuges" onclick="toggleRefuges()" title="Afficher les refuges et associations sur la carte">
+    🏠 Refuges
+    <span id="chipRefugesCount" style="display:none;background:rgba(255,255,255,0.3);border-radius:10px;padding:0 5px;margin-left:3px;font-size:10px"></span>
+  </button>
 </div>
 
 <!-- BARRE FILTRES AVANCÉS -->
@@ -1382,6 +1411,96 @@ function renderMarkers() {
   });
 }
 
+/* ══════════════════════════════════════════════════
+   REFUGES & ASSOCIATIONS — marqueurs carte
+══════════════════════════════════════════════════ */
+let refugeLayer    = null;
+let refugeMarkers  = {};
+let allRefuges     = [];
+let showRefuges    = false;
+
+async function fetchRefuges(retries = 0) {
+  if (typeof db === 'undefined') {
+    if (retries >= 30) return [];
+    await new Promise(r => setTimeout(r, 100));
+    return fetchRefuges(retries + 1);
+  }
+  try {
+    const snap = await db.collection('refuges').where('visible', '==', true).get();
+    return snap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+  } catch (e) { return []; }
+}
+
+function createRefugeMarker(refuge) {
+  const d = refuge.data;
+  const lat = parseFloat(d.latitude), lng = parseFloat(d.longitude);
+  if (isNaN(lat) || isNaN(lng)) return null;
+
+  const shortName = (d.nom || 'Refuge').length > 18
+    ? (d.nom || 'Refuge').slice(0, 16) + '…'
+    : (d.nom || 'Refuge');
+
+  const icon = L.divIcon({
+    className: '',
+    html: `<div class="refuge-marker" id="refuge-bubble-${escHTML(refuge.id)}">
+      <div class="refuge-bubble">
+        <span class="refuge-bubble-icon">🏠</span>${escHTML(shortName)}
+      </div>
+      <div class="refuge-pin"></div>
+    </div>`,
+    iconAnchor: [50, 32]
+  });
+
+  const logoHtml = d.logo_url
+    ? `<img src="${escHTML(d.logo_url)}" alt="" style="width:100%;height:100%;object-fit:cover">`
+    : '🏠';
+
+  const marker = L.marker([lat, lng], { icon, zIndexOffset: 1000 });
+  marker.bindPopup(`
+    <div class="popup-img" style="font-size:44px">${logoHtml}</div>
+    <div class="popup-body">
+      <div class="popup-refuge-badge">${escHTML(d.type || 'Association')}</div>
+      <div class="popup-title">${escHTML(d.nom || 'Refuge')}</div>
+      <div class="popup-meta">${d.ville ? escHTML(d.ville) + (d.code_postal ? ' (' + escHTML(d.code_postal) + ')' : '') : ''}</div>
+      <a class="popup-btn popup-btn-refuge" href="refuge.html?id=${encodeURIComponent(refuge.id)}">Voir leurs animaux →</a>
+    </div>`, { maxWidth: 220 });
+  return marker;
+}
+
+function renderRefugeMarkers() {
+  if (!refugeLayer) refugeLayer = L.layerGroup().addTo(map);
+  refugeLayer.clearLayers();
+  refugeMarkers = {};
+  if (!showRefuges) return;
+  allRefuges.forEach(refuge => {
+    const m = createRefugeMarker(refuge);
+    if (m) {
+      refugeMarkers[refuge.id] = m;
+      refugeLayer.addLayer(m);
+    }
+  });
+}
+
+function toggleRefuges() {
+  showRefuges = !showRefuges;
+  const chip = document.getElementById('chipRefuges');
+  if (chip) chip.classList.toggle('active', showRefuges);
+  renderRefugeMarkers();
+  // Zoom pour englober refuges + annonces si on les active
+  if (showRefuges && allRefuges.length > 0) {
+    const coords = allRefuges
+      .filter(r => !isNaN(parseFloat(r.data.latitude)) && !isNaN(parseFloat(r.data.longitude)))
+      .map(r => [parseFloat(r.data.latitude), parseFloat(r.data.longitude)]);
+    if (coords.length > 0) {
+      const existing = filteredRecords
+        .filter(r => r.fields['Latitude'] && r.fields['Longitude'])
+        .map(r => [parseFloat(r.fields['Latitude']), parseFloat(r.fields['Longitude'])]);
+      const all = [...coords, ...existing];
+      if (all.length > 0) map.fitBounds(L.latLngBounds(all), { padding:[40,40], maxZoom:10, animate:true });
+    }
+  }
+}
+
 function setActiveCard(id) {
   activeCardId = id;
   renderList();
@@ -1613,8 +1732,17 @@ async function init() {
   initMap();
   initGeoSlider();
   try {
-    allRecords = await fetchAnnonces();
+    // Chargement parallèle annonces + refuges
+    const [annonces, refuges] = await Promise.all([fetchAnnonces(), fetchRefuges()]);
+    allRecords = annonces;
+    allRefuges = refuges;
     filteredRecords = allRecords;
+
+    // Badge compteur sur le chip
+    if (refuges.length > 0) {
+      const countEl = document.getElementById('chipRefugesCount');
+      if (countEl) { countEl.textContent = refuges.length; countEl.style.display = 'inline'; }
+    }
 
     const coords = allRecords
       .filter(r => r.fields['Latitude'] && r.fields['Longitude'])

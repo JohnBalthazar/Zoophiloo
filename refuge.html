@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Google Analytics : chargé conditionnellement par cookies.js (RGPD) -->
+<meta charset="UTF-8">
+<meta name="theme-color" content="#7c3aed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refuge — YoupiZoo</title>
+<meta name="description" content="Fiche refuge et association sur YoupiZoo — retrouvez tous les animaux disponibles à l'adoption.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.youpizoo.fr/refuge.html">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Refuge — YoupiZoo">
+<meta property="og:description" content="Fiche refuge sur YoupiZoo — adoptez un animal et donnez-lui une seconde chance.">
+<meta property="og:url" content="https://www.youpizoo.fr/refuge.html">
+<meta property="og:image" content="https://www.youpizoo.fr/og-image.jpg">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="YoupiZoo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Refuge — YoupiZoo">
+<meta name="twitter:image" content="https://www.youpizoo.fr/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #5a9e1a;
+    --green-dark: #478015;
+    --green-light: #f0f8e6;
+    --orange: #e8622a;
+    --blue: #2563a8;
+    --purple: #7c3aed;
+    --purple-dark: #6d28d9;
+    --purple-light: #f5f3ff;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --border: #e8e8e4;
+    --bg: #fafaf8;
+    --white: #ffffff;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 51px; width: auto; display: block; }
+  .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
+  .header-left { display: flex; align-items: center; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 6px 16px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    padding: 10px 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--purple); }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  /* ── LOADING / ERROR ── */
+  .page-loading, .page-error {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 12px; padding: 80px 24px;
+    color: var(--text-muted); font-size: 14px; text-align: center;
+  }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-emoji { font-size: 40px; }
+  .error-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--text); }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    flex: 1;
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #ddd6fe;
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .hero-logo {
+    width: 88px; height: 88px;
+    border-radius: 14px;
+    border: 2px solid #ddd6fe;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .hero-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-body { flex: 1; min-width: 0; }
+  .hero-type-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--purple); color: white;
+    padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 700;
+    color: var(--text); line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    font-size: 13px; color: var(--text-muted);
+  }
+  .hero-meta-item { display: flex; align-items: center; gap: 5px; }
+  .hero-meta-item svg { opacity: 0.6; flex-shrink: 0; }
+  .hero-count {
+    margin-top: 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--purple-dark); font-weight: 500;
+    background: white; border: 1px solid #ddd6fe;
+    padding: 5px 12px; border-radius: 20px;
+  }
+
+  /* ── TWO-COLUMN GRID ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+  }
+  .left-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+  .card-text {
+    font-size: 14px; line-height: 1.7;
+    color: var(--text); white-space: pre-wrap;
+  }
+  .card-text.empty { color: var(--text-muted); font-style: italic; }
+
+  /* ── PHOTO GALLERY ── */
+  .gallery { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .gallery-main { width: 100%; aspect-ratio: 16/9; background: var(--bg); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-main .placeholder { font-size: 64px; opacity: 0.25; }
+  .gallery-thumbs { display: flex; gap: 8px; padding: 10px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .gallery-thumb { width: 72px; height: 64px; border-radius: 6px; border: 2px solid transparent; overflow: hidden; cursor: pointer; flex-shrink: 0; background: var(--bg); }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-thumb.active { border-color: var(--purple); }
+
+  /* ── RIGHT COLUMN (sticky) ── */
+  .right-col { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── CONTACT CARD ── */
+  .contact-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .contact-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+  .contact-actions { display: flex; flex-direction: column; gap: 8px; }
+  .btn-action {
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    padding: 10px 16px; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    text-decoration: none; transition: all 0.15s; width: 100%;
+    border: none;
+  }
+  .btn-action-purple { background: var(--purple); color: white; }
+  .btn-action-purple:hover { background: var(--purple-dark); }
+  .btn-action-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-action-outline:hover { border-color: var(--purple); background: var(--purple-light); color: var(--purple-dark); }
+  .btn-action-green { background: var(--green); color: white; }
+  .btn-action-green:hover { background: var(--green-dark); }
+
+  /* ── LOCATION CARD ── */
+  .location-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+  .location-inner { display: flex; align-items: center; gap: 10px; }
+  .location-icon { font-size: 22px; }
+  .location-city { font-size: 14px; font-weight: 500; }
+  .location-cp { font-size: 12px; color: var(--text-muted); }
+
+  /* ── SECTION ANIMAUX ── */
+  .animals-section { display: flex; flex-direction: column; gap: 16px; }
+  .animals-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .animals-title {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .animals-count {
+    font-size: 12px; font-weight: 500;
+    background: var(--purple-light); color: var(--purple-dark);
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  /* ── GRILLE ANIMAUX ── */
+  .animals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .animal-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+  .animal-card:hover { border-color: var(--purple); box-shadow: 0 4px 16px rgba(124,58,237,0.1); transform: translateY(-2px); }
+  .animal-photo {
+    width: 100%; aspect-ratio: 4/3;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; overflow: hidden;
+    position: relative; flex-shrink: 0;
+  }
+  .animal-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .animal-type-badge {
+    position: absolute; bottom: 8px; left: 8px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .badge-vente   { background: #f0f8e6; color: #478015; }
+  .badge-adopt   { background: #dbeafe; color: #1d4ed8; }
+  .badge-don     { background: #fef3c7; color: #92400e; }
+  .badge-perdu   { background: #fef2f2; color: #dc2626; }
+  .badge-trouve  { background: #f5f3ff; color: #7c3aed; }
+  .animal-body { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .animal-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .animal-sub { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .animal-price { font-size: 13px; font-weight: 600; color: var(--green); margin-top: 4px; }
+  .animal-price.don { color: var(--orange); }
+  .animal-price.adopt { color: var(--blue); }
+
+  /* ── VIDE / CHARGEMENT ANIMAUX ── */
+  .animals-empty {
+    text-align: center; padding: 48px 24px;
+    color: var(--text-muted); font-size: 14px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+  }
+  .animals-empty-icon { font-size: 40px; margin-bottom: 10px; }
+  .animals-loading {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 32px; color: var(--text-muted); font-size: 14px;
+  }
+  .loading-spinner-sm { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+  /* ── ECO BANNER ── */
+  .eco-banner {
+    background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%);
+    border-bottom: 1px solid #a0d860;
+    padding: 6px 44px 6px 16px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 12px; color: #4a7a12;
+    font-family: var(--font-body); position: relative; flex-shrink: 0;
+    text-align: center; line-height: 1.4;
+  }
+  .eco-banner a { color: #4a7a12; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner-dismiss {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%; border: none;
+    background: rgba(90,158,26,0.12); color: #4a7a12; cursor: pointer;
+    font-size: 11px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .right-col { position: static; }
+    .tagline { display: none; }
+    .hero { flex-direction: column; gap: 14px; }
+    .hero-logo { width: 64px; height: 64px; font-size: 28px; }
+    .hero-name { font-size: 20px; }
+    .animals-grid { grid-template-columns: repeat(2, 1fr); }
+    .eco-banner { display: none !important; }
+    footer { display: none !important; }
+  }
+  @media (max-width: 420px) {
+    .animals-grid { grid-template-columns: 1fr 1fr; }
+    main { padding: 16px 16px 32px; }
+  }
+</style>
+<link rel="stylesheet" href="cookies.css">
+</head>
+<body>
+
+<!-- ECO BANNER -->
+<div class="eco-banner" id="ecoBanner">
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/ecologie" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
+    <span class="tagline">Trouvez vos animaux près de chez vous</span>
+  </div>
+  <div class="header-right">
+    <a href="index.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour aux annonces
+    </a>
+    <div id="headerAuth">
+      <button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>
+    </div>
+    <a href="deposer.html" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Déposer une annonce
+    </a>
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">Accueil</a>
+  <span class="sep">›</span>
+  <a href="index.html?refuges=1">Refuges &amp; Associations</a>
+  <span class="sep">›</span>
+  <span id="breadcrumbText">Fiche refuge</span>
+</div>
+
+<!-- LOADING -->
+<div class="page-loading" id="loadingState">
+  <div class="loading-spinner"></div>
+  <span>Chargement de la fiche…</span>
+</div>
+
+<!-- ERROR -->
+<div class="page-error" id="errorState" style="display:none">
+  <span class="error-emoji">🏚️</span>
+  <strong class="error-title">Refuge introuvable</strong>
+  <span id="errorMsg">Cette fiche n'existe pas ou a été supprimée.</span>
+  <a href="index.html" class="btn-primary" style="margin-top:8px">← Retour aux annonces</a>
+</div>
+
+<!-- CONTENT -->
+<main id="pageContent" style="display:none">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-logo" id="heroLogo">🏠</div>
+    <div class="hero-body">
+      <div class="hero-type-badge" id="heroTypeBadge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/></svg>
+        <span id="heroTypeLabel">Refuge</span>
+      </div>
+      <h1 class="hero-name" id="heroName">—</h1>
+      <div class="hero-meta">
+        <span class="hero-meta-item" id="heroVille" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="heroVilleText"></span>
+        </span>
+        <span class="hero-meta-item" id="heroWebsite" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <a id="heroWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" style="color:var(--purple-dark);text-decoration:none;font-weight:500"></a>
+        </span>
+      </div>
+      <div class="hero-count" id="heroCount" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span id="heroCountText">0 animal disponible</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TWO-COL -->
+  <div class="two-col">
+
+    <!-- LEFT -->
+    <div class="left-col">
+
+      <!-- DESCRIPTION -->
+      <div class="card">
+        <p class="card-title">À propos</p>
+        <p class="card-text" id="refugeDescription">Aucune description disponible.</p>
+      </div>
+
+      <!-- GALERIE PHOTOS DU REFUGE -->
+      <div class="gallery" id="refugeGallery" style="display:none">
+        <div class="gallery-main" id="galleryMain"></div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-col">
+
+      <!-- CONTACT -->
+      <div class="contact-card">
+        <p class="contact-card-title">Contacter le refuge</p>
+        <div class="contact-actions" id="contactActions">
+          <p style="font-size:13px;color:var(--text-muted)">Aucune coordonnée renseignée.</p>
+        </div>
+      </div>
+
+      <!-- LOCALISATION -->
+      <div class="location-card" id="locationCard" style="display:none">
+        <div class="location-inner">
+          <span class="location-icon">📍</span>
+          <div>
+            <div class="location-city" id="locationCity">—</div>
+            <div class="location-cp" id="locationCp"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION ANIMAUX -->
+  <div class="animals-section">
+    <div class="animals-header">
+      <h2 class="animals-title">
+        🐾 Leurs animaux disponibles
+        <span class="animals-count" id="animalsCount">…</span>
+      </h2>
+    </div>
+    <div id="animalsContainer">
+      <div class="animals-loading">
+        <div class="loading-spinner-sm"></div>
+        <span>Chargement des animaux…</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- COOKIES RGPD -->
+<div id="yz-cookie-banner" style="display:none">
+  <div id="yz-cookie-overlay"></div>
+  <div id="yz-cookie-box">
+    <div id="yz-cookie-header">
+      <span id="yz-cookie-title">🍪 Cookies &amp; Confidentialité</span>
+    </div>
+    <div id="yz-cookie-body">
+      <p id="yz-cookie-desc">Nous utilisons des cookies pour analyser notre trafic (Google Analytics) et améliorer votre expérience. Vos données ne sont jamais vendues.</p>
+      <div id="yz-cookie-toggles">
+        <div class="yz-toggle-row">
+          <div class="yz-toggle-info"><strong>Cookies essentiels</strong><span>Authentification, sécurité</span></div>
+          <label class="yz-switch yz-disabled"><input type="checkbox" checked disabled><span class="yz-slider"></span></label>
+        </div>
+        <div class="yz-toggle-row">
+          <div class="yz-toggle-info"><strong>Analytics (GA4)</strong><span>Mesure d'audience anonymisée</span></div>
+          <label class="yz-switch"><input type="checkbox" id="yz-analytics-toggle"><span class="yz-slider"></span></label>
+        </div>
+      </div>
+    </div>
+    <div id="yz-cookie-footer">
+      <div id="yz-cookie-btns">
+        <button id="yz-reject-all" class="yz-btn yz-btn-customize">Tout refuser</button>
+        <button id="yz-accept-all" class="yz-btn yz-btn-accept">Tout accepter</button>
+      </div>
+      <div id="yz-cookie-btns-2" style="display:none">
+        <button id="yz-accept-all-2" class="yz-btn yz-btn-customize">Tout accepter</button>
+        <button id="yz-save" class="yz-btn yz-btn-accept">Enregistrer mes choix 🐾</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="cookies.js"></script>
+
+<footer style="text-align:center;padding:20px 16px 32px;font-size:12px;color:#888;border-top:1px solid #eee;">
+  © 2025 YoupiZoo &nbsp;·&nbsp; <a href="index.html" style="color:#5a9e1a;text-decoration:none;">Annonces</a> &nbsp;·&nbsp; <a href="apropos.html" style="color:#5a9e1a;text-decoration:none;">À propos</a> &nbsp;·&nbsp; <a href="cgu.html" style="color:#5a9e1a;text-decoration:none;">CGU</a>
+</footer>
+
+<script>
+/* ── Utilitaires ── */
+function escHTML(s) {
+  if (s == null || s === '') return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatDate(str) {
+  if (!str) return '';
+  return new Date(str).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function formatPrice(val, type) {
+  const t = type || '';
+  if (t === 'A donner' || t === 'À donner') return { text: 'Don gratuit', cls: 'don' };
+  if (t === 'A adopter' || t === 'À adopter') return { text: 'Adoption', cls: 'adopt' };
+  if (!val) return { text: 'Prix non précisé', cls: '' };
+  const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+  return { text: isNaN(num) ? String(val) : num.toLocaleString('fr-FR') + ' €', cls: '' };
+}
+
+const ESPECE_EMOJI = {
+  'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
+  'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐',
+  'Insecte':'🐛','Araignée':'🕷️','Plante':'🌿','Autre':'🔵'
+};
+
+const TYPE_LABEL = {
+  'A vendre': 'Vente', 'À vendre': 'Vente',
+  'A donner': 'Don', 'À donner': 'Don',
+  'A adopter': 'Adoption', 'À adopter': 'Adoption',
+  'Perdu': 'Perdu', 'Trouvé': 'Trouvé'
+};
+const TYPE_CLASS = {
+  'A vendre': 'badge-vente', 'À vendre': 'badge-vente',
+  'A donner': 'badge-don',   'À donner': 'badge-don',
+  'A adopter': 'badge-adopt','À adopter': 'badge-adopt',
+  'Perdu': 'badge-perdu', 'Trouvé': 'badge-trouve'
+};
+
+/* ── Eco banner ── */
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    var b = document.getElementById('ecoBanner');
+    if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  var b = document.getElementById('ecoBanner');
+  if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+
+/* ── Galerie photos du refuge ── */
+function renderGallery(photos) {
+  if (!photos || photos.length === 0) return;
+  const galleryEl = document.getElementById('refugeGallery');
+  const main = document.getElementById('galleryMain');
+  const thumbs = document.getElementById('galleryThumbs');
+  galleryEl.style.display = 'block';
+
+  function showPhoto(idx) {
+    main.innerHTML = `<img src="${escHTML(photos[idx].url)}" alt="Photo ${idx+1}">`;
+    document.querySelectorAll('.gallery-thumb').forEach((t, i) => {
+      t.classList.toggle('active', i === idx);
+    });
+  }
+
+  if (photos.length > 1) {
+    thumbs.innerHTML = photos.map((p, i) =>
+      `<div class="gallery-thumb ${i===0?'active':''}" data-idx="${i}">
+         <img src="${escHTML(p.thumbnails?.small?.url || p.url)}" alt="">
+       </div>`
+    ).join('');
+    thumbs.addEventListener('click', e => {
+      const t = e.target.closest('.gallery-thumb');
+      if (t) showPhoto(parseInt(t.dataset.idx));
+    });
+  } else {
+    thumbs.style.display = 'none';
+  }
+  showPhoto(0);
+}
+
+/* ── Rendu grille animaux ── */
+function renderAnimals(docs) {
+  const container = document.getElementById('animalsContainer');
+  const countEl = document.getElementById('animalsCount');
+  const heroCount = document.getElementById('heroCount');
+  const heroCountText = document.getElementById('heroCountText');
+
+  const visible = docs.filter(d => d.data().Visible !== false && d.data().Statut !== 'Vendu');
+  countEl.textContent = `${visible.length} animal${visible.length > 1 ? 'x' : ''}`;
+
+  if (heroCount) {
+    heroCount.style.display = 'inline-flex';
+    heroCountText.textContent = `${visible.length} animal${visible.length > 1 ? 'x' : ''} disponible${visible.length > 1 ? 's' : ''}`;
+  }
+
+  if (visible.length === 0) {
+    container.innerHTML = `
+      <div class="animals-empty">
+        <div class="animals-empty-icon">🐾</div>
+        <p>Ce refuge n'a pas encore d'animaux publiés sur YoupiZoo.</p>
+        <p style="margin-top:6px;font-size:13px">Consultez leur site ou contactez-les directement.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="animals-grid">${visible.map(doc => {
+    const f = doc.data();
+    const id = doc.id;
+    const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
+    const photoUrl = f['Photos']?.[0]?.thumbnails?.small?.url || f['Photos']?.[0]?.url || '';
+    const price = formatPrice(f['Prix'], f['Type_annonce']);
+    const typeLabel = TYPE_LABEL[f['Type_annonce']] || f['Type_annonce'] || '';
+    const typeCls   = TYPE_CLASS[f['Type_annonce']] || 'badge-vente';
+    const sub = [f['Espèce'], f['Race'], f['Ville']].filter(Boolean).map(escHTML).join(' · ');
+
+    return `<a class="animal-card" href="annonce.html?id=${escHTML(id)}">
+      <div class="animal-photo" data-fb="${emoji}">
+        ${photoUrl
+          ? `<img src="${escHTML(photoUrl)}" alt="${escHTML(f['Titre']||'')}" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`
+          : emoji}
+        ${typeLabel ? `<span class="animal-type-badge ${typeCls}">${typeLabel}</span>` : ''}
+      </div>
+      <div class="animal-body">
+        <div class="animal-name">${escHTML(f['Titre']) || 'Sans titre'}</div>
+        <div class="animal-sub">${sub}</div>
+        <div class="animal-price ${price.cls}">${escHTML(price.text)}</div>
+      </div>
+    </a>`;
+  }).join('')}</div>`;
+}
+
+/* ── Rendu de la fiche refuge ── */
+function renderRefuge(doc) {
+  const d = doc.data();
+
+  // SEO dynamique
+  const pageTitle = `${d.nom || 'Refuge'} — YoupiZoo`;
+  document.title = pageTitle;
+  document.getElementById('breadcrumbText').textContent = d.nom || 'Fiche refuge';
+
+  // Hero
+  const logoEl = document.getElementById('heroLogo');
+  if (d.logo_url) {
+    logoEl.innerHTML = `<img src="${escHTML(d.logo_url)}" alt="${escHTML(d.nom||'')}">`;
+  }
+  document.getElementById('heroName').textContent = d.nom || '—';
+  document.getElementById('heroTypeLabel').textContent = d.type || 'Association';
+
+  if (d.ville) {
+    document.getElementById('heroVille').style.display = 'flex';
+    document.getElementById('heroVilleText').textContent =
+      `${d.ville}${d.code_postal ? ' (' + d.code_postal + ')' : ''}`;
+  }
+  if (d.website) {
+    document.getElementById('heroWebsite').style.display = 'flex';
+    const link = document.getElementById('heroWebsiteLink');
+    link.href = d.website;
+    link.textContent = d.website.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  }
+
+  // Description
+  const descEl = document.getElementById('refugeDescription');
+  if (d.description) {
+    descEl.textContent = d.description;
+  } else {
+    descEl.textContent = 'Aucune description fournie.';
+    descEl.classList.add('empty');
+  }
+
+  // Galerie
+  if (d.photos && d.photos.length > 0) renderGallery(d.photos);
+
+  // Contact
+  const actions = [];
+  if (d.telephone) {
+    actions.push(`<a href="tel:${escHTML(d.telephone)}" class="btn-action btn-action-purple">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.1 4.17 2 2 0 015.1 2H8a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91A16 16 0 0015.09 15.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Appeler : ${escHTML(d.telephone)}
+    </a>`);
+  }
+  if (d.email) {
+    actions.push(`<a href="mailto:${escHTML(d.email)}?subject=Renseignement%20depuis%20YoupiZoo" class="btn-action btn-action-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Envoyer un email
+    </a>`);
+  }
+  if (d.website) {
+    actions.push(`<a href="${escHTML(d.website)}" target="_blank" rel="noopener noreferrer" class="btn-action btn-action-green">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Visiter leur site →
+    </a>`);
+  }
+  if (actions.length === 0) {
+    actions.push(`<p style="font-size:13px;color:var(--text-muted)">Aucune coordonnée renseignée.</p>`);
+  }
+  document.getElementById('contactActions').innerHTML = actions.join('');
+
+  // Localisation
+  if (d.ville || d.code_postal) {
+    document.getElementById('locationCard').style.display = 'block';
+    document.getElementById('locationCity').textContent = d.ville || '—';
+    document.getElementById('locationCp').textContent = d.code_postal || '';
+  }
+}
+
+/* ── Chargement principal ── */
+async function init() {
+  const params = new URLSearchParams(location.search);
+  const id   = params.get('id');
+  const slug = params.get('slug');
+
+  if (!id && !slug) {
+    showError('Aucun identifiant de refuge fourni.');
+    return;
+  }
+
+  try {
+    let docSnap;
+    if (id) {
+      docSnap = await db.collection('refuges').doc(id).get();
+      if (!docSnap.exists) { showError('Ce refuge est introuvable.'); return; }
+    } else {
+      const snap = await db.collection('refuges').where('slug', '==', slug).where('visible', '==', true).limit(1).get();
+      if (snap.empty) { showError('Ce refuge est introuvable.'); return; }
+      docSnap = snap.docs[0];
+    }
+
+    if (docSnap.data().visible === false) { showError('Ce refuge n\'est pas publié.'); return; }
+
+    // Afficher la fiche
+    renderRefuge(docSnap);
+
+    // Masquer loading, afficher contenu
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('pageContent').style.display = 'flex';
+
+    // Charger les annonces du refuge
+    const annonceSnap = await db.collection('annonces')
+      .where('refuge_id', '==', docSnap.id)
+      .where('Visible', '==', true)
+      .get();
+
+    renderAnimals(annonceSnap.docs);
+
+  } catch (err) {
+    console.error(err);
+    showError('Une erreur est survenue lors du chargement.');
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('errorState').style.display = 'flex';
+  if (msg) document.getElementById('errorMsg').textContent = msg;
+}
+
+/* ── Header auth (copié de annonce.html) ── */
+const styleEl = document.createElement('style');
+styleEl.textContent = `
+  .user-menu { position: relative; }
+  .user-btn { display:flex;align-items:center;gap:7px;padding:5px 10px 5px 5px;border:1px solid var(--border);border-radius:20px;background:var(--white);cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text);transition:all 0.15s; }
+  .user-btn:hover { border-color:var(--green);background:var(--green-light); }
+  .user-avatar { width:26px;height:26px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;overflow:hidden; }
+  .user-avatar img { width:100%;height:100%;object-fit:cover; }
+  .user-name { max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .user-dropdown { display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.10);min-width:180px;z-index:1000;overflow:hidden; }
+  .user-dropdown.open { display:block; }
+  .user-dropdown-item { display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background 0.12s;border:none;background:transparent;width:100%;font-family:var(--font-body);text-align:left;text-decoration:none; }
+  .user-dropdown-item:hover { background:var(--green-light);color:var(--green-dark); }
+  .user-dropdown-item.danger:hover { background:#fdf0ee;color:#c0392b; }
+  .dropdown-divider { height:1px;background:var(--border); }
+  #headerAuth { display:flex;align-items:center;gap:8px; }
+`;
+document.head.appendChild(styleEl);
+
+function renderHeaderAuth(user) {
+  const el = document.getElementById('headerAuth');
+  if (!el) return;
+  if (!user) {
+    el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`;
+    return;
+  }
+  const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const avatarHtml = user.photoURL ? `<img src="${user.photoURL}" alt="">` : initials;
+  const displayName = user.displayName || user.email.split('@')[0];
+  el.innerHTML = `
+    <div class="user-menu" id="userMenu">
+      <button class="user-btn" onclick="toggleDropdown()">
+        <div class="user-avatar">${avatarHtml}</div>
+        <span class="user-name">${escHTML(displayName)}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="user-dropdown" id="userDropdown">
+        <a href="mon-espace.html" class="user-dropdown-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mon espace
+        </a>
+        <a href="messages.html" class="user-dropdown-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+        </a>
+        <div class="dropdown-divider"></div>
+        <button onclick="doSignOut()" class="user-dropdown-item danger">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Se déconnecter
+        </button>
+      </div>
+    </div>`;
+}
+
+function toggleDropdown() {
+  document.getElementById('userDropdown')?.classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#userMenu')) {
+    document.getElementById('userDropdown')?.classList.remove('open');
+  }
+});
+async function doSignOut() { await auth.signOut(); }
+auth.onAuthStateChanged(user => renderHeaderAuth(user));
+</script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:            "__FIREBASE_API_KEY__",
+  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
+  projectId:         "__FIREBASE_PROJECT_ID__",
+  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:             "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+init(); // Firestore prêt
+</script>
+</body>
+</html>
