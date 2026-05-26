@@ -147,6 +147,17 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────
+    // REFUGES & ASSOCIATIONS
+    // ─────────────────────────────────────────────────────────
+    match /refuges/{refugeId} {
+      // Lecture : public pour les fiches visibles, admin pour toutes
+      allow read: if resource.data.visible == true || isAdmin();
+
+      // Écriture : admin uniquement (pas d'auto-inscription)
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────
     // CONFIGURATION ADMIN
     // ─────────────────────────────────────────────────────────
     match /adminConfig/{docId} {

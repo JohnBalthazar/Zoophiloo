@@ -638,17 +638,12 @@
         </div>
       </div>
 
-      <div class="rfm-grid">
-        <div class="frow">
-          <label class="flbl" for="rfmLat">Latitude</label>
-          <input type="number" id="rfmLat" class="finput" style="max-width:100%" placeholder="45.75" step="any">
-        </div>
-        <div class="frow">
-          <label class="flbl" for="rfmLng">Longitude</label>
-          <input type="number" id="rfmLng" class="finput" style="max-width:100%" placeholder="4.83" step="any">
-        </div>
+      <!-- Coords GPS masquées — remplies automatiquement par géocodage Nominatim -->
+      <input type="hidden" id="rfmLat">
+      <input type="hidden" id="rfmLng">
+      <div class="frow" style="margin-bottom:6px">
+        <span id="rfmGeoStatus" style="font-size:12px;color:var(--muted)">📍 Les coordonnées GPS seront détectées automatiquement depuis l'adresse.</span>
       </div>
-      <p class="fhint" style="margin-top:-8px;margin-bottom:14px">📍 Coordonnées GPS pour l'affichage sur la carte. Trouvez-les sur <a href="https://www.google.fr/maps" target="_blank" rel="noopener" style="color:var(--green)">Google Maps</a> (clic droit → "C'est ici").</p>
 
       <div class="frow">
         <label class="flbl" for="rfmLogo">URL du logo</label>
@@ -970,8 +965,13 @@ function openRefugeModal(id) {
     document.getElementById('rfmAdresse').value  = r.adresse  || '';
     document.getElementById('rfmVille').value   = r.ville    || '';
     document.getElementById('rfmCp').value      = r.code_postal || '';
-    document.getElementById('rfmLat').value     = r.latitude  != null ? r.latitude  : '';
-    document.getElementById('rfmLng').value     = r.longitude != null ? r.longitude : '';
+    document.getElementById('rfmLat').value  = r.latitude  != null ? r.latitude  : '';
+    document.getElementById('rfmLng').value  = r.longitude != null ? r.longitude : '';
+    if (r.latitude != null && r.longitude != null) {
+      rfmGeoShow(`📍 Coordonnées existantes : ${parseFloat(r.latitude).toFixed(4)}, ${parseFloat(r.longitude).toFixed(4)}`, true);
+    } else {
+      rfmGeoReset();
+    }
     document.getElementById('rfmLogo').value    = r.logo_url  || '';
     document.getElementById('rfmEmail').value   = r.email     || '';
     document.getElementById('rfmTel').value     = r.telephone || '';
@@ -984,6 +984,7 @@ function openRefugeModal(id) {
     document.getElementById('rfmId').value = '';
     ['rfmNom','rfmDesc','rfmAdresse','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug']
       .forEach(id => document.getElementById(id).value = '');
+    rfmGeoReset();
     document.getElementById('rfmType').value = 'Refuge';
     document.getElementById('rfmVisible').checked = true;
   }
@@ -1007,8 +1008,62 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ── Géocodage automatique (Nominatim / OpenStreetMap) ──
+let _rfmGeoTimer = null;
+
+function rfmGeoShow(msg, ok) {
+  const el = document.getElementById('rfmGeoStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok === true ? '#16a34a' : ok === false ? 'var(--red)' : 'var(--muted)';
+}
+function rfmGeoReset() {
+  rfmGeoShow('📍 Les coordonnées GPS seront détectées automatiquement depuis l\'adresse.', null);
+}
+
+async function rfmGeocode() {
+  const adresse = document.getElementById('rfmAdresse').value.trim();
+  const ville   = document.getElementById('rfmVille').value.trim();
+  const cp      = document.getElementById('rfmCp').value.trim();
+  if (!ville && !cp) return;
+
+  rfmGeoShow('📍 Localisation en cours…', null);
+  const q = [adresse, cp, ville, 'France'].filter(Boolean).join(', ');
+  try {
+    const res  = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=fr`,
+      { headers: { 'Accept-Language': 'fr', 'User-Agent': 'YoupiZoo-Admin/1.0' } }
+    );
+    const data = await res.json();
+    if (data.length > 0) {
+      document.getElementById('rfmLat').value = parseFloat(data[0].lat).toFixed(6);
+      document.getElementById('rfmLng').value = parseFloat(data[0].lon).toFixed(6);
+      const label = data[0].display_name.split(',').slice(0, 3).join(', ');
+      rfmGeoShow('✅ ' + label, true);
+    } else {
+      document.getElementById('rfmLat').value = '';
+      document.getElementById('rfmLng').value = '';
+      rfmGeoShow('⚠️ Adresse introuvable — vérifiez les champs', false);
+    }
+  } catch(e) {
+    rfmGeoShow('⚠️ Erreur de géolocalisation', false);
+  }
+}
+
+function rfmScheduleGeocode() {
+  clearTimeout(_rfmGeoTimer);
+  _rfmGeoTimer = setTimeout(rfmGeocode, 700);
+}
+
+// Listeners sur les champs adresse du modal refuge
+['rfmAdresse','rfmVille','rfmCp'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', rfmScheduleGeocode);
+  document.getElementById(id)?.addEventListener('blur',  () => { clearTimeout(_rfmGeoTimer); rfmGeocode(); });
+});
+
 function closeRefugeModal() {
   document.getElementById('rfm').classList.remove('on');
+  clearTimeout(_rfmGeoTimer);
   document.getElementById('rfmNom').removeEventListener('input', autoSlug);
   delete document.getElementById('rfmSlug').dataset.manual;
 }
