@@ -71,6 +71,12 @@ service cloud.firestore {
 
       // Suppression : admin uniquement
       allow delete: if isAdmin();
+
+      // ── Sous-collection ALERTES ──────────────────────────
+      match /alertes/{alerteId} {
+        // Lecture, création, modification, suppression : propriétaire uniquement
+        allow read, create, update, delete: if isOwner(userId);
+      }
     }
 
     // ─────────────────────────────────────────────────────────
