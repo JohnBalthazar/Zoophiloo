@@ -593,7 +593,7 @@
 </div><!-- /app -->
 
 <!-- ── REFUGE FORM MODAL ── -->
-<div id="rfm" onclick="rfmOverlayClick(event)">
+<div id="rfm">
   <div class="rfm-box">
     <div class="rfm-hdr">
       <span class="rfm-title" id="rfmTitle">Nouveau refuge</span>
@@ -620,6 +620,11 @@
       <div class="frow">
         <label class="flbl" for="rfmDesc">Description</label>
         <textarea id="rfmDesc" class="finput" rows="3" style="resize:vertical" placeholder="Présentation du refuge, sa mission, ses animaux…"></textarea>
+      </div>
+
+      <div class="frow">
+        <label class="flbl" for="rfmAdresse">Adresse</label>
+        <input type="text" id="rfmAdresse" class="finput" placeholder="12 rue des Tilleuls">
       </div>
 
       <div class="rfm-grid">
@@ -962,6 +967,7 @@ function openRefugeModal(id) {
     document.getElementById('rfmNom').value     = r.nom      || '';
     document.getElementById('rfmType').value    = r.type     || 'Refuge';
     document.getElementById('rfmDesc').value    = r.description || '';
+    document.getElementById('rfmAdresse').value  = r.adresse  || '';
     document.getElementById('rfmVille').value   = r.ville    || '';
     document.getElementById('rfmCp').value      = r.code_postal || '';
     document.getElementById('rfmLat').value     = r.latitude  != null ? r.latitude  : '';
@@ -976,7 +982,7 @@ function openRefugeModal(id) {
     // Mode création
     document.getElementById('rfmTitle').textContent = '🏠 Nouveau refuge';
     document.getElementById('rfmId').value = '';
-    ['rfmNom','rfmDesc','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug']
+    ['rfmNom','rfmDesc','rfmAdresse','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug']
       .forEach(id => document.getElementById(id).value = '');
     document.getElementById('rfmType').value = 'Refuge';
     document.getElementById('rfmVisible').checked = true;
@@ -1007,9 +1013,6 @@ function closeRefugeModal() {
   delete document.getElementById('rfmSlug').dataset.manual;
 }
 
-function rfmOverlayClick(e) {
-  if (e.target === document.getElementById('rfm')) closeRefugeModal();
-}
 
 async function saveRefuge() {
   const btn  = document.getElementById('rfmSaveBtn');
@@ -1023,6 +1026,7 @@ async function saveRefuge() {
     nom,
     type:        document.getElementById('rfmType').value,
     description: document.getElementById('rfmDesc').value.trim() || null,
+    adresse:     document.getElementById('rfmAdresse').value.trim() || null,
     ville:       document.getElementById('rfmVille').value.trim() || null,
     code_postal: document.getElementById('rfmCp').value.trim()   || null,
     logo_url:    document.getElementById('rfmLogo').value.trim()  || null,
