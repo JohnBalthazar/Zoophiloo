@@ -253,6 +253,34 @@
     .delay-bad   { color: var(--red);    font-weight: 600; }
     .logs-info-bar { display:flex;align-items:flex-start;gap:10px;padding:13px 16px;border-radius:8px;
                      background:var(--blue-light);border:1px solid #bfdbfe;margin-bottom:16px;font-size:12.5px; }
+
+    /* ── TOGGLE SWITCH ── */
+    .tgl { position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0; }
+    .tgl input { opacity:0;width:0;height:0; }
+    .tgl-slider { position:absolute;inset:0;background:#cbd5e1;border-radius:22px;transition:.2s;cursor:pointer; }
+    .tgl-slider:before { content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s; }
+    .tgl input:checked + .tgl-slider { background:var(--green); }
+    .tgl input:checked + .tgl-slider:before { transform:translateX(16px); }
+
+    /* ── REFUGE FORM MODAL ── */
+    #rfm { position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999;padding:20px; }
+    #rfm.on { display:flex; }
+    .rfm-box { background:#fff;border-radius:14px;width:100%;max-width:600px;box-shadow:0 20px 50px rgba(0,0,0,.18);display:flex;flex-direction:column;max-height:92vh;overflow:hidden; }
+    .rfm-hdr { padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0; }
+    .rfm-title { font-family:var(--font-d);font-size:16px;font-weight:700; }
+    .rfm-close { background:none;border:1px solid var(--border);border-radius:50%;width:28px;height:28px;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .12s;cursor:pointer; }
+    .rfm-close:hover { border-color:var(--red);color:var(--red);background:var(--red-light); }
+    .rfm-body { padding:20px 22px;overflow-y:auto;flex:1; }
+    .rfm-grid { display:grid;grid-template-columns:1fr 1fr;gap:0 16px; }
+    .rfm-ftr { padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;background:#fafbfc; }
+    /* Badge refuge */
+    .bdg-refuge   { background:#f5f3ff;color:#7c3aed; }
+    .bdg-visible  { background:#f0fdf4;color:#16a34a; }
+    .bdg-hidden   { background:#f1f5f9;color:#64748b; }
+    /* Sec header with action button */
+    .sec-hdr { display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px; }
+    .sec-title { font-family:var(--font-d);font-size:18px;font-weight:700; }
+    .sec-sub { font-size:13px;color:var(--muted);margin-top:2px; }
   </style>
 <link rel="stylesheet" href="cookies.css">
 </head>
@@ -285,6 +313,7 @@
       <a href="#" data-sec="reports"><span class="ico">⚠️</span>Signalements<span class="sb-badge" id="rBadge">0</span></a>
       <a href="#" data-sec="annonces"><span class="ico">📋</span>Annonces</a>
       <a href="#" data-sec="users"><span class="ico">👥</span>Utilisateurs</a>
+      <a href="#" data-sec="refuges"><span class="ico">🏠</span>Refuges</a>
       <div class="sb-section">Système</div>
       <a href="#" data-sec="settings"><span class="ico">⚙️</span>Paramètres</a>
       <a href="#" data-sec="logs"><span class="ico">📜</span>Logs juridiques<span class="sb-badge" id="lBadge">!</span></a>
@@ -543,9 +572,123 @@
         </div>
       </section>
 
+      <!-- ═══ REFUGES ═══ -->
+      <section class="sec" id="secRefuges">
+        <div class="sec-hdr">
+          <div>
+            <div class="sec-title">Refuges &amp; Associations</div>
+            <div class="sec-sub" id="rfSub">Chargement…</div>
+          </div>
+          <button class="btn btn-ok" onclick="openRefugeModal(null)" style="font-size:13px;padding:8px 16px;font-weight:600">
+            + Nouveau refuge
+          </button>
+        </div>
+        <div class="tcard" id="rfTableWrap">
+          <div class="tloading"><div class="tspinner"></div><div style="font-size:13px;margin-top:6px">Chargement…</div></div>
+        </div>
+      </section>
+
     </div><!-- /body -->
   </div><!-- /main -->
 </div><!-- /app -->
+
+<!-- ── REFUGE FORM MODAL ── -->
+<div id="rfm" onclick="rfmOverlayClick(event)">
+  <div class="rfm-box">
+    <div class="rfm-hdr">
+      <span class="rfm-title" id="rfmTitle">Nouveau refuge</span>
+      <button class="rfm-close" onclick="closeRefugeModal()">✕</button>
+    </div>
+    <div class="rfm-body">
+      <input type="hidden" id="rfmId">
+
+      <div class="rfm-grid">
+        <div class="frow">
+          <label class="flbl" for="rfmNom">Nom <span style="color:var(--red)">*</span></label>
+          <input type="text" id="rfmNom" class="finput" placeholder="SPA de Lyon">
+        </div>
+        <div class="frow">
+          <label class="flbl" for="rfmType">Type <span style="color:var(--red)">*</span></label>
+          <select id="rfmType" class="finput">
+            <option value="SPA">SPA</option>
+            <option value="Refuge">Refuge</option>
+            <option value="Association">Association</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="frow">
+        <label class="flbl" for="rfmDesc">Description</label>
+        <textarea id="rfmDesc" class="finput" rows="3" style="resize:vertical" placeholder="Présentation du refuge, sa mission, ses animaux…"></textarea>
+      </div>
+
+      <div class="rfm-grid">
+        <div class="frow">
+          <label class="flbl" for="rfmVille">Ville</label>
+          <input type="text" id="rfmVille" class="finput" placeholder="Lyon">
+        </div>
+        <div class="frow">
+          <label class="flbl" for="rfmCp">Code postal</label>
+          <input type="text" id="rfmCp" class="finput" placeholder="69000">
+        </div>
+      </div>
+
+      <div class="rfm-grid">
+        <div class="frow">
+          <label class="flbl" for="rfmLat">Latitude</label>
+          <input type="number" id="rfmLat" class="finput" style="max-width:100%" placeholder="45.75" step="any">
+        </div>
+        <div class="frow">
+          <label class="flbl" for="rfmLng">Longitude</label>
+          <input type="number" id="rfmLng" class="finput" style="max-width:100%" placeholder="4.83" step="any">
+        </div>
+      </div>
+      <p class="fhint" style="margin-top:-8px;margin-bottom:14px">📍 Coordonnées GPS pour l'affichage sur la carte. Trouvez-les sur <a href="https://www.google.fr/maps" target="_blank" rel="noopener" style="color:var(--green)">Google Maps</a> (clic droit → "C'est ici").</p>
+
+      <div class="frow">
+        <label class="flbl" for="rfmLogo">URL du logo</label>
+        <input type="url" id="rfmLogo" class="finput" placeholder="https://…">
+        <p class="fhint">Lien direct vers l'image du logo (hébergée sur imgbb, Cloudinary, etc.)</p>
+      </div>
+
+      <div class="rfm-grid">
+        <div class="frow">
+          <label class="flbl" for="rfmEmail">Email de contact</label>
+          <input type="email" id="rfmEmail" class="finput" placeholder="contact@refuge.fr">
+        </div>
+        <div class="frow">
+          <label class="flbl" for="rfmTel">Téléphone</label>
+          <input type="tel" id="rfmTel" class="finput" placeholder="04 72 …">
+        </div>
+      </div>
+
+      <div class="frow">
+        <label class="flbl" for="rfmSite">Site web</label>
+        <input type="url" id="rfmSite" class="finput" placeholder="https://www.refuge.fr">
+      </div>
+
+      <div class="frow">
+        <label class="flbl" for="rfmSlug">Slug (URL)</label>
+        <input type="text" id="rfmSlug" class="finput" placeholder="spa-lyon">
+        <p class="fhint">Généré automatiquement depuis le nom. Lien : <code>refuge.html?slug=…</code></p>
+      </div>
+
+      <div class="frow" style="display:flex;align-items:center;gap:12px">
+        <label class="tgl">
+          <input type="checkbox" id="rfmVisible" checked>
+          <span class="tgl-slider"></span>
+        </label>
+        <span style="font-size:13.5px;font-weight:500">Visible sur le site</span>
+      </div>
+
+      <div id="rfmError" style="display:none;margin-top:10px;padding:10px 14px;background:var(--red-light);color:var(--red);border-radius:8px;font-size:13px"></div>
+    </div>
+    <div class="rfm-ftr">
+      <button class="btn btn-ghost" onclick="closeRefugeModal()">Annuler</button>
+      <button class="btn-save" id="rfmSaveBtn" onclick="saveRefuge()">Enregistrer</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── CONFIRM MODAL ── -->
 <div id="cfm">
@@ -595,6 +738,7 @@ let _users    = [];
 let _rFilter  = 'all';
 let _uFilter  = 'all';
 let _cfmAct   = null;
+let _refuges  = [];
 
 // ── HELPERS ──
 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -629,10 +773,11 @@ function goSec(sec) {
   _curSec = sec;
   document.querySelectorAll('[data-sec]').forEach(a => a.classList.toggle('active', a.dataset.sec === sec));
   document.querySelectorAll('.sec').forEach(s => s.classList.toggle('on', s.id === 'sec' + sec.charAt(0).toUpperCase() + sec.slice(1)));
-  const titles = {overview:'Vue d\'ensemble', reports:'Signalements', annonces:'Annonces', users:'Utilisateurs', settings:'Paramètres', logs:'Logs juridiques'};
+  const titles = {overview:'Vue d\'ensemble', reports:'Signalements', annonces:'Annonces', users:'Utilisateurs', refuges:'Refuges & Associations', settings:'Paramètres', logs:'Logs juridiques'};
   document.getElementById('hdrTitle').textContent = titles[sec] || sec;
   if (sec === 'annonces' && !_annonces.length) loadAnnonces();
   if (sec === 'users'    && !_users.length)    loadUsers();
+  if (sec === 'refuges'  && !_refuges.length)  loadRefuges();
   if (sec === 'settings') refreshSettingsUI();
   if (sec === 'logs'     && !_logs.length)     loadLogs();
 }
@@ -682,6 +827,241 @@ async function saveSettings() {
     toast('Seuil mis à jour.','s');
   } catch(e) { toast('Erreur : '+e.message,'e'); }
   finally { btn.disabled=false; btn.textContent='Enregistrer'; }
+}
+
+// ══════════════════════════════════════════════════
+// REFUGES & ASSOCIATIONS
+// ══════════════════════════════════════════════════
+function slugify(str) {
+  return (str||'').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+async function loadRefuges() {
+  const wrap = document.getElementById('rfTableWrap');
+  wrap.innerHTML = '<div class="tloading"><div class="tspinner"></div><div style="font-size:13px;margin-top:6px">Chargement…</div></div>';
+  try {
+    const snap = await db.collection('refuges').orderBy('created_at','desc').get();
+    _refuges = snap.docs.map(d => ({id:d.id,...d.data()}));
+    renderRefuges();
+  } catch(e) {
+    // orderBy peut échouer sans index — fallback sans tri
+    try {
+      const snap2 = await db.collection('refuges').get();
+      _refuges = snap2.docs.map(d => ({id:d.id,...d.data()}));
+      renderRefuges();
+    } catch(e2) {
+      wrap.innerHTML = `<div class="empty"><div class="empty-ico">❌</div><h3>Erreur</h3><p>${esc(e2.message)}</p></div>`;
+    }
+  }
+}
+
+function renderRefuges() {
+  const wrap = document.getElementById('rfTableWrap');
+  const sub  = document.getElementById('rfSub');
+  sub.textContent = `${_refuges.length} refuge${_refuges.length>1?'s':''} enregistré${_refuges.length>1?'s':''}`;
+
+  if (!_refuges.length) {
+    wrap.innerHTML = `<div class="empty">
+      <div class="empty-ico">🏠</div>
+      <h3>Aucun refuge</h3>
+      <p>Cliquez sur "+ Nouveau refuge" pour ajouter la première fiche.</p>
+    </div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<table class="atbl">
+    <thead>
+      <tr>
+        <th>Refuge</th>
+        <th>Type</th>
+        <th>Ville</th>
+        <th>Contact</th>
+        <th>Visibilité</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${_refuges.map(r => {
+        const logo = r.logo_url
+          ? `<img src="${esc(r.logo_url)}" class="ph-thumb" onerror="this.outerHTML='<div class=\\'ph-none\\'>🏠</div>'">`
+          : `<div class="ph-none">🏠</div>`;
+        const contactParts = [r.email, r.telephone].filter(Boolean);
+        return `<tr>
+          <td>
+            <div class="ad-cell">
+              ${logo}
+              <div>
+                <div class="ad-name">${esc(r.nom||'—')}</div>
+                <div class="ad-meta">${r.slug ? 'slug: '+esc(r.slug) : 'Pas de slug'}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="bdg bdg-refuge">${esc(r.type||'—')}</span></td>
+          <td>${esc(r.ville||'—')}${r.code_postal?' <span style="color:var(--muted);font-size:12px">('+esc(r.code_postal)+')</span>':''}</td>
+          <td style="font-size:12.5px;color:var(--muted)">${contactParts.map(esc).join('<br>') || '—'}</td>
+          <td>
+            <label class="tgl" title="${r.visible?'Masquer':'Publier'}">
+              <input type="checkbox" ${r.visible?'checked':''} onchange="toggleRefugeVisible('${esc(r.id)}', this.checked)">
+              <span class="tgl-slider"></span>
+            </label>
+          </td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <a href="refuge.html?id=${encodeURIComponent(r.id)}" target="_blank" class="btn btn-ghost" title="Voir la fiche">🔗</a>
+              <button class="btn btn-info" onclick="openRefugeModal('${esc(r.id)}')">✏️ Modifier</button>
+              <button class="btn btn-danger" onclick="confirmDeleteRefuge('${esc(r.id)}', '${esc(r.nom||'')}')">🗑</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+}
+
+async function toggleRefugeVisible(id, visible) {
+  try {
+    await db.collection('refuges').doc(id).update({ visible });
+    const rf = _refuges.find(r => r.id === id);
+    if (rf) rf.visible = visible;
+    toast(visible ? 'Refuge publié.' : 'Refuge masqué.', 's');
+  } catch(e) { toast('Erreur : '+e.message,'e'); loadRefuges(); }
+}
+
+function confirmDeleteRefuge(id, nom) {
+  showCfm({
+    icon: '🏚️',
+    title: 'Supprimer ce refuge ?',
+    body: `"${nom}" sera définitivement supprimé. Les annonces liées ne seront pas supprimées.`,
+    okLabel: 'Supprimer',
+    okCls: 'btn-cfm-danger',
+    action: async () => {
+      try {
+        await db.collection('refuges').doc(id).delete();
+        _refuges = _refuges.filter(r => r.id !== id);
+        renderRefuges();
+        toast('Refuge supprimé.', 's');
+      } catch(e) { toast('Erreur : '+e.message,'e'); }
+    }
+  });
+}
+
+// ── Formulaire refuge ──
+function openRefugeModal(id) {
+  const modal = document.getElementById('rfm');
+  const err   = document.getElementById('rfmError');
+  err.style.display = 'none';
+
+  if (id) {
+    // Mode édition
+    const r = _refuges.find(r => r.id === id);
+    if (!r) return;
+    document.getElementById('rfmTitle').textContent = '✏️ Modifier le refuge';
+    document.getElementById('rfmId').value      = id;
+    document.getElementById('rfmNom').value     = r.nom      || '';
+    document.getElementById('rfmType').value    = r.type     || 'Refuge';
+    document.getElementById('rfmDesc').value    = r.description || '';
+    document.getElementById('rfmVille').value   = r.ville    || '';
+    document.getElementById('rfmCp').value      = r.code_postal || '';
+    document.getElementById('rfmLat').value     = r.latitude  != null ? r.latitude  : '';
+    document.getElementById('rfmLng').value     = r.longitude != null ? r.longitude : '';
+    document.getElementById('rfmLogo').value    = r.logo_url  || '';
+    document.getElementById('rfmEmail').value   = r.email     || '';
+    document.getElementById('rfmTel').value     = r.telephone || '';
+    document.getElementById('rfmSite').value    = r.website   || '';
+    document.getElementById('rfmSlug').value    = r.slug      || '';
+    document.getElementById('rfmVisible').checked = r.visible !== false;
+  } else {
+    // Mode création
+    document.getElementById('rfmTitle').textContent = '🏠 Nouveau refuge';
+    document.getElementById('rfmId').value = '';
+    ['rfmNom','rfmDesc','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug']
+      .forEach(id => document.getElementById(id).value = '');
+    document.getElementById('rfmType').value = 'Refuge';
+    document.getElementById('rfmVisible').checked = true;
+  }
+
+  // Auto-slug depuis le nom
+  document.getElementById('rfmNom').addEventListener('input', autoSlug);
+
+  modal.classList.add('on');
+  document.getElementById('rfmNom').focus();
+}
+
+function autoSlug() {
+  const slugEl = document.getElementById('rfmSlug');
+  if (!slugEl.dataset.manual) {
+    slugEl.value = slugify(document.getElementById('rfmNom').value);
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('rfmSlug')?.addEventListener('input', function() {
+    this.dataset.manual = '1';
+  });
+});
+
+function closeRefugeModal() {
+  document.getElementById('rfm').classList.remove('on');
+  document.getElementById('rfmNom').removeEventListener('input', autoSlug);
+  delete document.getElementById('rfmSlug').dataset.manual;
+}
+
+function rfmOverlayClick(e) {
+  if (e.target === document.getElementById('rfm')) closeRefugeModal();
+}
+
+async function saveRefuge() {
+  const btn  = document.getElementById('rfmSaveBtn');
+  const err  = document.getElementById('rfmError');
+  err.style.display = 'none';
+
+  const nom  = document.getElementById('rfmNom').value.trim();
+  if (!nom) { err.textContent = 'Le nom est obligatoire.'; err.style.display='block'; return; }
+
+  const data = {
+    nom,
+    type:        document.getElementById('rfmType').value,
+    description: document.getElementById('rfmDesc').value.trim() || null,
+    ville:       document.getElementById('rfmVille').value.trim() || null,
+    code_postal: document.getElementById('rfmCp').value.trim()   || null,
+    logo_url:    document.getElementById('rfmLogo').value.trim()  || null,
+    email:       document.getElementById('rfmEmail').value.trim() || null,
+    telephone:   document.getElementById('rfmTel').value.trim()   || null,
+    website:     document.getElementById('rfmSite').value.trim()  || null,
+    slug:        document.getElementById('rfmSlug').value.trim()  || slugify(nom),
+    visible:     document.getElementById('rfmVisible').checked,
+  };
+
+  const latVal = document.getElementById('rfmLat').value;
+  const lngVal = document.getElementById('rfmLng').value;
+  if (latVal !== '') data.latitude  = parseFloat(latVal);
+  if (lngVal !== '') data.longitude = parseFloat(lngVal);
+
+  btn.disabled = true; btn.textContent = 'Enregistrement…';
+  try {
+    const id = document.getElementById('rfmId').value;
+    if (id) {
+      // Mise à jour
+      await db.collection('refuges').doc(id).update(data);
+      const idx = _refuges.findIndex(r => r.id === id);
+      if (idx >= 0) _refuges[idx] = { id, ...data };
+      toast('Refuge mis à jour.', 's');
+    } else {
+      // Création
+      data.created_at = firebase.firestore.FieldValue.serverTimestamp();
+      const ref = await db.collection('refuges').add(data);
+      _refuges.unshift({ id: ref.id, ...data });
+      toast('Refuge créé ! Lien : refuge.html?id=' + ref.id, 's');
+    }
+    renderRefuges();
+    closeRefugeModal();
+  } catch(e) {
+    err.textContent = 'Erreur : ' + e.message;
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Enregistrer';
+  }
 }
 
 // ── LOAD REPORTS ──
