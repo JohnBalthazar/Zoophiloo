@@ -1,0 +1,91 @@
+name: 🔐 Sauvegarde données Firestore (quotidienne)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Sauvegarde automatique de toutes les collections Firestore.
+# Chiffrée AES-256-GCM. Conservée 30 jours dans les artefacts GitHub.
+#
+# Secrets GitHub requis (Settings → Secrets → Actions) :
+#   FIREBASE_SERVICE_ACCOUNT   JSON du compte de service Firebase
+#   BACKUP_ENCRYPTION_KEY      Clé hex 64 chars  (openssl rand -hex 32)
+#   FIREBASE_PROJECT_ID        ID du projet Firebase
+#
+# Pour obtenir FIREBASE_SERVICE_ACCOUNT :
+#   1. Firebase Console → Paramètres du projet → Comptes de service
+#   2. Générer une nouvelle clé privée (télécharge un JSON)
+#   3. Copiez TOUT le contenu JSON comme valeur du secret
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    # Tous les jours à 2h00 UTC (3h ou 4h heure française)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run (affiche uniquement les stats, ne sauvegarde pas)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  backup-firestore:
+    name: Export & chiffrement Firestore
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Node.js 20 ────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/package.json
+
+      # ── 3. Dépendances du script de sauvegarde ───────────────────────────
+      - name: Installer firebase-admin
+        working-directory: scripts
+        run: npm install
+
+      # ── 4. Export + chiffrement ───────────────────────────────────────────
+      - name: Sauvegarder Firestore
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          BACKUP_ENCRYPTION_KEY:    ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+          FIREBASE_PROJECT_ID:      ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: node scripts/backup-firestore.mjs
+
+      # ── 5. Dry-run (statistiques seulement) ──────────────────────────────
+      - name: Dry-run (stats uniquement)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_PROJECT_ID:      ${{ secrets.FIREBASE_PROJECT_ID }}
+          # Pas de BACKUP_ENCRYPTION_KEY → JSON non chiffré pour inspection
+        run: node scripts/backup-firestore.mjs
+
+      # ── 6. Upload artifact (conservé 30 jours) ───────────────────────────
+      - name: Uploader la sauvegarde
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: firestore-backup-${{ github.run_id }}-${{ github.run_number }}
+          path: backups/
+          retention-days: 30
+
+      # ── 7. Résumé ────────────────────────────────────────────────────────
+      - name: Résumé de la sauvegarde
+        if: always()
+        run: |
+          echo "## 🔐 Sauvegarde Firestore" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Paramètre | Valeur |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Date | $(date -u '+%Y-%m-%d %H:%M UTC') |" >> $GITHUB_STEP_SUMMARY
+          echo "| Projet | ${{ secrets.FIREBASE_PROJECT_ID }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rétention | 30 jours |" >> $GITHUB_STEP_SUMMARY
+          echo "| Chiffrement | AES-256-GCM |" >> $GITHUB_STEP_SUMMARY

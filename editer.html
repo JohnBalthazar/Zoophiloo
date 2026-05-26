@@ -158,6 +158,9 @@
   </div>
 </div>
 
+<!-- Chiffrement RGPD des données personnelles -->
+<script src="js/crypto-utils.js"></script>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -200,7 +203,11 @@ async function loadRecord() {
     if (!ownerByUid && !ownerByEmail) {
       window.location.href = 'mon-espace.html'; return;
     }
-    renderForm(data);
+    // ── Déchiffrement RGPD des champs sensibles avant affichage dans le formulaire ──
+    const decryptedData = (typeof yzDecryptRecord === 'function')
+      ? await yzDecryptRecord(data)
+      : data;
+    renderForm(decryptedData);
   } catch(e) {
     document.getElementById('pageContent').innerHTML = `
       <div style="text-align:center;padding:64px 24px;color:var(--text-muted)">
@@ -617,8 +624,13 @@ async function submitEdit() {
       fields['Puce'] = v || null;
     } else { fields['Puce'] = null; }
 
+    // ── Rechiffrement RGPD des champs sensibles avant écriture Firestore ──
+    const encryptedFields = (typeof yzEncryptRecord === 'function')
+      ? await yzEncryptRecord(fields)
+      : fields;
+
     await db.collection('annonces').doc(recordId).update({
-      ...fields,
+      ...encryptedFields,
       updatedAt: new Date().toISOString()
     });
 

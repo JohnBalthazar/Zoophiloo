@@ -1,0 +1,13 @@
+{
+  "name": "youpizoo-backup",
+  "version": "1.0.0",
+  "description": "Script de sauvegarde automatisée Firestore — YoupiZoo",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "backup": "node backup-firestore.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

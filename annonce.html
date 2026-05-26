@@ -690,8 +690,14 @@ function renderEcoCard(type) {
   }
 }
 
-function renderPage(record) {
-  const f = record.fields;
+async function renderPage(record) {
+  // ── Déchiffrement RGPD des champs sensibles (Telephone, Adresse) ──────────
+  const rawFields = record.fields;
+  const user      = record.user || null;
+  const f = (typeof yzDecryptRecord === 'function')
+    ? await yzDecryptRecord(rawFields)
+    : { ...rawFields };
+
   const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
   const price = formatPrice(f['Prix'], f['Type_annonce']);
 
@@ -802,21 +808,35 @@ function renderPage(record) {
   };
   updateMsgBtn();
 
+  // ── Coordonnées de contact — protégées derrière l'authentification (RGPD) ──
   const actions = [];
-  if (f['Telephone']) {
-    actions.push(`<a href="tel:${escHTML(f['Telephone'])}" class="btn-contact btn-contact-primary">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.1 4.17 2 2 0 015.1 2H8a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91A16 16 0 0015.09 15.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-      Appeler : ${escHTML(f['Telephone'])}
-    </a>`);
-  }
-  if (f['Email_contact']) {
-    actions.push(`<a href="mailto:${escHTML(f['Email_contact'])}?subject=Annonce%20YoupiZoo%20%3A%20${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      Envoyer un email
-    </a>`);
-  }
-  if (actions.length === 0) {
-    actions.push(`<p style="font-size:12px;color:var(--text-muted);text-align:center">Aucune coordonnée disponible.</p>`);
+  if (user) {
+    // Utilisateur connecté : afficher les coordonnées déchiffrées
+    if (f['Telephone']) {
+      actions.push(`<a href="tel:${escHTML(f['Telephone'])}" class="btn-contact btn-contact-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.1 4.17 2 2 0 015.1 2H8a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 9.91A16 16 0 0015.09 15.91l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Appeler : ${escHTML(f['Telephone'])}
+      </a>`);
+    }
+    if (f['Email_contact']) {
+      actions.push(`<a href="mailto:${escHTML(f['Email_contact'])}?subject=Annonce%20YoupiZoo%20%3A%20${encodeURIComponent(title)}" class="btn-contact btn-contact-secondary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Envoyer un email
+      </a>`);
+    }
+    if (actions.length === 0) {
+      actions.push(`<p style="font-size:12px;color:var(--text-muted);text-align:center">Aucune coordonnée disponible.</p>`);
+    }
+  } else {
+    // Non connecté : invitation à se connecter (RGPD — données perso non exposées publiquement)
+    const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+    actions.push(`<a href="login.html?next=${returnUrl}" class="btn-contact btn-contact-primary" style="justify-content:center;gap:8px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Se connecter pour voir les coordonnées
+    </a>
+    <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:6px">
+      🔒 Coordonnées protégées — connexion requise (RGPD)
+    </p>`);
   }
   document.getElementById('contactActions').innerHTML = actions.join('');
 
@@ -837,13 +857,19 @@ function renderPage(record) {
 }
 
 async function init() {
+  // ── Attendre l'état d'authentification AVANT le chargement ───────────────
+  // Nécessaire pour afficher les coordonnées aux utilisateurs connectés (RGPD).
+  const user = await new Promise(resolve => {
+    const unsub = auth.onAuthStateChanged(u => { unsub(); resolve(u); });
+  });
+
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) { showError('Aucun identifiant d\'annonce fourni.'); return; }
   try {
     const docSnap = await db.collection('annonces').doc(id).get();
     if (!docSnap.exists) throw new Error('Annonce introuvable');
-    renderPage({ id: docSnap.id, fields: docSnap.data() });
+    await renderPage({ id: docSnap.id, fields: docSnap.data(), user });
   } catch (err) {
     console.error(err);
     showError('Impossible de charger cette annonce. Elle a peut-être été supprimée.');
@@ -1046,6 +1072,9 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeReportModal();
 });
 </script>
+
+<!-- Chiffrement RGPD des données personnelles -->
+<script src="js/crypto-utils.js"></script>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>

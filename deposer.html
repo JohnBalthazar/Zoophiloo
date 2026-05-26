@@ -531,6 +531,9 @@
   </div>
 </div>
 
+<!-- Chiffrement RGPD des données personnelles -->
+<script src="js/crypto-utils.js"></script>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -908,11 +911,15 @@ async function submitAnnonce() {
       fields['Photos'] = photoUrls.map(url => ({ url }));
     }
 
-    // Créer dans Firestore
+    // Créer dans Firestore — chiffrement RGPD des champs sensibles avant écriture
     fields['Date_creation'] = new Date().toISOString();
     fields['uid'] = currentUser.uid;
 
-    const ref = await db.collection('annonces').add(fields);
+    const encryptedFields = (typeof yzEncryptRecord === 'function')
+      ? await yzEncryptRecord(fields)
+      : fields;
+
+    const ref = await db.collection('annonces').add(encryptedFields);
 
     // Mettre à jour le slug avec l'ID Firestore
     const slug = makeSlug(fields['Titre'], ref.id);

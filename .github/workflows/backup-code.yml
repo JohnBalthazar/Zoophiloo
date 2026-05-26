@@ -1,0 +1,69 @@
+name: 📦 Sauvegarde code source (hebdomadaire)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Crée une archive ZIP du code source à chaque push sur main et chaque dimanche.
+# Conservée 90 jours dans les artefacts GitHub.
+#
+# DOUBLE SAUVEGARDE code :
+#   1. Dépôt GitHub principal (branches + historique git)
+#   2. Archive ZIP horodatée (artefact GitHub, 90 jours)
+#
+# Pour télécharger une archive :
+#   GitHub → Actions → backup-code → Artifacts
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    # Chaque dimanche à 3h00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+jobs:
+  backup-code:
+    name: Archive code source
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout complet (avec historique git) ─────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Historique complet pour l'archive
+
+      # ── 2. Créer l'archive ZIP ────────────────────────────────────────────
+      - name: Créer l'archive ZIP
+        run: |
+          DATE=$(date -u '+%Y%m%d_%H%M%S')
+          COMMIT=$(git rev-parse --short HEAD)
+          ARCHIVE="code-backup-${DATE}-${COMMIT}.zip"
+
+          # Archive Git (fichiers trackés + historique)
+          git archive --format=zip HEAD -o "${ARCHIVE}"
+
+          echo "ARCHIVE_NAME=${ARCHIVE}" >> $GITHUB_ENV
+          SIZE=$(du -sh "${ARCHIVE}" | cut -f1)
+          echo "ARCHIVE_SIZE=${SIZE}" >> $GITHUB_ENV
+          echo "✓ Archive créée : ${ARCHIVE} (${SIZE})"
+
+      # ── 3. Upload artifact (conservé 90 jours) ───────────────────────────
+      - name: Uploader l'archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-backup-${{ github.run_id }}
+          path: code-backup-*.zip
+          retention-days: 90
+
+      # ── 4. Résumé ────────────────────────────────────────────────────────
+      - name: Résumé de la sauvegarde
+        run: |
+          echo "## 📦 Sauvegarde code source" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Paramètre | Valeur |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Fichier | ${{ env.ARCHIVE_NAME }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Taille | ${{ env.ARCHIVE_SIZE }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branche | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rétention | 90 jours |" >> $GITHUB_STEP_SUMMARY

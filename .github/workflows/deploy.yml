@@ -23,6 +23,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject Crypto Salt (chiffrement RGPD)
+        run: |
+          if [ -f "js/crypto-utils.js" ]; then
+            sed -i "s|__CRYPTO_SALT__|${{ secrets.CRYPTO_SALT }}|g" js/crypto-utils.js
+          fi
+
       - name: Inject imgbb key
         run: |
           for file in deposer.html editer.html; do
