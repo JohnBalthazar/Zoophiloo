@@ -118,33 +118,49 @@
   .gallery-thumb.active { border-color: var(--green); }
 
   /* INFO CARD */
-  .info-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+  .info-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); }
   .info-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-  .ad-title-big { font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1.2; color: var(--text); }
+  .ad-title-big { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.2; color: var(--text); }
   .ad-price-big { font-size: 26px; font-weight: 700; color: var(--green); white-space: nowrap; }
   .ad-price-big.don { color: var(--orange); }
   .ad-price-big.gratuit { color: var(--blue); }
   .ad-meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
-  .tag { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .tag-vente { background: #f0f8e6; color: #478015; }
-  .tag-adoption { background: #dbeafe; color: #1d4ed8; }
-  .tag-don { background: #fef3c7; color: #92400e; }
-  .tag-perdu { background: #fef2f2; color: #dc2626; }
-  .tag-trouve { background: #f5f3ff; color: #7c3aed; }
+  .tag { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .tag-vente { background: #e8f5d4; color: #3a6a10; border: 1px solid #c0dfa0; }
+  .tag-adoption { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .tag-don { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .tag-perdu { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .tag-trouve { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
   .tag-espece { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
-  .meta-pill { font-size: 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; }
-  .meta-pill svg { opacity: 0.5; }
-  .divider-line { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+  .meta-pill { font-size: 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; }
+  .meta-pill svg { opacity: 0.45; }
+  .divider-line { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
   /* DESCRIPTION */
-  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
-  .description-text { font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; }
+  .section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .description-block { border-left: 3px solid var(--border); padding-left: 14px; }
+  .description-text { font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
+  .description-empty { font-style: italic; color: var(--text-muted) !important; }
 
   /* DETAILS GRID */
-  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .detail-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-  .detail-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 3px; }
-  .detail-value { font-size: 13px; font-weight: 500; color: var(--text); }
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .detail-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .detail-item:hover { border-color: #c8c8c4; box-shadow: 0 1px 5px rgba(0,0,0,0.07); }
+  .detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 5px; }
+  .detail-value { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; }
+
+  /* DETAIL GROUPS */
+  .detail-group { margin-bottom: 20px; }
+  .detail-group:last-child { margin-bottom: 0; }
+  .detail-group-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding-bottom: 7px; margin-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+
+  /* HEALTH STATUS CHIPS */
+  .health-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .health-chip-item { display: flex; flex-direction: column; gap: 5px; }
+  .health-chip-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+  .chip-yes { display: inline-flex; align-items: center; gap: 5px; background: #dcfce7; color: #15803d; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 1px solid #bbf7d0; }
+  .chip-no  { display: inline-flex; align-items: center; gap: 5px; background: #fee2e2; color: #b91c1c; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 1px solid #fecaca; }
 
   /* RIGHT COLUMN — STICKY CONTACT CARD */
   .right-col { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 16px; }
@@ -451,13 +467,15 @@
       <div class="ad-meta-row" id="adMetaRow"></div>
       <hr class="divider-line">
       <p class="section-label">Description</p>
-      <p class="description-text" id="adDescription"></p>
+      <div class="description-block">
+        <p class="description-text" id="adDescription"></p>
+      </div>
     </div>
 
     <!-- DETAILS -->
     <div class="info-card">
       <p class="section-label">Détails de l'annonce</p>
-      <div class="details-grid" id="detailsGrid"></div>
+      <div id="detailsGrid"></div>
     </div>
 
     <!-- ECO CARD — rempli dynamiquement selon le type d'annonce -->
@@ -735,43 +753,74 @@ async function renderPage(record) {
   `;
 
   // Description
-  document.getElementById('adDescription').textContent =
-    f['Description'] || 'Aucune description fournie.';
+  const descEl = document.getElementById('adDescription');
+  if (f['Description']) {
+    descEl.textContent = f['Description'];
+  } else {
+    descEl.textContent = 'Aucune description fournie.';
+    descEl.classList.add('description-empty');
+  }
 
-  // Details grid
-  const details = [];
-  if (f['Espèce'])        details.push({ label: 'Espèce',      value: `${emoji} ${escHTML(f['Espèce'])}` });
-  if (f['Race'])          details.push({ label: 'Race',         value: escHTML(f['Race']) });
+  // Details grid — 3 sections groupées
+  const animalDetails = [];
+  const healthItems   = [];
+  const adminDetails  = [];
 
-  // ── Caractéristiques animal ──
+  if (f['Espèce'])  animalDetails.push({ label: 'Espèce',        value: `${emoji} ${escHTML(f['Espèce'])}` });
+  if (f['Race'])    animalDetails.push({ label: 'Race',           value: escHTML(f['Race']) });
   if (f['Sexe']) {
-    const sexeIcon = f['Sexe'] === 'Mâle' ? '♂' : f['Sexe'] === 'Femelle' ? '♀' : '';
-    details.push({ label: 'Sexe', value: `${sexeIcon} ${escHTML(f['Sexe'])}`.trim() });
+    const sIcon = f['Sexe'] === 'Mâle' ? '♂' : f['Sexe'] === 'Femelle' ? '♀' : '';
+    animalDetails.push({ label: 'Sexe', value: `${sIcon} ${escHTML(f['Sexe'])}`.trim() });
   }
-  if (f['Age_valeur'] != null && f['Age_valeur'] !== '') {
-    details.push({ label: 'Âge', value: `${escHTML(f['Age_valeur'])} ${escHTML(f['Age_unite'] || '')}`.trim() });
+  if (f['Age_valeur'] != null && f['Age_valeur'] !== '')
+    animalDetails.push({ label: 'Âge', value: `${escHTML(f['Age_valeur'])} ${escHTML(f['Age_unite'] || '')}`.trim() });
+  if (f['Couleur']) animalDetails.push({ label: 'Couleur / robe', value: escHTML(f['Couleur']) });
+
+  if (f['Sterilise'] && f['Sterilise'] !== 'Non précisé') healthItems.push({ label: 'Stérilisé(e)', val: f['Sterilise'] });
+  if (f['Vaccine']   && f['Vaccine']   !== 'Non précisé') healthItems.push({ label: 'Vacciné(e)',   val: f['Vaccine'] });
+  if (f['Puce']      && f['Puce']      !== 'Non précisé') healthItems.push({ label: 'Identifié(e)', val: f['Puce'] });
+
+  if (f['Type_annonce'])  adminDetails.push({ label: "Type d'annonce", value: escHTML(f['Type_annonce']) });
+  if (f['Prix'])          adminDetails.push({ label: 'Prix',           value: escHTML(price.text) });
+  if (f['Ville'])         adminDetails.push({ label: 'Ville',          value: escHTML(f['Ville']) });
+  if (f['Code_postal'])   adminDetails.push({ label: 'Code postal',    value: escHTML(f['Code_postal']) });
+  if (f['Date_creation']) adminDetails.push({ label: 'Publié le',      value: formatDate(f['Date_creation']) });
+  if (f['Statut'])        adminDetails.push({ label: 'Statut',         value: escHTML(f['Statut']) });
+
+  const renderItemGrid = items =>
+    `<div class="details-grid">${items.map(d =>
+      `<div class="detail-item"><div class="detail-label">${d.label}</div><div class="detail-value">${d.value}</div></div>`
+    ).join('')}</div>`;
+
+  let detailsHTML = '';
+  if (animalDetails.length) {
+    detailsHTML += `<div class="detail-group">
+      <div class="detail-group-title">🐾 Caractéristiques</div>
+      ${renderItemGrid(animalDetails)}
+    </div>`;
   }
-  if (f['Couleur'])   details.push({ label: 'Couleur / robe', value: escHTML(f['Couleur']) });
-  if (f['Sterilise'] && f['Sterilise'] !== 'Non précisé')
-    details.push({ label: 'Stérilisé(e)', value: f['Sterilise'] === 'Oui' ? '✓ Oui' : '✗ Non' });
-  if (f['Vaccine'] && f['Vaccine'] !== 'Non précisé')
-    details.push({ label: 'Vacciné(e)',   value: f['Vaccine']   === 'Oui' ? '✓ Oui' : '✗ Non' });
-  if (f['Puce'] && f['Puce'] !== 'Non précisé')
-    details.push({ label: 'Identifié(e)', value: f['Puce']      === 'Oui' ? '✓ Oui' : '✗ Non' });
+  if (healthItems.length) {
+    const chipsHTML = healthItems.map(h =>
+      `<div class="health-chip-item">
+        <span class="health-chip-label">${h.label}</span>
+        ${h.val === 'Oui'
+          ? '<span class="chip-yes"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Oui</span>'
+          : '<span class="chip-no"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Non</span>'}
+      </div>`
+    ).join('');
+    detailsHTML += `<div class="detail-group">
+      <div class="detail-group-title">🩺 Santé &amp; identification</div>
+      <div class="health-row">${chipsHTML}</div>
+    </div>`;
+  }
+  if (adminDetails.length) {
+    detailsHTML += `<div class="detail-group">
+      <div class="detail-group-title">📋 Informations pratiques</div>
+      ${renderItemGrid(adminDetails)}
+    </div>`;
+  }
 
-  if (f['Type_annonce'])  details.push({ label: "Type d'annonce", value: escHTML(f['Type_annonce']) });
-  if (f['Prix'])          details.push({ label: 'Prix',         value: escHTML(price.text) });
-  if (f['Ville'])         details.push({ label: 'Ville',        value: escHTML(f['Ville']) });
-  if (f['Code_postal'])   details.push({ label: 'Code postal',  value: escHTML(f['Code_postal']) });
-  if (f['Date_creation']) details.push({ label: 'Publié le',    value: formatDate(f['Date_creation']) });
-  if (f['Statut'])        details.push({ label: 'Statut',       value: escHTML(f['Statut']) });
-
-  document.getElementById('detailsGrid').innerHTML = details.map(d =>
-    `<div class="detail-item">
-       <div class="detail-label">${d.label}</div>
-       <div class="detail-value">${d.value}</div>
-     </div>`
-  ).join('');
+  document.getElementById('detailsGrid').innerHTML = detailsHTML;
 
   // Contact — nom affiché : pseudo Firestore en priorité, sinon prénom+nom Airtable
   const prenom = f['Prenom_contact'] || '';
