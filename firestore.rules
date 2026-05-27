@@ -32,10 +32,12 @@ service cloud.firestore {
     // ─────────────────────────────────────────────────────────
     match /annonces/{annonceId} {
 
-      // Lecture : annonce visible (public) ou propriétaire ou admin
+      // Lecture : annonce visible (public) ou propriétaire (uid ou email) ou admin
       //          ou gestionnaire du refuge auquel l'annonce appartient
       allow read: if resource.data.Visible == true
                   || (isAuth() && isOwner(resource.data.uid))
+                  || (isAuth() && request.auth.token.email != null
+                      && request.auth.token.email == resource.data.Email_contact)
                   || isAdmin()
                   || (isAuth() && resource.data.refuge_id != null
                       && isRefugeManager(resource.data.refuge_id));
