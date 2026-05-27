@@ -15,6 +15,14 @@
         { "fieldPath": "Visible", "order": "ASCENDING" },
         { "fieldPath": "Date_creation", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "annonces",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "refuge_id", "order": "ASCENDING" },
+        { "fieldPath": "Date_creation", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": [

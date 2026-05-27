@@ -467,12 +467,17 @@ async function init() {
       }
       _refuge = refugeSnap.data();
 
-      // Charger les annonces du refuge
+      // Charger les annonces du refuge (tri client pour éviter l'index composite)
       const annonceSnap = await db.collection('annonces')
         .where('refuge_id', '==', _refugeId)
-        .orderBy('Date_creation', 'desc')
         .get();
-      _animals = annonceSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+      _animals = annonceSnap.docs
+        .map(d => ({ _id: d.id, ...d.data() }))
+        .sort((a, b) => {
+          const ta = a['Date_creation']?.seconds ?? 0;
+          const tb = b['Date_creation']?.seconds ?? 0;
+          return tb - ta;
+        });
 
       // Afficher
       renderRefugeHero();
