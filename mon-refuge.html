@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Google Analytics : chargé conditionnellement par cookies.js (RGPD) -->
+<meta charset="UTF-8">
+<meta name="theme-color" content="#7c3aed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace refuge — YoupiZoo</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #5a9e1a; --green-dark: #478015; --green-light: #f0f8e6;
+    --purple: #7c3aed; --purple-dark: #6d28d9; --purple-light: #f5f3ff;
+    --orange: #e8622a; --red: #dc2626; --red-light: #fef2f2;
+    --text: #1a1a1a; --text-muted: #6b6b6b; --border: #e8e8e4;
+    --bg: #fafaf8; --white: #ffffff;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* HEADER */
+  header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 51px; width: auto; display: block; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 8px 18px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-purple { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 8px 18px; border: none; border-radius: 8px; background: var(--purple); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .btn-purple:hover { background: var(--purple-dark); }
+
+  /* PAGE STATES */
+  .page-loading, .page-error { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 80px 24px; color: var(--text-muted); font-size: 14px; text-align: center; }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-emoji { font-size: 40px; }
+  .error-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--text); }
+
+  /* MAIN */
+  main { flex: 1; max-width: 900px; width: 100%; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* REFUGE HERO CARD */
+  .refuge-hero {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #ddd6fe; border-radius: 16px;
+    padding: 24px; display: flex; align-items: center; gap: 18px;
+  }
+  .refuge-hero-logo { width: 72px; height: 72px; border-radius: 14px; background: white; border: 2px solid #ddd6fe; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; overflow: hidden; }
+  .refuge-hero-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .refuge-hero-info { flex: 1; min-width: 0; }
+  .refuge-hero-type { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--purple); margin-bottom: 4px; }
+  .refuge-hero-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text); }
+  .refuge-hero-loc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .refuge-hero-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; text-align: center; }
+  .stat-value { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--purple); }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* SECTION HEADER */
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .section-hdr h2 { font-family: var(--font-display); font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+  /* ANIMALS TABLE */
+  .animals-table { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .animals-table-header { display: grid; grid-template-columns: 48px 1fr 100px 80px 80px 70px; align-items: center; padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); gap: 10px; }
+  .animals-table-row { display: grid; grid-template-columns: 48px 1fr 100px 80px 80px 70px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; gap: 10px; transition: background 0.1s; }
+  .animals-table-row:last-child { border-bottom: none; }
+  .animals-table-row:hover { background: #fafaf8; }
+  .animal-thumb { width: 40px; height: 40px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .animal-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .animal-name-cell { min-width: 0; }
+  .animal-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .animal-sub { font-size: 11px; color: var(--text-muted); }
+  .status-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 3px; }
+  .status-visible { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+  .status-hidden { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .animal-actions { display: flex; gap: 6px; }
+  .action-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--white); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; text-decoration: none; }
+  .action-btn:hover { border-color: var(--purple); background: var(--purple-light); }
+  .action-btn.danger:hover { border-color: var(--red); background: var(--red-light); }
+
+  /* EMPTY / LOADING STATES */
+  .empty-table { text-align: center; padding: 40px 24px; color: var(--text-muted); font-size: 14px; }
+  .empty-table .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 9999; display: none; animation: toastIn 0.25s ease; }
+  .toast.show { display: block; }
+  @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(8px); } to { opacity:1; transform:translateX(-50%); } }
+
+  /* TOGGLE */
+  .tgl { position:relative;display:inline-block;width:38px;height:21px;flex-shrink:0 }
+  .tgl input { opacity:0;width:0;height:0 }
+  .tgl-slider { position:absolute;cursor:pointer;inset:0;background:#d1d5db;border-radius:21px;transition:.2s }
+  .tgl-slider:before { content:'';position:absolute;width:15px;height:15px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s }
+  .tgl input:checked + .tgl-slider { background:#7c3aed }
+  .tgl input:checked + .tgl-slider:before { transform:translateX(17px) }
+
+  /* ALERT */
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-bottom: 8px; display: none; }
+  .alert.show { display: flex; align-items: flex-start; gap: 8px; }
+  .alert-error { background: var(--red-light); color: var(--red); border: 1px solid rgba(220,38,38,0.2); }
+  .alert-success { background: var(--green-light); color: var(--green-dark); border: 1px solid rgba(90,158,26,0.25); }
+
+  @media (max-width: 700px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .animals-table-header { display: none; }
+    .animals-table-row { grid-template-columns: 40px 1fr auto; gap: 8px; }
+    .animals-table-row > :nth-child(3), .animals-table-row > :nth-child(4), .animals-table-row > :nth-child(5) { display: none; }
+    .refuge-hero { flex-direction: column; gap: 12px; }
+    .refuge-hero-actions { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
+  <div class="header-right">
+    <a href="index.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour
+    </a>
+    <div id="headerAuth"></div>
+  </div>
+</header>
+
+<!-- LOADING -->
+<div class="page-loading" id="loadingState">
+  <div class="loading-spinner"></div>
+  <span>Chargement de votre espace refuge…</span>
+</div>
+
+<!-- ERROR -->
+<div class="page-error" id="errorState" style="display:none">
+  <span class="error-emoji">🔒</span>
+  <strong class="error-title" id="errorTitle">Accès refusé</strong>
+  <span id="errorMsg">Vous n'êtes pas gestionnaire d'un refuge.</span>
+  <a href="index.html" class="btn-ghost" style="margin-top:8px">Retour à l'accueil</a>
+</div>
+
+<!-- CONTENT -->
+<main id="pageContent" style="display:none">
+
+  <div id="alertMsg" class="alert"></div>
+
+  <!-- REFUGE HERO -->
+  <div class="refuge-hero">
+    <div class="refuge-hero-logo" id="refugeLogo">🏠</div>
+    <div class="refuge-hero-info">
+      <div class="refuge-hero-type" id="refugeType">Refuge</div>
+      <div class="refuge-hero-name" id="refugeName">—</div>
+      <div class="refuge-hero-loc" id="refugeLoc"></div>
+    </div>
+    <div class="refuge-hero-actions">
+      <a id="viewPageBtn" href="#" target="_blank" class="btn-ghost">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Voir ma fiche
+      </a>
+      <button class="btn-ghost" onclick="showEditForm()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Modifier ma fiche
+      </button>
+      <a href="deposer.html" class="btn-purple">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Publier un animal
+      </a>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value" id="statAnimaux">—</div>
+      <div class="stat-label">Animaux publiés</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statVisible">—</div>
+      <div class="stat-label">Visibles sur le site</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statAdoption">—</div>
+      <div class="stat-label">Proposés à l'adoption</div>
+    </div>
+  </div>
+
+  <!-- EDIT FORM (masqué par défaut) -->
+  <div id="editFormSection" style="display:none">
+    <div style="background:var(--white);border:1px solid #ddd6fe;border-radius:14px;padding:22px">
+      <h2 style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:16px;color:var(--purple-dark)">✏️ Modifier la fiche refuge</h2>
+      <div style="display:grid;gap:12px">
+        <div>
+          <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px">Description</label>
+          <textarea id="editDesc" rows="4" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;resize:vertical;background:var(--bg)"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px">Email de contact</label>
+            <input type="email" id="editEmail" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;background:var(--bg)">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px">Téléphone</label>
+            <input type="tel" id="editTel" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;background:var(--bg)">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px">Site web</label>
+          <input type="url" id="editSite" placeholder="https://…" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;background:var(--bg)">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px">URL du logo</label>
+          <input type="url" id="editLogo" placeholder="https://…" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font-body);font-size:14px;outline:none;background:var(--bg)">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+        <button class="btn-ghost" onclick="hideEditForm()">Annuler</button>
+        <button class="btn-purple" id="saveEditBtn" onclick="saveRefugeEdit()">Enregistrer les modifications</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTE DES ANIMAUX -->
+  <div>
+    <div class="section-hdr">
+      <h2>🐾 Mes animaux publiés</h2>
+      <a href="deposer.html" class="btn-primary" style="font-size:12px;padding:6px 14px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ajouter
+      </a>
+    </div>
+    <div class="animals-table">
+      <div class="animals-table-header">
+        <span></span>
+        <span>Titre</span>
+        <span>Espèce</span>
+        <span>Type</span>
+        <span>Statut</span>
+        <span>Actions</span>
+      </div>
+      <div id="animalsTableBody">
+        <div class="empty-table">
+          <div class="loading-spinner" style="margin:0 auto 10px"></div>
+          <p>Chargement…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:            "__FIREBASE_API_KEY__",
+  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
+  projectId:         "__FIREBASE_PROJECT_ID__",
+  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:             "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+function escHTML(s) {
+  if (!s && s !== 0) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function formatDate(str) {
+  if (!str) return '';
+  return new Date(str).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
+}
+
+let _currentUser = null;
+let _refuge = null;
+let _refugeId = null;
+let _animals = [];
+
+const ESPECE_EMOJI = {
+  'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇',
+  'Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐','Insecte':'🐛',
+  'Araignée':'🕷️','Plante':'🌿','Autre':'🔵'
+};
+
+/* ── Toast ── */
+function toast(msg, type='s') {
+  const el = document.getElementById('toast');
+  el.textContent = (type === 's' ? '✅ ' : '❌ ') + msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ── Header auth ── */
+function renderHeaderAuth(user) {
+  const el = document.getElementById('headerAuth');
+  if (!el) return;
+  if (!user) { el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`; return; }
+  const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:8px">
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--purple);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${initials}</div>
+    <button class="btn-ghost" onclick="auth.signOut()">Se déconnecter</button>
+  </div>`;
+}
+
+/* ── Edit form ── */
+function showEditForm() {
+  if (!_refuge) return;
+  document.getElementById('editDesc').value  = _refuge.description  || '';
+  document.getElementById('editEmail').value = _refuge.email        || '';
+  document.getElementById('editTel').value   = _refuge.telephone    || '';
+  document.getElementById('editSite').value  = _refuge.website      || '';
+  document.getElementById('editLogo').value  = _refuge.logo_url     || '';
+  document.getElementById('editFormSection').style.display = 'block';
+  document.getElementById('editFormSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function hideEditForm() {
+  document.getElementById('editFormSection').style.display = 'none';
+}
+
+async function saveRefugeEdit() {
+  if (!_refugeId) return;
+  const btn = document.getElementById('saveEditBtn');
+  btn.disabled = true; btn.textContent = 'Enregistrement…';
+  try {
+    const update = {
+      description: document.getElementById('editDesc').value.trim()  || null,
+      email:       document.getElementById('editEmail').value.trim() || null,
+      telephone:   document.getElementById('editTel').value.trim()   || null,
+      website:     document.getElementById('editSite').value.trim()  || null,
+      logo_url:    document.getElementById('editLogo').value.trim()  || null,
+    };
+    await db.collection('refuges').doc(_refugeId).update(update);
+    Object.assign(_refuge, update);
+    renderRefugeHero();
+    hideEditForm();
+    toast('Fiche mise à jour avec succès !');
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'e');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Enregistrer les modifications';
+  }
+}
+
+/* ── Rendu hero ── */
+function renderRefugeHero() {
+  const r = _refuge;
+  const logoEl = document.getElementById('refugeLogo');
+  if (r.logo_url) {
+    logoEl.innerHTML = `<img src="${escHTML(r.logo_url)}" alt="">`;
+  } else {
+    logoEl.textContent = '🏠';
+  }
+  document.getElementById('refugeType').textContent = r.type || 'Refuge';
+  document.getElementById('refugeName').textContent = r.nom || '—';
+  document.getElementById('refugeLoc').textContent = [r.ville, r.code_postal ? '(' + r.code_postal + ')' : ''].filter(Boolean).join(' ');
+  document.getElementById('viewPageBtn').href = `refuge.html?id=${escHTML(_refugeId)}`;
+}
+
+/* ── Rendu stats ── */
+function renderStats() {
+  const total = _animals.length;
+  const visible = _animals.filter(a => a.Visible !== false && a.Statut !== 'Vendu').length;
+  const adoption = _animals.filter(a => (a.Type_annonce || '').includes('adopter') || (a.Type_annonce || '').includes('Adopter')).length;
+  document.getElementById('statAnimaux').textContent  = total;
+  document.getElementById('statVisible').textContent  = visible;
+  document.getElementById('statAdoption').textContent = adoption;
+}
+
+/* ── Rendu table animaux ── */
+function renderAnimals() {
+  const tbody = document.getElementById('animalsTableBody');
+  if (_animals.length === 0) {
+    tbody.innerHTML = `<div class="empty-table">
+      <div class="empty-icon">🐾</div>
+      <p>Aucun animal publié pour ce refuge.</p>
+      <a href="deposer.html" class="btn-purple" style="margin-top:12px;text-decoration:none">Publier votre premier animal</a>
+    </div>`;
+    return;
+  }
+  tbody.innerHTML = _animals.map(a => {
+    const emoji = ESPECE_EMOJI[a['Espèce']] || '🐾';
+    const photoUrl = a['Photos']?.[0]?.url || null;
+    const isVisible = a['Visible'] !== false && a['Statut'] !== 'Vendu';
+    const typeAd = a['Type_annonce'] || '';
+    return `<div class="animals-table-row">
+      <div class="animal-thumb">
+        ${photoUrl ? `<img src="${escHTML(photoUrl)}" alt="" onerror="this.parentNode.textContent='${emoji}'">` : emoji}
+      </div>
+      <div class="animal-name-cell">
+        <div class="animal-title">${escHTML(a['Titre'] || 'Sans titre')}</div>
+        <div class="animal-sub">${formatDate(a['Date_creation'])}</div>
+      </div>
+      <div>${emoji} ${escHTML(a['Espèce'] || '—')}</div>
+      <div style="font-size:12px">${escHTML(typeAd)}</div>
+      <div>
+        <span class="status-badge ${isVisible ? 'status-visible' : 'status-hidden'}">
+          ${isVisible ? '● Visible' : '● Masqué'}
+        </span>
+      </div>
+      <div class="animal-actions">
+        <a class="action-btn" href="annonce.html?id=${escHTML(a._id)}" target="_blank" title="Voir">👁️</a>
+        <a class="action-btn" href="editer.html?id=${escHTML(a._id)}" title="Modifier">✏️</a>
+        <button class="action-btn danger" onclick="toggleVisibility('${escHTML(a._id)}', ${isVisible})" title="${isVisible ? 'Masquer' : 'Rendre visible'}">
+          ${isVisible ? '🙈' : '👁️'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Toggle visibilité ── */
+async function toggleVisibility(annonceId, isVisible) {
+  try {
+    await db.collection('annonces').doc(annonceId).update({ Visible: !isVisible });
+    const a = _animals.find(x => x._id === annonceId);
+    if (a) a['Visible'] = !isVisible;
+    renderAnimals();
+    renderStats();
+    toast(isVisible ? 'Annonce masquée.' : 'Annonce visible.');
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'e');
+  }
+}
+
+/* ── Init ── */
+async function init() {
+  auth.onAuthStateChanged(async user => {
+    renderHeaderAuth(user);
+    if (!user) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'flex';
+      document.getElementById('errorMsg').textContent = 'Vous devez être connecté pour accéder à cet espace.';
+      return;
+    }
+    _currentUser = user;
+
+    try {
+      // Lire le profil pour trouver le refuge_id
+      const userSnap = await db.collection('users').doc(user.uid).get();
+      if (!userSnap.exists || !userSnap.data().refuge_id) {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('errorState').style.display = 'flex';
+        return;
+      }
+      _refugeId = userSnap.data().refuge_id;
+
+      // Charger le refuge
+      const refugeSnap = await db.collection('refuges').doc(_refugeId).get();
+      if (!refugeSnap.exists) {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('errorState').style.display = 'flex';
+        document.getElementById('errorMsg').textContent = 'Refuge introuvable. Contactez l\'administrateur.';
+        return;
+      }
+      _refuge = refugeSnap.data();
+
+      // Charger les annonces du refuge
+      const annonceSnap = await db.collection('annonces')
+        .where('refuge_id', '==', _refugeId)
+        .orderBy('Date_creation', 'desc')
+        .get();
+      _animals = annonceSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+
+      // Afficher
+      renderRefugeHero();
+      renderStats();
+      renderAnimals();
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('pageContent').style.display = 'flex';
+
+    } catch(e) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'flex';
+      document.getElementById('errorTitle').textContent = 'Erreur';
+      document.getElementById('errorMsg').textContent = e.message;
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>

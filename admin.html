@@ -673,6 +673,13 @@
         <p class="fhint">Généré automatiquement depuis le nom. Lien : <code>refuge.html?slug=…</code></p>
       </div>
 
+      <div class="frow">
+        <label class="flbl" for="rfmGerant">Email du gestionnaire <span style="font-weight:400;color:var(--text-muted)">(optionnel)</span></label>
+        <input type="email" id="rfmGerant" class="finput" placeholder="gestionnaire@refuge.fr">
+        <p class="fhint">Ce compte pourra modifier la fiche et publier des annonces via <code>mon-refuge.html</code></p>
+        <div id="rfmGerantStatus" style="font-size:11px;margin-top:3px"></div>
+      </div>
+
       <div class="frow" style="display:flex;align-items:center;gap:12px">
         <label class="tgl">
           <input type="checkbox" id="rfmVisible" checked>
@@ -982,8 +989,9 @@ function openRefugeModal(id) {
     // Mode création
     document.getElementById('rfmTitle').textContent = '🏠 Nouveau refuge';
     document.getElementById('rfmId').value = '';
-    ['rfmNom','rfmDesc','rfmAdresse','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug']
-      .forEach(id => document.getElementById(id).value = '');
+    ['rfmNom','rfmDesc','rfmAdresse','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug','rfmGerant']
+      .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    const gs = document.getElementById('rfmGerantStatus'); if(gs) gs.textContent = '';
     rfmGeoReset();
     document.getElementById('rfmType').value = 'Refuge';
     document.getElementById('rfmVisible').checked = true;
@@ -1100,6 +1108,7 @@ async function saveRefuge() {
   btn.disabled = true; btn.textContent = 'Enregistrement…';
   try {
     const id = document.getElementById('rfmId').value;
+    let refugeDocId = id;
     if (id) {
       // Mise à jour
       await db.collection('refuges').doc(id).update(data);
@@ -1110,9 +1119,30 @@ async function saveRefuge() {
       // Création
       data.created_at = firebase.firestore.FieldValue.serverTimestamp();
       const ref = await db.collection('refuges').add(data);
+      refugeDocId = ref.id;
       _refuges.unshift({ id: ref.id, ...data });
       toast('Refuge créé ! Lien : refuge.html?id=' + ref.id, 's');
     }
+
+    // ── Lier le gestionnaire au refuge ──────────────────────────────────────
+    const gerantEmail = document.getElementById('rfmGerant').value.trim().toLowerCase();
+    const statusEl    = document.getElementById('rfmGerantStatus');
+    if (gerantEmail && refugeDocId) {
+      try {
+        const uSnap = await db.collection('users')
+          .where('email', '==', gerantEmail).limit(1).get();
+        if (!uSnap.empty) {
+          await db.collection('users').doc(uSnap.docs[0].id).update({ refuge_id: refugeDocId });
+          if (statusEl) statusEl.style.color = '#15803d';
+          if (statusEl) statusEl.textContent = '✓ Gestionnaire lié : ' + gerantEmail;
+        } else {
+          if (statusEl) statusEl.style.color = '#b45309';
+          if (statusEl) statusEl.textContent = '⚠ Aucun compte trouvé pour ' + gerantEmail + ' (le lien sera actif dès que le compte sera créé)';
+        }
+      } catch(ge) { /* non bloquant */ }
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
     renderRefuges();
     closeRefugeModal();
   } catch(e) {

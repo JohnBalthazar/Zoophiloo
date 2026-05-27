@@ -442,6 +442,9 @@
   /* Chip Refuges */
   .chip-refuge:hover { border-color: #7c3aed !important; color: #7c3aed !important; }
   .chip-refuge.active { background: #7c3aed !important; color: white !important; border-color: #7c3aed !important; }
+  /* Tag refuge sur les cartes annonces */
+  .tag-refuge { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; }
+  .tag-refuge:hover { background: #ede9fe; border-color: #c4b5fd; }
 
   /* Cluster markercluster — couleurs thème */
   .marker-cluster-small,
@@ -1283,7 +1286,12 @@ function _cardExtras(f, recordId) {
   const sexeStr = f['Sexe']==='Mâle' ? '♂' : f['Sexe']==='Femelle' ? '♀' : '';
   const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
     ? `${escHTML(String(f['Age_valeur']))} ${escHTML(f['Age_unite']||'')}`.trim() : '';
-  return { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeClass, typeLabel, pedigreeBadge, distBadge, distKm, sexeStr, ageStr };
+  const refugeId = f['refuge_id'] || '';
+  const refugeName = refugeId && refugeNameMap[refugeId] ? refugeNameMap[refugeId] : '';
+  const refugeBadge = refugeName
+    ? `<span class="tag tag-refuge" onclick="event.stopPropagation();window.location.href='refuge.html?id=${escHTML(refugeId)}'">🏠 ${escHTML(refugeName)}</span>`
+    : '';
+  return { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeClass, typeLabel, pedigreeBadge, distBadge, distKm, sexeStr, ageStr, refugeBadge, refugeId, refugeName };
 }
 
 function renderList() {
@@ -1309,7 +1317,7 @@ function renderList() {
   } else {
     container.innerHTML = filteredRecords.map(record => {
       const f = record.fields;
-      const { price, emoji, photoUrl, isDon, isAdopt, typeClass, typeLabel, pedigreeBadge, distBadge } = _cardExtras(f, record.id);
+      const { price, emoji, photoUrl, isDon, isAdopt, typeClass, typeLabel, pedigreeBadge, distBadge, refugeBadge } = _cardExtras(f, record.id);
       const sexeStr = f['Sexe']==='Mâle' ? '♂ Mâle' : f['Sexe']==='Femelle' ? '♀ Femelle' : '';
       const ageStr  = (f['Age_valeur'] != null && f['Age_valeur'] !== '')
         ? `${escHTML(String(f['Age_valeur']))} ${escHTML(f['Age_unite']||'')}`.trim() : '';
@@ -1324,7 +1332,7 @@ function renderList() {
           <div class="ad-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</div>
           ${caracHtml}
           <div class="ad-price ${price.cls}">${escHTML(price.text)}</div>
-          <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDon||isAdopt)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}</div>
+          <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDon||isAdopt)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}${refugeBadge}</div>
         </div>
         <span class="ad-date">${formatDate(f['Date_creation'])}</span>
         <button class="fav-btn classic-fav" data-id="${safeId}" onclick="toggleFavorite('${safeId}',event)" title="${userFavorites.has(record.id)?'Retirer des favoris':'Ajouter aux favoris'}">${userFavorites.has(record.id)?'❤️':'🤍'}</button>
@@ -1335,7 +1343,7 @@ function renderList() {
 
 function renderCardSPA(record) {
   const f  = record.fields;
-  const { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeLabel, sexeStr, ageStr } = _cardExtras(f, record.id);
+  const { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeLabel, sexeStr, ageStr, refugeBadge, refugeId } = _cardExtras(f, record.id);
   const safeId = escHTML(record.id);
   const typeCls = isDon?'spa-type-don':isAdopt?'spa-type-adopt':isPerdu?'spa-type-perdu':isTrouve?'spa-type-trouve':'spa-type-vente';
   const caracParts = [sexeStr, ageStr].filter(Boolean);
@@ -1351,6 +1359,7 @@ function renderCardSPA(record) {
     <div class="spa-body">
       <div class="spa-name">${escHTML(f['Titre'])||'Sans titre'}</div>
       <div class="spa-sub">${sub}</div>
+      ${refugeBadge ? `<div style="margin-top:5px">${refugeBadge}</div>` : ''}
       <div class="spa-footer">
         <span class="spa-price ${price.cls}">${escHTML(price.text)}</span>
         ${caracParts.length ? `<span class="spa-carac">${caracParts.join(' · ')}</span>` : `<span class="spa-carac">${formatDate(f['Date_creation'])}</span>`}
@@ -1361,7 +1370,7 @@ function renderCardSPA(record) {
 
 function renderCardUne(record) {
   const f  = record.fields;
-  const { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeLabel } = _cardExtras(f, record.id);
+  const { price, emoji, photoUrl, isDon, isAdopt, isPerdu, isTrouve, typeLabel, refugeBadge } = _cardExtras(f, record.id);
   const safeId   = escHTML(record.id);
   const typeCls  = isDon?'une-type-don':isAdopt?'une-type-adopt':isPerdu?'une-type-perdu':isTrouve?'une-type-trouve':'une-type-vente';
   const isUrgent = f['Urgence'] === true;
@@ -1388,6 +1397,7 @@ function renderCardUne(record) {
       </div>
       <div class="une-title">${escHTML(f['Titre'])||'Sans titre'}</div>
       <div class="une-race">${race}</div>
+      ${refugeBadge ? `<div style="margin-top:5px">${refugeBadge}</div>` : ''}
       <div class="une-bottom">
         <span class="une-loc">📍 ${ville}${dept ? ' ' + dept : ''}</span>
         <div style="display:flex;align-items:center;gap:8px">
@@ -1418,6 +1428,7 @@ let refugeLayer    = null;
 let refugeMarkers  = {};
 let allRefuges     = [];
 let showRefuges    = false;
+let refugeNameMap  = {};  // refugeId → nom (pour badges sur les cartes)
 
 async function fetchRefuges(retries = 0) {
   if (typeof db === 'undefined') {
@@ -1736,6 +1747,7 @@ async function init() {
     const [annonces, refuges] = await Promise.all([fetchAnnonces(), fetchRefuges()]);
     allRecords = annonces;
     allRefuges = refuges;
+    refugeNameMap = Object.fromEntries(refuges.map(r => [r.id, r.data.nom || '']));
     filteredRecords = allRecords;
 
     // Badge compteur sur le chip
@@ -2230,7 +2242,7 @@ function dismissEcoBanner() {
 </script>
 
 <footer style="text-align:center;padding:20px 16px 32px;font-size:12px;color:#888;border-top:1px solid #eee;margin-top:8px;">
-  © 2025 YoupiZoo &nbsp;·&nbsp; <a href="apropos.html" style="color:#5a9e1a;text-decoration:none;">À propos</a> &nbsp;·&nbsp; <a href="cgu.html" style="color:#5a9e1a;text-decoration:none;">CGU</a> &nbsp;·&nbsp; <a href="mailto:contact@youpizoo.fr" style="color:#5a9e1a;text-decoration:none;">Contact</a>
+  © 2025 YoupiZoo &nbsp;·&nbsp; <a href="refuges.html" style="color:#7c3aed;text-decoration:none;">🏠 Refuges partenaires</a> &nbsp;·&nbsp; <a href="apropos.html" style="color:#5a9e1a;text-decoration:none;">À propos</a> &nbsp;·&nbsp; <a href="cgu.html" style="color:#5a9e1a;text-decoration:none;">CGU</a> &nbsp;·&nbsp; <a href="mailto:contact@youpizoo.fr" style="color:#5a9e1a;text-decoration:none;">Contact</a>
 </footer>
 </body>
 </html>

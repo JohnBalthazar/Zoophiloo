@@ -21,6 +21,12 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
+    // Gestionnaire d'un refuge (utilisateur ayant refuge_id == l'ID du refuge)
+    function isRefugeManager(refugeId) {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.refuge_id == refugeId;
+    }
+
     // ─────────────────────────────────────────────────────────
     // ANNONCES
     // ─────────────────────────────────────────────────────────
@@ -150,12 +156,18 @@ service cloud.firestore {
     // REFUGES & ASSOCIATIONS
     // ─────────────────────────────────────────────────────────
     match /refuges/{refugeId} {
-      // Lecture : public pour les fiches visibles, admin pour toutes
-      // resource == null couvre le cas d'un doc inexistant (retourne exists:false au client)
-      allow read: if resource == null || resource.data.visible == true || isAdmin();
+      // Lecture : public pour les fiches visibles, admin pour toutes, gérant pour la sienne
+      allow read: if resource == null || resource.data.visible == true
+                  || isAdmin() || isRefugeManager(refugeId);
 
-      // Écriture : admin uniquement (pas d'auto-inscription)
-      allow create, update, delete: if isAdmin();
+      // Création / suppression : admin uniquement
+      allow create, delete: if isAdmin();
+
+      // Modification : admin ou gestionnaire du refuge (ne peut PAS changer visible/slug)
+      allow update: if isAdmin()
+                    || (isRefugeManager(refugeId)
+                        && !request.resource.data.diff(resource.data)
+                            .affectedKeys().hasAny(['visible','slug','created_at']));
     }
 
     // ─────────────────────────────────────────────────────────

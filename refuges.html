@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Google Analytics : chargé conditionnellement par cookies.js (RGPD) -->
+<meta charset="UTF-8">
+<meta name="theme-color" content="#7c3aed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refuges & Associations partenaires — YoupiZoo</title>
+<meta name="description" content="Découvrez les refuges et associations animalières partenaires de YoupiZoo. Adoptez un animal et donnez-lui une seconde chance.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.youpizoo.fr/refuges.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Refuges & Associations partenaires — YoupiZoo">
+<meta property="og:description" content="Trouvez un refuge ou une association animalière près de chez vous sur YoupiZoo.">
+<meta property="og:url" content="https://www.youpizoo.fr/refuges.html">
+<meta property="og:image" content="https://www.youpizoo.fr/og-image.jpg">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="YoupiZoo">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #5a9e1a; --green-dark: #478015; --green-light: #f0f8e6;
+    --purple: #7c3aed; --purple-dark: #6d28d9; --purple-light: #f5f3ff;
+    --text: #1a1a1a; --text-muted: #6b6b6b; --border: #e8e8e4;
+    --bg: #fafaf8; --white: #ffffff;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* HEADER */
+  header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 51px; width: auto; display: block; }
+  .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
+  .header-left { display: flex; align-items: center; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 6px 16px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+
+  /* HERO BANNER */
+  .hero-banner {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
+    padding: 40px 24px 36px;
+    text-align: center;
+    color: white;
+  }
+  .hero-banner h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+  .hero-banner p { font-size: 15px; opacity: 0.88; max-width: 520px; margin: 0 auto 20px; line-height: 1.6; }
+  .hero-stats { display: flex; justify-content: center; gap: 32px; font-size: 13px; opacity: 0.85; }
+  .hero-stat strong { font-size: 22px; font-weight: 700; display: block; }
+
+  /* MAIN */
+  main { flex: 1; max-width: 1040px; width: 100%; margin: 0 auto; padding: 28px 24px 48px; }
+
+  /* SEARCH BAR */
+  .search-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 16px; margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .search-bar input {
+    flex: 1; border: none; outline: none; font-family: var(--font-body);
+    font-size: 14px; background: transparent; color: var(--text);
+  }
+  .search-bar input::placeholder { color: var(--text-muted); }
+  .search-icon { color: var(--text-muted); flex-shrink: 0; }
+
+  /* FILTER CHIPS */
+  .filter-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .chip { font-family: var(--font-body); font-size: 12px; font-weight: 500; padding: 5px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--white); color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+  .chip:hover { border-color: var(--purple); color: var(--purple); }
+  .chip.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+  /* RESULTS COUNT */
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .results-count { font-size: 13px; color: var(--text-muted); }
+  .results-count strong { color: var(--text); }
+
+  /* REFUGES GRID */
+  .refuges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+  /* REFUGE CARD */
+  .refuge-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.15s;
+  }
+  .refuge-card:hover { border-color: #c4b5fd; box-shadow: 0 6px 20px rgba(124,58,237,0.12); transform: translateY(-2px); }
+  .refuge-card-header {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid #ddd6fe;
+  }
+  .refuge-card-logo {
+    width: 60px; height: 60px; border-radius: 12px;
+    background: white; border: 2px solid #ddd6fe;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0; overflow: hidden;
+  }
+  .refuge-card-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .refuge-card-info { flex: 1; min-width: 0; }
+  .refuge-card-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--purple); margin-bottom: 4px; }
+  .refuge-card-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .refuge-card-loc { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+  .refuge-card-body { padding: 14px 18px; flex: 1; }
+  .refuge-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 12px; }
+  .refuge-card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .refuge-animal-count { font-size: 12px; font-weight: 500; color: var(--purple-dark); background: var(--purple-light); padding: 3px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+  .refuge-card-btn { font-size: 12px; color: var(--purple); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+
+  /* BADGE VÉRIFIÉ */
+  .verified-badge { font-size: 10px; font-weight: 700; background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 10px; border: 1px solid #bbf7d0; display: inline-flex; align-items: center; gap: 3px; margin-top: 4px; }
+
+  /* EMPTY / LOADING */
+  .state-empty, .state-loading { text-align: center; padding: 60px 24px; color: var(--text-muted); font-size: 14px; }
+  .state-icon { font-size: 40px; margin-bottom: 12px; }
+  .state-loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ECO BANNER */
+  .eco-banner { background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%); border-bottom: 1px solid #a0d860; padding: 6px 44px 6px 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #4a7a12; font-family: var(--font-body); position: relative; flex-shrink: 0; text-align: center; line-height: 1.4; }
+  .eco-banner a { color: #4a7a12; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner-dismiss { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: none; background: rgba(90,158,26,0.12); color: #4a7a12; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
+
+  /* CTA REFUGE */
+  .cta-refuge {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #ddd6fe; border-radius: 14px;
+    padding: 24px; text-align: center; margin-top: 32px;
+  }
+  .cta-refuge h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--purple-dark); }
+  .cta-refuge p { font-size: 13px; color: #6d28d9; margin-bottom: 16px; line-height: 1.6; }
+  .btn-purple { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 9px 20px; border: none; border-radius: 8px; background: var(--purple); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+  .btn-purple:hover { background: var(--purple-dark); }
+
+  /* BREADCRUMB */
+  .breadcrumb { padding: 10px 24px; font-size: 12px; color: var(--text-muted); background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--purple); }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  @media (max-width: 680px) {
+    .eco-banner { display: none !important; }
+    footer { display: none !important; }
+    .tagline { display: none; }
+    .hero-banner h1 { font-size: 22px; }
+    .hero-stats { gap: 20px; }
+    main { padding: 16px 16px 32px; }
+    .refuges-grid { grid-template-columns: 1fr; }
+  }
+</style>
+<link rel="stylesheet" href="cookies.css">
+</head>
+<body>
+
+<!-- ECO BANNER -->
+<div class="eco-banner" id="ecoBanner">
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/ecologie" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
+    <span class="tagline">Trouvez vos animaux près de chez vous</span>
+  </div>
+  <div class="header-right">
+    <a href="index.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour aux annonces
+    </a>
+    <div id="headerAuth">
+      <button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>
+    </div>
+    <a href="deposer.html" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Déposer une annonce
+    </a>
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <a href="index.html">Accueil</a>
+  <span class="sep">›</span>
+  <span>Refuges &amp; Associations</span>
+</div>
+
+<!-- HERO -->
+<div class="hero-banner">
+  <h1>🏠 Refuges &amp; Associations partenaires</h1>
+  <p>Adoptez auprès d'organisations vérifiées et redonnez une seconde chance à un animal dans le besoin.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong id="statRefuges">—</strong>refuges partenaires</div>
+    <div class="hero-stat"><strong id="statAnimaux">—</strong>animaux disponibles</div>
+  </div>
+</div>
+
+<main>
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Rechercher par nom ou ville…" oninput="filterRefuges()">
+  </div>
+
+  <!-- FILTRES TYPE -->
+  <div class="filter-chips" id="typeFilters">
+    <button class="chip active" data-type="" onclick="setTypeFilter(this, '')">Tous</button>
+    <button class="chip" data-type="Refuge" onclick="setTypeFilter(this, 'Refuge')">🏠 Refuge</button>
+    <button class="chip" data-type="SPA" onclick="setTypeFilter(this, 'SPA')">🐾 SPA</button>
+    <button class="chip" data-type="Association" onclick="setTypeFilter(this, 'Association')">🤝 Association</button>
+    <button class="chip" data-type="Autre" onclick="setTypeFilter(this, 'Autre')">Autre</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-header">
+    <p class="results-count" id="resultsCount"><strong>—</strong> refuge(s)</p>
+  </div>
+
+  <div id="container">
+    <div class="state-loading">
+      <div class="state-loading-spinner"></div>
+      <p>Chargement des refuges…</p>
+    </div>
+  </div>
+
+  <!-- CTA DEVENIR PARTENAIRE -->
+  <div class="cta-refuge">
+    <h3>Vous gérez un refuge ou une association ?</h3>
+    <p>Rejoignez YoupiZoo gratuitement et donnez plus de visibilité à vos animaux. Fiche vitrine personnalisée, présence sur la carte géolocalisée, et accès à des milliers de personnes cherchant à adopter.</p>
+    <a href="mailto:contact@youpizoo.fr?subject=Demande%20de%20partenariat%20refuge" class="btn-purple">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Nous contacter pour un partenariat
+    </a>
+  </div>
+</main>
+
+<script src="cookies.js"></script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:            "__FIREBASE_API_KEY__",
+  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
+  projectId:         "__FIREBASE_PROJECT_ID__",
+  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:             "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+function escHTML(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+let allRefuges = [];
+let filteredRefuges = [];
+let currentType = '';
+let animalCounts = {}; // refugeId → count
+
+/* ── Eco banner ── */
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    const b = document.getElementById('ecoBanner');
+    if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  const b = document.getElementById('ecoBanner');
+  if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+
+/* ── Header auth ── */
+const _styleEl = document.createElement('style');
+_styleEl.textContent = `.user-menu{position:relative}.user-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 5px;border:1px solid var(--border);border-radius:20px;background:var(--white);cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text);transition:all .15s}.user-btn:hover{border-color:var(--green);background:var(--green-light)}.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;overflow:hidden}.user-avatar img{width:100%;height:100%;object-fit:cover}.user-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-dropdown{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.1);min-width:180px;z-index:1000;overflow:hidden}.user-dropdown.open{display:block}.user-dropdown-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .12s;border:none;background:transparent;width:100%;font-family:var(--font-body);text-align:left;text-decoration:none}.user-dropdown-item:hover{background:var(--green-light);color:var(--green-dark)}.user-dropdown-item.danger:hover{background:#fdf0ee;color:#c0392b}.dropdown-divider{height:1px;background:var(--border)}#headerAuth{display:flex;align-items:center;gap:8px}`;
+document.head.appendChild(_styleEl);
+function renderHeaderAuth(user) {
+  const el = document.getElementById('headerAuth');
+  if (!el) return;
+  if (!user) { el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='login.html'">Se connecter</button>`; return; }
+  const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const avatarHtml = user.photoURL ? `<img src="${user.photoURL}" alt="">` : initials;
+  const displayName = user.displayName || user.email.split('@')[0];
+  el.innerHTML = `<div class="user-menu" id="userMenu"><button class="user-btn" onclick="document.getElementById('userDropdown')?.classList.toggle('open')"><div class="user-avatar">${avatarHtml}</div><span class="user-name">${escHTML(displayName)}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button><div class="user-dropdown" id="userDropdown"><a href="mon-espace.html" class="user-dropdown-item">Mon espace</a><div class="dropdown-divider"></div><button onclick="auth.signOut()" class="user-dropdown-item danger">Se déconnecter</button></div></div>`;
+}
+document.addEventListener('click', e => { if (!e.target.closest('#userMenu')) document.getElementById('userDropdown')?.classList.remove('open'); });
+
+/* ── Rendu des cartes ── */
+function renderRefugeCard(r) {
+  const d = r.data;
+  const count = animalCounts[r.id] || 0;
+  const hasLogo = d.logo_url ? true : false;
+  return `<a class="refuge-card" href="refuge.html?id=${escHTML(r.id)}">
+    <div class="refuge-card-header">
+      <div class="refuge-card-logo">
+        ${hasLogo ? `<img src="${escHTML(d.logo_url)}" alt="${escHTML(d.nom||'')}">` : '🏠'}
+      </div>
+      <div class="refuge-card-info">
+        <div class="refuge-card-type">${escHTML(d.type || 'Refuge')}</div>
+        <div class="refuge-card-name">${escHTML(d.nom || 'Refuge')}</div>
+        ${d.ville ? `<div class="refuge-card-loc"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${escHTML(d.ville)}${d.code_postal ? ' (' + escHTML(d.code_postal) + ')' : ''}</div>` : ''}
+        <span class="verified-badge">✓ Partenaire vérifié</span>
+      </div>
+    </div>
+    <div class="refuge-card-body">
+      ${d.description ? `<div class="refuge-card-desc">${escHTML(d.description)}</div>` : '<div class="refuge-card-desc" style="font-style:italic">Aucune description disponible.</div>'}
+      <div class="refuge-card-footer">
+        <span class="refuge-animal-count">🐾 ${count} animal${count > 1 ? 'x' : ''} disponible${count > 1 ? 's' : ''}</span>
+        <span class="refuge-card-btn">Voir la fiche →</span>
+      </div>
+    </div>
+  </a>`;
+}
+
+function renderList() {
+  const container = document.getElementById('container');
+  const countEl = document.getElementById('resultsCount');
+  if (filteredRefuges.length === 0) {
+    container.innerHTML = `<div class="state-empty"><div class="state-icon">🏚️</div><p>Aucun refuge ne correspond à votre recherche.</p></div>`;
+    countEl.innerHTML = '<strong>0</strong> refuge';
+    return;
+  }
+  countEl.innerHTML = `<strong>${filteredRefuges.length}</strong> refuge${filteredRefuges.length > 1 ? 's' : ''}`;
+  container.innerHTML = `<div class="refuges-grid">${filteredRefuges.map(renderRefugeCard).join('')}</div>`;
+}
+
+function filterRefuges() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  filteredRefuges = allRefuges.filter(r => {
+    const d = r.data;
+    const matchType = !currentType || d.type === currentType;
+    const matchSearch = !q
+      || (d.nom || '').toLowerCase().includes(q)
+      || (d.ville || '').toLowerCase().includes(q)
+      || (d.description || '').toLowerCase().includes(q);
+    return matchType && matchSearch;
+  });
+  renderList();
+}
+
+function setTypeFilter(btn, type) {
+  currentType = type;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  filterRefuges();
+}
+
+/* ── Chargement ── */
+async function init() {
+  try {
+    // Charger refuges visibles
+    const snap = await db.collection('refuges').where('visible', '==', true).orderBy('nom').get();
+    allRefuges = snap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+
+    // Compter les annonces par refuge (parallel)
+    if (allRefuges.length > 0) {
+      const countPromises = allRefuges.map(r =>
+        db.collection('annonces')
+          .where('refuge_id', '==', r.id)
+          .where('Visible', '==', true)
+          .get()
+          .then(s => { animalCounts[r.id] = s.size; })
+          .catch(() => {})
+      );
+      await Promise.all(countPromises);
+    }
+
+    // Statistiques hero
+    const totalAnimaux = Object.values(animalCounts).reduce((a, b) => a + b, 0);
+    document.getElementById('statRefuges').textContent = allRefuges.length;
+    document.getElementById('statAnimaux').textContent = totalAnimaux;
+
+    filteredRefuges = [...allRefuges];
+    renderList();
+  } catch(e) {
+    document.getElementById('container').innerHTML = `<div class="state-empty"><div class="state-icon">❌</div><p>Erreur de chargement : ${escHTML(e.message)}</p></div>`;
+  }
+}
+
+auth.onAuthStateChanged(user => renderHeaderAuth(user));
+init();
+</script>
+
+<footer style="text-align:center;padding:20px 16px 32px;font-size:12px;color:#888;border-top:1px solid #eee;">
+  © 2025 YoupiZoo &nbsp;·&nbsp; <a href="index.html" style="color:#5a9e1a;text-decoration:none;">Annonces</a> &nbsp;·&nbsp; <a href="apropos.html" style="color:#5a9e1a;text-decoration:none;">À propos</a> &nbsp;·&nbsp; <a href="cgu.html" style="color:#5a9e1a;text-decoration:none;">CGU</a>
+</footer>
+</body>
+</html>

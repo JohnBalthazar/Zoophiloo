@@ -521,6 +521,23 @@
     </div>
   </div>
 
+  <!-- 6. Refuge (visible uniquement pour les gestionnaires) -->
+  <div class="form-section" id="refugeSection" style="display:none">
+    <div class="section-title"><div class="num">6</div>Publier pour votre refuge</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;margin-bottom:12px">
+      <span style="font-size:24px">🏠</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#6d28d9" id="refugeLinkLabel">Votre refuge</div>
+        <div style="font-size:12px;color:#7c3aed">Cet animal sera affiché sur la fiche de votre refuge</div>
+      </div>
+      <label style="margin-left:auto;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+        <input type="checkbox" id="refugePublish" style="width:15px;height:15px;accent-color:#7c3aed" checked>
+        Activer
+      </label>
+    </div>
+    <input type="hidden" id="refuge_id_hidden">
+  </div>
+
   <!-- Submit -->
   <div class="submit-bar">
     <p class="submit-note">Votre annonce sera publiée immédiatement.</p>
@@ -568,6 +585,19 @@ auth.onAuthStateChanged(async user => {
       if (d.adresse_rue) document.getElementById('adresse').value      = d.adresse_rue;
       if (d.code_postal) document.getElementById('code_postal').value  = d.code_postal;
       if (d.ville || d.code_postal) geocodeAddress();
+
+    // Gestionnaire refuge — afficher la section refuge
+    if (d.refuge_id) {
+      document.getElementById('refuge_id_hidden').value = d.refuge_id;
+      document.getElementById('refugeSection').style.display = 'block';
+      // Charger le nom du refuge pour l'afficher
+      try {
+        const rSnap = await db.collection('refuges').doc(d.refuge_id).get();
+        if (rSnap.exists) {
+          document.getElementById('refugeLinkLabel').textContent = '🏠 ' + (rSnap.data().nom || 'Votre refuge');
+        }
+      } catch(re) {}
+    }
     }
   } catch(e) {
     // Fallback : localStorage si Firestore inaccessible
@@ -910,6 +940,11 @@ async function submitAnnonce() {
     if (photoUrls.length > 0) {
       fields['Photos'] = photoUrls.map(url => ({ url }));
     }
+
+    // Lier au refuge si gestionnaire
+    const refugeHidden = document.getElementById('refuge_id_hidden')?.value;
+    const refugePublish = document.getElementById('refugePublish')?.checked;
+    if (refugeHidden && refugePublish) fields['refuge_id'] = refugeHidden;
 
     // Créer dans Firestore — chiffrement RGPD des champs sensibles avant écriture
     fields['Date_creation'] = new Date().toISOString();
