@@ -826,6 +826,19 @@
 
   /* ── TAG SMILE (Don / Adoption) ── */
   .tag-eco { background: #fff3e0; color: #e8622a; border: 1px solid #f4a96a; }
+
+  /* ── PATTES ── */
+  .patte-btn {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: none; border: 1px solid transparent; cursor: pointer;
+    font-size: 12px; color: var(--text-muted); border-radius: 20px;
+    padding: 1px 6px 1px 4px; transition: all 0.15s;
+    font-family: var(--font-body); line-height: 1; white-space: nowrap;
+  }
+  .patte-btn:hover, .patte-btn.patte-active {
+    background: #fff4ee; border-color: var(--orange); color: var(--orange);
+  }
+  .patte-count { font-size: 11px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -1038,6 +1051,7 @@ let allRecords = [], filteredRecords = [];
 let activeEspece = '', activeType = '', searchQuery = '', activeCardId = null;
 let currentView = localStorage.getItem('yz_view') || 'classic';
 let userFavorites = new Set(); // IDs Firestore des annonces likées
+let userPattes    = new Set(); // IDs Firestore des annonces auxquelles l'user a donné une 🐾
 let currentUserUid = null;
 
 function setView(v) {
@@ -1324,6 +1338,7 @@ function renderList() {
       const caracParts = [sexeStr, ageStr].filter(Boolean);
       const caracHtml = caracParts.length
         ? `<div class="ad-carac">${caracParts.join('<span class="carac-sep">·</span>')}</div>` : '';
+      const patteCnt = f['pattes_count'] || 0;
       const safeId = escHTML(record.id);
       return `<div class="ad-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
         <div class="ad-img" data-fb="${emoji}">${photoUrl?`<img src="${escHTML(photoUrl)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}</div>
@@ -1332,7 +1347,7 @@ function renderList() {
           <div class="ad-meta">${escHTML(f['Espèce'])||''}${f['Race']?' · '+escHTML(f['Race']):''}  · ${escHTML(f['Ville'])||''}${f['Code_postal']?' ('+escHTML(f['Code_postal'])+')':''}</div>
           ${caracHtml}
           <div class="ad-price ${price.cls}">${escHTML(price.text)}</div>
-          <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDon||isAdopt)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}${refugeBadge}</div>
+          <div class="ad-tags"><span class="tag ${typeClass}">${typeLabel}</span>${(isDon||isAdopt)?`<span class="tag tag-eco">😊 Smile</span>`:''}${pedigreeBadge}${distBadge}${refugeBadge}<button class="patte-btn${userPattes.has(record.id)?' patte-active':''}" data-id="${safeId}" onclick="togglePatte('${safeId}',event)" title="Donner une patte 🐾">🐾<span class="patte-count">${patteCnt>0?' '+patteCnt:''}</span></button></div>
         </div>
         <span class="ad-date">${formatDate(f['Date_creation'])}</span>
         <button class="fav-btn classic-fav" data-id="${safeId}" onclick="toggleFavorite('${safeId}',event)" title="${userFavorites.has(record.id)?'Retirer des favoris':'Ajouter aux favoris'}">${userFavorites.has(record.id)?'❤️':'🤍'}</button>
@@ -1350,6 +1365,7 @@ function renderCardSPA(record) {
   const espece = escHTML(f['Espèce'])||'';
   const ville  = escHTML(f['Ville'])||'';
   const sub    = [espece, f['Race']?escHTML(f['Race']):'', ville].filter(Boolean).join(' · ');
+  const spaPatteCnt = f['pattes_count'] || 0;
   return `<div class="spa-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
     <div class="spa-photo" data-fb="${emoji}">
       ${photoUrl?`<img src="${escHTML(photoUrl)}" alt="${escHTML(f['Titre']||'')}" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">`:emoji}
@@ -1362,7 +1378,10 @@ function renderCardSPA(record) {
       ${refugeBadge ? `<div style="margin-top:5px">${refugeBadge}</div>` : ''}
       <div class="spa-footer">
         <span class="spa-price ${price.cls}">${escHTML(price.text)}</span>
-        ${caracParts.length ? `<span class="spa-carac">${caracParts.join(' · ')}</span>` : `<span class="spa-carac">${formatDate(f['Date_creation'])}</span>`}
+        <div style="display:flex;align-items:center;gap:4px">
+          <button class="patte-btn${userPattes.has(record.id)?' patte-active':''}" data-id="${safeId}" onclick="togglePatte('${safeId}',event)" title="Donner une patte 🐾">🐾<span class="patte-count">${spaPatteCnt>0?' '+spaPatteCnt:''}</span></button>
+          ${caracParts.length ? `<span class="spa-carac">${caracParts.join(' · ')}</span>` : `<span class="spa-carac">${formatDate(f['Date_creation'])}</span>`}
+        </div>
       </div>
     </div>
   </div>`;
@@ -1380,7 +1399,8 @@ function renderCardUne(record) {
     : isUne ? `<span class="une-badge-top une">À la une</span>` : '';
   const ville = escHTML(f['Ville'])||'';
   const dept  = f['Code_postal'] ? `(${escHTML(f['Code_postal'])})` : '';
-  const race  = f['Race'] ? escHTML(f['Race']) : escHTML(f['Espèce']||'');
+  const race      = f['Race'] ? escHTML(f['Race']) : escHTML(f['Espèce']||'');
+  const unePatteCnt = f['pattes_count'] || 0;
   return `<div class="une-card ${record.id===activeCardId?'active':''}" data-id="${safeId}" onclick="handleCardClick('${safeId}')">
     <div class="une-photo-wrap">
       <div class="une-photo" data-fb="${emoji}">
@@ -1400,9 +1420,10 @@ function renderCardUne(record) {
       ${refugeBadge ? `<div style="margin-top:5px">${refugeBadge}</div>` : ''}
       <div class="une-bottom">
         <span class="une-loc">📍 ${ville}${dept ? ' ' + dept : ''}</span>
-        <div style="display:flex;align-items:center;gap:8px">
+        <div style="display:flex;align-items:center;gap:6px">
           <span class="une-price ${price.cls}">${escHTML(price.text)}</span>
           <button class="fav-btn une-fav" data-id="${safeId}" onclick="toggleFavorite('${safeId}',event)" title="${userFavorites.has(record.id)?'Retirer des favoris':'Ajouter aux favoris'}">${userFavorites.has(record.id)?'❤️':'🤍'}</button>
+          <button class="patte-btn${userPattes.has(record.id)?' patte-active':''}" data-id="${safeId}" onclick="togglePatte('${safeId}',event)" title="Donner une patte 🐾">🐾<span class="patte-count">${unePatteCnt>0?' '+unePatteCnt:''}</span></button>
         </div>
       </div>
     </div>
@@ -2080,6 +2101,7 @@ auth.onAuthStateChanged(user => {
     currentUserUid = user.uid;
     watchUnreadCount(user.uid, user.email);
     loadFavorites(user.uid);
+    loadPattes(user.uid);
     db.collection('users').doc(user.uid).get()
       .then(snap => { if (snap.exists && snap.data().refuge_id) injectRefugeLink(); })
       .catch(() => {});
@@ -2090,6 +2112,7 @@ auth.onAuthStateChanged(user => {
     }
   } else {
     userFavorites = new Set();
+    userPattes    = new Set();
     renderList();
   }
 });
@@ -2131,6 +2154,69 @@ async function toggleFavorite(recordId, e) {
     btn.title         = userFavorites.has(recordId) ? 'Retirer des favoris' : 'Ajouter aux favoris';
     btn.dataset.faved = userFavorites.has(recordId) ? '1' : '';
   });
+}
+
+/* ══════════════════════════════════════════════════
+   PATTES 🐾 — système de "j'aime" public
+══════════════════════════════════════════════════ */
+async function loadPattes(uid) {
+  try {
+    const snap = await db.collection('users').doc(uid).get();
+    const p = snap.exists ? (snap.data().pattes || []) : [];
+    userPattes = new Set(p);
+    // Mise à jour ciblée des boutons déjà rendus
+    document.querySelectorAll('.patte-btn').forEach(btn => {
+      btn.classList.toggle('patte-active', userPattes.has(btn.dataset.id));
+    });
+    renderList();
+  } catch(e) { /* silencieux */ }
+}
+
+async function togglePatte(recordId, e) {
+  e.stopPropagation();
+  const user = auth.currentUser;
+  if (!user) { window.location.href = 'login.html?next=index.html'; return; }
+
+  const hasPatte = userPattes.has(recordId);
+  const delta    = hasPatte ? -1 : 1;
+
+  // Mise à jour optimiste locale
+  if (hasPatte) userPattes.delete(recordId); else userPattes.add(recordId);
+  const record = allRecords.find(r => r.id === recordId);
+  if (record) record.fields['pattes_count'] = Math.max(0, (record.fields['pattes_count'] || 0) + delta);
+
+  // Mise à jour ciblée des boutons sans re-render
+  document.querySelectorAll(`.patte-btn[data-id="${recordId}"]`).forEach(btn => {
+    btn.classList.toggle('patte-active', userPattes.has(recordId));
+    const c = btn.querySelector('.patte-count');
+    if (c) {
+      const cnt = record ? (record.fields['pattes_count'] || 0) : 0;
+      c.textContent = cnt > 0 ? ' ' + cnt : '';
+    }
+  });
+
+  // Persistence Firestore (2 opérations séparées pour robustesse)
+  try {
+    await db.collection('users').doc(user.uid).set(
+      { pattes: hasPatte
+          ? firebase.firestore.FieldValue.arrayRemove(recordId)
+          : firebase.firestore.FieldValue.arrayUnion(recordId) },
+      { merge: true }
+    );
+  } catch(err) { console.error('Patte user update:', err); }
+
+  try {
+    await db.collection('annonces').doc(recordId).update({
+      pattes_count: firebase.firestore.FieldValue.increment(delta)
+    });
+  } catch(err) {
+    // Permissions insuffisantes — rollback visuel du compteur uniquement
+    if (record) record.fields['pattes_count'] = Math.max(0, (record.fields['pattes_count'] || 0) - delta);
+    document.querySelectorAll(`.patte-btn[data-id="${recordId}"] .patte-count`).forEach(c => {
+      const cnt = record ? (record.fields['pattes_count'] || 0) : 0;
+      c.textContent = cnt > 0 ? ' ' + cnt : '';
+    });
+  }
 }
 </script>
 

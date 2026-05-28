@@ -423,6 +423,23 @@
   }
   .eco-thanks-icon { font-size: 26px; flex-shrink: 0; line-height: 1; }
   .eco-thanks-card strong { display: block; font-size: 14px; margin-bottom: 4px; }
+
+  /* ── PATTES 🐾 (fiche annonce) ── */
+  .patte-section { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .patte-count-line {
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+    min-height: 18px;
+  }
+  .btn-patte {
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    padding: 9px 16px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    cursor: pointer; display: inline-flex; align-items: center;
+    justify-content: center; gap: 7px; transition: all 0.15s; width: 100%;
+  }
+  .btn-patte:hover { border-color: var(--orange); background: #fff4ee; color: var(--orange); }
+  .btn-patte.patte-active { border-color: var(--orange); background: #fff4ee; color: var(--orange); font-weight: 600; }
 </style>
 <link rel="stylesheet" href="cookies.css">
 </head>
@@ -541,6 +558,14 @@
     </div>
 
     <div class="date-badge" id="dateBadge"></div>
+
+    <!-- PATTES 🐾 -->
+    <div class="patte-section" id="patteSection">
+      <div class="patte-count-line" id="patteCountLine"></div>
+      <button class="btn-patte" id="patteBtn" onclick="togglePatteDetail()">
+        🐾 <span id="patteBtnLabel">Donner une patte</span>
+      </button>
+    </div>
 
     <button class="report-link" onclick="openReportModal()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -937,6 +962,9 @@ async function renderPage(record) {
 
   // Refuge encart (si annonce liée à un refuge)
   if (f['refuge_id']) loadRefugeEncart(f['refuge_id']);
+
+  // Pattes 🐾
+  loadPatteState(record.id);
 }
 
 /* ── Encart refuge partenaire ── */
@@ -1178,6 +1206,77 @@ async function sendReport() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeReportModal();
 });
+
+/* ══════════════════════════════════════════════════
+   PATTES 🐾 — système de "j'aime" (fiche annonce)
+══════════════════════════════════════════════════ */
+let _patteAdId     = '';
+let _patteCount    = 0;
+let _userHasPatte  = false;
+
+function updatePatteUI() {
+  const line = document.getElementById('patteCountLine');
+  const btn  = document.getElementById('patteBtn');
+  const lbl  = document.getElementById('patteBtnLabel');
+  if (!btn) return;
+  if (line) {
+    line.textContent = _patteCount > 0
+      ? `🐾 ${_patteCount} patte${_patteCount > 1 ? 's' : ''} reçue${_patteCount > 1 ? 's' : ''}`
+      : '';
+  }
+  btn.classList.toggle('patte-active', _userHasPatte);
+  if (lbl) lbl.textContent = _userHasPatte ? 'Retirer ma patte' : 'Donner une patte';
+}
+
+async function loadPatteState(adId) {
+  _patteAdId = adId;
+  try {
+    const adSnap = await db.collection('annonces').doc(adId).get();
+    _patteCount = adSnap.exists ? (adSnap.data().pattes_count || 0) : 0;
+    const user = auth.currentUser;
+    if (user) {
+      const uSnap = await db.collection('users').doc(user.uid).get();
+      const pattes = uSnap.exists ? (uSnap.data().pattes || []) : [];
+      _userHasPatte = pattes.includes(adId);
+    } else {
+      _userHasPatte = false;
+    }
+    updatePatteUI();
+  } catch(e) { /* silencieux */ }
+}
+
+async function togglePatteDetail() {
+  const user = auth.currentUser;
+  if (!user) {
+    const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `login.html?next=${returnUrl}`;
+    return;
+  }
+  const delta = _userHasPatte ? -1 : 1;
+  _userHasPatte = !_userHasPatte;
+  _patteCount = Math.max(0, _patteCount + delta);
+  updatePatteUI();
+
+  try {
+    await db.collection('users').doc(user.uid).set(
+      { pattes: _userHasPatte
+          ? firebase.firestore.FieldValue.arrayUnion(_patteAdId)
+          : firebase.firestore.FieldValue.arrayRemove(_patteAdId) },
+      { merge: true }
+    );
+  } catch(err) { console.error('Patte user update:', err); }
+
+  try {
+    await db.collection('annonces').doc(_patteAdId).update({
+      pattes_count: firebase.firestore.FieldValue.increment(delta)
+    });
+  } catch(err) {
+    // Rollback si permissions insuffisantes
+    _userHasPatte = !_userHasPatte;
+    _patteCount = Math.max(0, _patteCount - delta);
+    updatePatteUI();
+  }
+}
 </script>
 
 <!-- Chiffrement RGPD des données personnelles -->

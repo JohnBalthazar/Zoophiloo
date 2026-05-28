@@ -52,10 +52,14 @@ service cloud.firestore {
                     && request.resource.data.Type_annonce is string
                     && request.resource.data.Ville is string;
 
-      // Modification : propriétaire (ne peut pas changer uid) ou admin
+      // Modification : propriétaire (ne peut pas changer uid) ou admin,
+      //               ou tout utilisateur authentifié pour le seul champ pattes_count
       allow update: if (isAuth() && isOwner(resource.data.uid)
                         && request.resource.data.uid == resource.data.uid)
-                    || isAdmin();
+                    || isAdmin()
+                    || (isAuth()
+                        && request.resource.data.diff(resource.data)
+                            .affectedKeys().hasOnly(['pattes_count']));
 
       // Suppression : propriétaire ou admin
       allow delete: if (isAuth() && isOwner(resource.data.uid)) || isAdmin();
