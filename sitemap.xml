@@ -17,17 +17,104 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Page hub Conseils -->
+  <url>
+    <loc>https://www.youpizoo.fr/conseils.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Articles conseils -->
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-alimentation-chien.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-dresser-chiot.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-premiers-jours-chiot.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-alimentation-chat.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-accueillir-chaton.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-vaccins-chien-chat.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-sterilisation.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-choisir-eleveur-serieux.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-alimentation-lapin-nain.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.youpizoo.fr/conseil-adoption-refuge.html</loc>
+    <lastmod>2025-05-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- À propos -->
+  <url>
+    <loc>https://www.youpizoo.fr/apropos.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Refuges partenaires -->
+  <url>
+    <loc>https://www.youpizoo.fr/refuges.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- CGU -->
   <url>
     <loc>https://www.youpizoo.fr/cgu.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
-
-  <!-- Rubriques à venir -->
-  <!-- <url><loc>https://www.youpizoo.fr/accessoires.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
-  <!-- <url><loc>https://www.youpizoo.fr/petsitter.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
-  <!-- <url><loc>https://www.youpizoo.fr/boutique.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
-  <!-- <url><loc>https://www.youpizoo.fr/bons-plans.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url> -->
 
 </urlset>
