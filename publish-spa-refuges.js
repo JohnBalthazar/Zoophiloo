@@ -28,11 +28,23 @@ const db = admin.firestore();
 async function main() {
   console.log('\n🔍 Recherche des refuges SPA importés (visible: false)…\n');
 
-  // On cible uniquement les docs importés par notre script
-  const snap = await db.collection('refuges')
-    .where('visible', '==', false)
-    .where('import_source', '==', 'import-spa-firestore.js')
-    .get();
+  // Cible tous les docs importés par notre script (deux valeurs possibles de import_source
+  // selon la version du script utilisée lors de l'import)
+  const [snap1, snap2] = await Promise.all([
+    db.collection('refuges')
+      .where('visible', '==', false)
+      .where('import_source', '==', 'import-spa-firestore.js')
+      .get(),
+    db.collection('refuges')
+      .where('visible', '==', false)
+      .where('import_source', '==', 'vocationanimale.fr — import-spa-firestore.js')
+      .get()
+  ]);
+
+  // Fusionner les deux résultats (dédoublonnage par ID)
+  const allDocs = new Map();
+  [...snap1.docs, ...snap2.docs].forEach(d => allDocs.set(d.id, d));
+  const snap = { docs: [...allDocs.values()], size: allDocs.size, empty: allDocs.size === 0 };
 
   if (snap.empty) {
     console.log('✅ Aucun refuge en attente de publication.\n');

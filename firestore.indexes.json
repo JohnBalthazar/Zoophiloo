@@ -50,12 +50,5 @@
       ]
     }
   ],
-  "fieldOverrides": [
-    {
-      "collectionGroup": "moderation_logs",
-      "fieldPath": "expiresAt",
-      "ttl": true,
-      "indexes": []
-    }
-  ]
+  "fieldOverrides": []
 }
