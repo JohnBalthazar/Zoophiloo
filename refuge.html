@@ -748,7 +748,7 @@ async function init() {
       docSnap = await db.collection('refuges').doc(id).get();
       if (!docSnap.exists) { showError('Ce refuge est introuvable.'); return; }
     } else {
-      const snap = await db.collection('refuges').where('slug', '==', slug).where('visible', '==', true).limit(1).get();
+      const snap = await db.collection('refuges').where('slug', '==', slug).limit(1).get();
       if (snap.empty) { showError('Ce refuge est introuvable.'); return; }
       docSnap = snap.docs[0];
     }

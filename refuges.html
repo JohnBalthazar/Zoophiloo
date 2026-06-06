@@ -407,9 +407,11 @@ function setTypeFilter(btn, type) {
 /* ── Chargement ── */
 async function init() {
   try {
-    // Charger refuges visibles
-    const snap = await db.collection('refuges').where('visible', '==', true).orderBy('nom').get();
-    allRefuges = snap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+    // Charger refuges visibles — tri côté JS (pas besoin d'index composite Firestore)
+    const snap = await db.collection('refuges').where('visible', '==', true).get();
+    allRefuges = snap.docs
+      .map(doc => ({ id: doc.id, data: doc.data() }))
+      .sort((a, b) => (a.data.nom || '').localeCompare(b.data.nom || '', 'fr'));
 
     // Compter les annonces par refuge (parallel)
     if (allRefuges.length > 0) {
