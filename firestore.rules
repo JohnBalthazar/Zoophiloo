@@ -54,12 +54,15 @@ service cloud.firestore {
 
       // Modification : propriétaire (ne peut pas changer uid) ou admin,
       //               ou tout utilisateur authentifié pour le seul champ pattes_count
+      //               → contraint à incrémenter de 1 exactement (anti-manipulation)
       allow update: if (isAuth() && isOwner(resource.data.uid)
                         && request.resource.data.uid == resource.data.uid)
                     || isAdmin()
                     || (isAuth()
                         && request.resource.data.diff(resource.data)
-                            .affectedKeys().hasOnly(['pattes_count']));
+                            .affectedKeys().hasOnly(['pattes_count'])
+                        && request.resource.data.pattes_count == resource.data.pattes_count + 1
+                        && request.resource.data.pattes_count <= 100000);
 
       // Suppression : propriétaire ou admin
       allow delete: if (isAuth() && isOwner(resource.data.uid)) || isAdmin();
