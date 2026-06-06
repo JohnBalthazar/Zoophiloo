@@ -92,7 +92,8 @@
     "latitude": 49.555052,
     "longitude": 3.633541,
     "geocode_score": 0.6220635334476843,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/fourriere-spa-de-laon/"
   },
   {
     "nom": "SPA d'Hirson - Refuge du Vivier",
@@ -130,7 +131,8 @@
     "latitude": 46.369293,
     "longitude": 2.596425,
     "geocode_score": 0.9662190909090907,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-montlucon-la-loue/"
   },
   {
     "nom": "SPA du Bourbonnais",
@@ -168,7 +170,8 @@
     "latitude": 46.081528,
     "longitude": 3.383616,
     "geocode_score": 0.5981046784922395,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-brugheas-vichy/"
   },
   {
     "nom": "ASPA - Association Secours Protection Animale",
@@ -206,7 +209,8 @@
     "latitude": 44.548731,
     "longitude": 6.055469,
     "geocode_score": 0.5358961497326202,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "website": "https://www.spasudalpine.fr/"
   },
   {
     "nom": "Refuge SPA de Briançon",
@@ -225,7 +229,8 @@
     "latitude": 44.884157,
     "longitude": 6.62916,
     "geocode_score": 0.964860909090909,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-briancon-le-chazal/"
   },
   {
     "nom": "SPA Côte d'Azur",
@@ -244,7 +249,8 @@
     "latitude": 43.747612,
     "longitude": 7.12626,
     "geocode_score": 0.9692890909090909,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "website": "https://spacavence.fr/"
   },
   {
     "nom": "SPA de Grasse - Refuge de l'Espoir",
@@ -396,7 +402,8 @@
     "latitude": 43.145224,
     "longitude": 1.751151,
     "geocode_score": 0.505410909090909,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-mirepoix-le-clergue/"
   },
   {
     "nom": "Refuge SPA de Saint-Parres-aux-Tertres",
@@ -415,7 +422,8 @@
     "latitude": 48.282479,
     "longitude": 4.122598,
     "geocode_score": 0.943970909090909,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-saint-parres-aux-tertres-troyes/"
   },
   {
     "nom": "SPA de Carcassonne",
@@ -472,7 +480,8 @@
     "latitude": 44.09846,
     "longitude": 3.078799,
     "geocode_score": 0.47184328159645234,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-millau-lescale/"
   },
   {
     "nom": "SPA de Rodez",
@@ -510,7 +519,9 @@
     "latitude": 43.517003,
     "longitude": 5.410657,
     "geocode_score": 0.5275990566037736,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "website": "https://www.aixenprovence.fr/Le-complexe-animalier-de-l-Arbois",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-daix-en-provence-des-chiens-en-liberte/"
   },
   {
     "nom": "Refuge SPA d'Aix-en-Provence",
@@ -529,7 +540,8 @@
     "latitude": 43.517003,
     "longitude": 5.410657,
     "geocode_score": 0.5275990566037736,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-daix-en-provence-des-chiens-en-liberte/"
   },
   {
     "nom": "SPA de Salon-de-Provence",
@@ -605,7 +617,8 @@
     "latitude": 49.283328,
     "longitude": -0.116495,
     "geocode_score": 0.9576381818181817,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-cabourg/"
   },
   {
     "nom": "SPA du Cantal",
@@ -833,7 +846,8 @@
     "latitude": 45.250836,
     "longitude": 1.712379,
     "geocode_score": 0.6645627272727272,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-chameyrat-tulle/"
   },
   {
     "nom": "SPA Loudéacienne",
@@ -947,7 +961,8 @@
     "latitude": 46.900288,
     "longitude": 6.35413,
     "geocode_score": 0.6031012852664577,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "website": "https://www.spa-pontarlier.com/"
   },
   {
     "nom": "SPA de Besançon",
@@ -1118,7 +1133,8 @@
     "latitude": 47.968596,
     "longitude": -4.109928,
     "geocode_score": 0.9660863636363635,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-quimper-du-corniguel/"
   },
   {
     "nom": "Refuge SPA de Crozon",
@@ -1137,7 +1153,8 @@
     "latitude": 48.248017,
     "longitude": -4.431006,
     "geocode_score": 0.7546245454545454,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-crozon/"
   },
   {
     "nom": "Refuge SPA de Plouhinec",
@@ -1156,7 +1173,8 @@
     "latitude": 48.03492,
     "longitude": -4.495049,
     "geocode_score": 0.62883,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-plouhinec/"
   },
   {
     "nom": "SPA de Cornouaille",
@@ -1213,7 +1231,8 @@
     "latitude": 44.129063,
     "longitude": 4.353164,
     "geocode_score": 0.9263936363636364,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-vallerargues-ales/"
   },
   {
     "nom": "SPA du Gers",
@@ -1251,7 +1270,8 @@
     "latitude": 44.81335,
     "longitude": -0.718468,
     "geocode_score": 0.9760045454545453,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/maison-spa-de-bordeaux/"
   },
   {
     "nom": "SPA de Béziers",
@@ -1327,7 +1347,8 @@
     "latitude": 48.109725,
     "longitude": -1.733525,
     "geocode_score": 0.9665336363636364,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-rennes/"
   },
   {
     "nom": "Refuge SPA de Châteaubourg",
@@ -1422,7 +1443,8 @@
     "latitude": 47.649735,
     "longitude": -2.091226,
     "geocode_score": 0.4769211067193676,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-redon/"
   },
   {
     "nom": "SPA de l'Indre",
@@ -1460,7 +1482,8 @@
     "latitude": 47.423265,
     "longitude": 0.55505,
     "geocode_score": 0.9501863636363636,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-luynes-tours/"
   },
   {
     "nom": "SPA du Dauphiné",
@@ -1536,7 +1559,8 @@
     "latitude": 43.8822,
     "longitude": 0.5345,
     "geocode_score": 0.6,
-    "geocode_source": "manual"
+    "geocode_source": "manual",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-saint-pierre-du-mont-mont-de-marsan/"
   },
   {
     "nom": "Refuge SPA de Morée - Jean Leriche",
@@ -1669,7 +1693,8 @@
     "latitude": 47.132206,
     "longitude": -2.150845,
     "geocode_score": 0.5206672727272726,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/fourriere-spa-de-pornic/"
   },
   {
     "nom": "Refuge SPA de Bouguenais",
@@ -1688,7 +1713,8 @@
     "latitude": 47.161527,
     "longitude": -1.579527,
     "geocode_score": 0.5820085714285714,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-de-bouguenais-nantes/"
   },
   {
     "nom": "SPA du Centre",
@@ -1726,7 +1752,8 @@
     "latitude": 48.081981,
     "longitude": 2.13552,
     "geocode_score": 0.6192636363636362,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-chilleurs-aux-bois-le-moulin-den-haut/"
   },
   {
     "nom": "SPA du Giennois",
@@ -1821,7 +1848,8 @@
     "latitude": 47.051422,
     "longitude": -0.826493,
     "geocode_score": 0.5829672727272728,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-cholet-de-lesperance/"
   },
   {
     "nom": "Refuge SPA de Cherbourg",
@@ -1840,7 +1868,8 @@
     "latitude": 49.588108,
     "longitude": -1.594626,
     "geocode_score": 0.675318023715415,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-du-cotentin-cherbourg/"
   },
   {
     "nom": "SPA de la Mayenne",
@@ -1935,7 +1964,8 @@
     "latitude": 47.720756,
     "longitude": -3.399822,
     "geocode_score": 0.5923744628099173,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-dinzinzac-lorient/"
   },
   {
     "nom": "SPA de Pontivy",
@@ -1973,7 +2003,8 @@
     "latitude": 47.845494,
     "longitude": -3.264157,
     "geocode_score": 0.6364492490118576,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-dinzinzac-lorient/"
   },
   {
     "nom": "Refuge SPA de Thionville",
@@ -1992,7 +2023,8 @@
     "latitude": 49.406935,
     "longitude": 6.117423,
     "geocode_score": 0.9557072727272726,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-thionville/"
   },
   {
     "nom": "Refuge SPA de Sarreguemines",
@@ -2011,7 +2043,8 @@
     "latitude": 49.10995,
     "longitude": 7.126956,
     "geocode_score": 0.7413740425531914,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-sarreguemines/"
   },
   {
     "nom": "Refuge SPA de Forbach",
@@ -2030,7 +2063,8 @@
     "latitude": 49.196087,
     "longitude": 6.931412,
     "geocode_score": 0.957369090909091,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-forbach/"
   },
   {
     "nom": "Refuge SPA d'Arry",
@@ -2049,7 +2083,8 @@
     "latitude": 49.005752,
     "longitude": 6.052699,
     "geocode_score": 0.9356745454545454,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/fourriere-spa-darry/"
   },
   {
     "nom": "SPA de la région de Flandres",
@@ -2163,7 +2198,8 @@
     "latitude": 49.422528,
     "longitude": 2.848479,
     "geocode_score": 0.9676554545454545,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-compiegne/"
   },
   {
     "nom": "SPA d'Essuiles et de l'Oise",
@@ -2201,7 +2237,8 @@
     "latitude": 48.431873,
     "longitude": 0.403441,
     "geocode_score": 0.9356790909090908,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/grand-refuge-spa-de-pervencheres/"
   },
   {
     "nom": "SPA Canche",
@@ -2239,7 +2276,8 @@
     "latitude": 50.292765,
     "longitude": 2.813842,
     "geocode_score": 0.6829513914656771,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-tilloy-les-mofflaines-arras/"
   },
   {
     "nom": "Refuge SPA de Saint-Omer",
@@ -2258,7 +2296,8 @@
     "latitude": 50.752248,
     "longitude": 2.246865,
     "geocode_score": 0.4637754545454545,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-saint-omer-le-brockus/"
   },
   {
     "nom": "SPA du Boulonnais - Refuge du Moulin Wibert",
@@ -2391,7 +2430,8 @@
     "latitude": 42.6986,
     "longitude": 2.8954,
     "geocode_score": 0.6,
-    "geocode_source": "manual"
+    "geocode_source": "manual",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-perpignan/"
   },
   {
     "nom": "SPA des Pyrénées-Orientales",
@@ -2448,7 +2488,8 @@
     "latitude": 48.820762,
     "longitude": 7.803213,
     "geocode_score": 0.9724372727272728,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "website": "https://www.spa-haguenau.org/"
   },
   {
     "nom": "SPA de Strasbourg",
@@ -2543,7 +2584,8 @@
     "latitude": 45.616066,
     "longitude": 4.90764,
     "geocode_score": 0.4835303339517625,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-marennes-lyon/"
   },
   {
     "nom": "SPA de Lyon et du Sud-Est",
@@ -2562,7 +2604,8 @@
     "latitude": 45.763965,
     "longitude": 4.838009,
     "geocode_score": 0.6962785503685504,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "website": "https://www.spa-lyon.org"
   },
   {
     "nom": "SPA de Gray et de Haute-Saône",
@@ -2695,7 +2738,8 @@
     "latitude": 48.035535,
     "longitude": 0.280967,
     "geocode_score": 0.4681983916083916,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-dyvre-leveque-le-mans/"
   },
   {
     "nom": "SPA de Savoie",
@@ -2790,7 +2834,8 @@
     "latitude": 48.887579,
     "longitude": 2.299225,
     "geocode_score": 0.9817518181818182,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/le-siege-social-de-la-spa/"
   },
   {
     "nom": "SPA Dieppoise",
@@ -2828,7 +2873,8 @@
     "latitude": 50.031846,
     "longitude": 1.388968,
     "geocode_score": 0.5247409881422925,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-detalondes/"
   },
   {
     "nom": "Refuge SPA de Vaux-le-Pénil",
@@ -2847,7 +2893,8 @@
     "latitude": 48.518883,
     "longitude": 2.713653,
     "geocode_score": 0.9497390909090908,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-vaux-le-penil/"
   },
   {
     "nom": "Refuge Pas si Bêtes",
@@ -2885,7 +2932,8 @@
     "latitude": 48.65349,
     "longitude": 1.675403,
     "geocode_score": 0.6770663636363635,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-dhermeray/"
   },
   {
     "nom": "Refuge SPA de Plaisir",
@@ -2904,7 +2952,8 @@
     "latitude": 48.799083,
     "longitude": 1.953368,
     "geocode_score": 0.56164,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-plaisir/"
   },
   {
     "nom": "Refuge SPA d'Orgeval",
@@ -2923,7 +2972,8 @@
     "latitude": 48.904221,
     "longitude": 1.937186,
     "geocode_score": 0.9476545454545453,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-dorgeval/"
   },
   {
     "nom": "Refuge SPA Ponthieu Marquenterre",
@@ -2961,7 +3011,8 @@
     "latitude": 49.948648,
     "longitude": 2.304675,
     "geocode_score": 0.9512654545454544,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-poulainville/"
   },
   {
     "nom": "Refuge SPA du Garric",
@@ -2980,7 +3031,8 @@
     "latitude": 43.999595,
     "longitude": 2.180873,
     "geocode_score": 0.4973815019762845,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-le-garric-albi/"
   },
   {
     "nom": "SPA de Montauban",
@@ -3018,7 +3070,8 @@
     "latitude": 44.116765,
     "longitude": 0.866205,
     "geocode_score": 0.7047169421487604,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/fourriere-spa-de-golfech/"
   },
   {
     "nom": "Comité d'Action et de Vigilance SPA",
@@ -3056,7 +3109,8 @@
     "latitude": 43.543167,
     "longitude": 6.312907,
     "geocode_score": 0.9541663636363635,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-flayosc-draguignan/"
   },
   {
     "nom": "SPA Vauclusienne",
@@ -3113,7 +3167,8 @@
     "latitude": 46.698103,
     "longitude": -1.426897,
     "geocode_score": 0.9636863636363635,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-la-roche-sur-yon/"
   },
   {
     "nom": "Refuge SPA de Château-d'Olonne",
@@ -3132,7 +3187,8 @@
     "latitude": 46.500688,
     "longitude": -1.712351,
     "geocode_score": 0.4412412121212121,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-chateau-dolonne-les-petites-prises/"
   },
   {
     "nom": "SPA de Châtellerault",
@@ -3284,7 +3340,8 @@
     "latitude": 48.517491,
     "longitude": 2.209349,
     "geocode_score": 0.45405224371373304,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-chamarande/"
   },
   {
     "nom": "Refuge SPA de Gennevilliers",
@@ -3303,7 +3360,8 @@
     "latitude": 48.933275,
     "longitude": 2.30811,
     "geocode_score": 0.9681763636363635,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-gennevilliers-grammont/"
   },
   {
     "nom": "SPA de la Guadeloupe",
@@ -3322,7 +3380,8 @@
     "latitude": 16.26369,
     "longitude": -61.489677,
     "geocode_score": 0.9533736363636363,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-guadeloupe-papillon/"
   },
   {
     "nom": "Refuge SPA du Papillon",
@@ -3341,7 +3400,8 @@
     "latitude": 14.77923,
     "longitude": -61.133896,
     "geocode_score": 0.3743618181818182,
-    "geocode_source": "api-adresse.gouv.fr"
+    "geocode_source": "api-adresse.gouv.fr",
+    "spa_official_url": "https://www.la-spa.fr/etablissement/refuge-spa-de-guadeloupe-papillon/"
   },
   {
     "nom": "SPA de la Martinique",
