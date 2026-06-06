@@ -1,1 +1,17 @@
 .claude/
+
+# ── Clés secrètes — NE JAMAIS committer ─────────────────────────────
+serviceAccountKey.json
+serviceAccountKey*.json
+*-serviceAccountKey.json
+*.key.json
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+
+# ── Node ─────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
