@@ -39,6 +39,7 @@ jobs:
 
       - name: Inject Firebase config
         run: |
+          # Pages principales
           for file in index.html annonce.html login.html mon-espace.html deposer.html editer.html compte.html messages.html reset-password.html admin.html refuge.html refuges.html mon-refuge.html; do
             if [ -f "$file" ]; then
               sed -i "s|__FIREBASE_API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g" $file
@@ -49,6 +50,16 @@ jobs:
               sed -i "s|__FIREBASE_APP_ID__|${{ secrets.FIREBASE_APP_ID }}|g" $file
             fi
           done
+          # Pages SPA individuelles (179 fiches refuges)
+          if [ -d "spa" ]; then
+            find spa -name "*.html" | xargs sed -i \
+              -e "s|__FIREBASE_API_KEY__|${{ secrets.FIREBASE_API_KEY }}|g" \
+              -e "s|__FIREBASE_AUTH_DOMAIN__|${{ secrets.FIREBASE_AUTH_DOMAIN }}|g" \
+              -e "s|__FIREBASE_PROJECT_ID__|${{ secrets.FIREBASE_PROJECT_ID }}|g" \
+              -e "s|__FIREBASE_STORAGE_BUCKET__|${{ secrets.FIREBASE_STORAGE_BUCKET }}|g" \
+              -e "s|__FIREBASE_MESSAGING_SENDER_ID__|${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}|g" \
+              -e "s|__FIREBASE_APP_ID__|${{ secrets.FIREBASE_APP_ID }}|g"
+          fi
 
       - name: Inject admin email
         run: |
