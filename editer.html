@@ -71,6 +71,8 @@
   .photo-thumb .remove-photo { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; border: none; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
   .photo-thumb.marked-delete { opacity: 0.4; }
   .photo-thumb.marked-delete::after { content: 'Supprimée'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(192,57,43,0.5); color: white; font-size: 11px; font-weight: 600; }
+  .photo-thumb.broken-img { border-color: #fca5a5; background: #fef2f2; }
+  .broken-notice { font-size: 11px; color: var(--red); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
 
   .photo-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.15s; background: var(--bg); }
   .photo-zone:hover { border-color: var(--green); background: var(--green-light); }
@@ -221,7 +223,11 @@ async function loadRecord() {
 function renderForm(f) {
   const statut = f['Statut'] || 'En attente';
   const isPending = !f['Statut'];
-  existingPhotos = (f['Photos'] || []).map(p => ({ url: p.url, markedDelete: false }));
+  existingPhotos = (f['Photos'] || []).map(p => ({
+    url: (typeof p === 'string') ? p : (p.url || ''),
+    markedDelete: false,
+    broken: false
+  })).filter(p => p.url);
 
   document.getElementById('pageContent').innerHTML = `
     <h1 class="page-title">Modifier l'<span>annonce</span></h1>
@@ -419,10 +425,30 @@ function typeOptions(selected) {
 
 function renderExistingPhotos() {
   return existingPhotos.map((p, i) => `
-    <div class="photo-thumb ${p.markedDelete?'marked-delete':''}" id="ep-${i}">
-      <img src="${p.url}" alt="">
+    <div class="photo-thumb ${p.markedDelete ? 'marked-delete' : ''}" id="ep-${i}">
+      ${p.broken
+        ? `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#999;text-align:center;padding:6px;background:#f5f5f5;gap:4px">
+             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+             <span>Image<br>supprimée</span>
+           </div>`
+        : `<img src="${p.url}" alt="" onerror="onExistingPhotoError(${i})">`
+      }
       <button class="remove-photo" onclick="toggleDeletePhoto(${i})">✕</button>
     </div>`).join('');
+}
+
+function onExistingPhotoError(i) {
+  existingPhotos[i].broken = true;
+  existingPhotos[i].markedDelete = true; // auto-supprime les images mortes à la sauvegarde
+  document.getElementById('existingPhotos').innerHTML = renderExistingPhotos();
+  // Afficher un avertissement si pas déjà présent
+  if (!document.getElementById('brokenNotice')) {
+    const notice = document.createElement('p');
+    notice.id = 'brokenNotice';
+    notice.className = 'broken-notice';
+    notice.innerHTML = '⚠️ Une ou plusieurs photos ne sont plus disponibles — elles seront retirées lors de la sauvegarde.';
+    document.getElementById('existingPhotos').after(notice);
+  }
 }
 
 function toggleDeletePhoto(i) {
