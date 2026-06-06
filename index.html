@@ -446,7 +446,7 @@
   .tag-refuge { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; }
   .tag-refuge:hover { background: #ede9fe; border-color: #c4b5fd; }
 
-  /* Cluster markercluster — couleurs thème */
+  /* Cluster markercluster — annonces (vert) */
   .marker-cluster-small,
   .marker-cluster-medium,
   .marker-cluster-large { background-color: rgba(90,158,26,0.18) !important; }
@@ -461,6 +461,10 @@
     border: 2px solid white !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
   }
+  /* Cluster refuges — violet */
+  .refuge-cluster-outer { background-color: rgba(124,58,237,0.18) !important; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+  .refuge-cluster-inner { background-color: rgba(109,40,217,0.92); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-weight: 700; font-size: 12px; border: 2px solid white; box-shadow: 0 2px 8px rgba(109,40,217,0.4); gap: 2px; flex-direction: column; line-height: 1; }
+  .refuge-cluster-inner span { font-size: 9px; opacity: 0.85; }
 
   /* ================================
      MOBILE TAB SWITCHER (hidden  on desktop)
@@ -1501,7 +1505,25 @@ function createRefugeMarker(refuge) {
 }
 
 function renderRefugeMarkers() {
-  if (!refugeLayer) refugeLayer = L.layerGroup().addTo(map);
+  if (!refugeLayer) {
+    refugeLayer = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 65,
+      spiderfyOnMaxZoom: true,
+      disableClusteringAtZoom: 13,
+      spiderfyDistanceMultiplier: 1.8,
+      iconCreateFunction: function(cluster) {
+        const n = cluster.getChildCount();
+        return L.divIcon({
+          html: `<div class="refuge-cluster-outer"><div class="refuge-cluster-inner">🏠<span>${n}</span></div></div>`,
+          className: '',
+          iconSize: [44, 44],
+          iconAnchor: [22, 22]
+        });
+      }
+    });
+    refugeLayer.addTo(map);
+  }
   refugeLayer.clearLayers();
   refugeMarkers = {};
   if (!showRefuges) return;
