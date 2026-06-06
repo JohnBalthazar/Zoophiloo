@@ -1541,17 +1541,20 @@ function toggleRefuges() {
   const chip = document.getElementById('chipRefuges');
   if (chip) chip.classList.toggle('active', showRefuges);
   renderRefugeMarkers();
-  // Zoom pour englober refuges + annonces si on les active
-  if (showRefuges && allRefuges.length > 0) {
-    const coords = allRefuges
-      .filter(r => !isNaN(parseFloat(r.data.latitude)) && !isNaN(parseFloat(r.data.longitude)))
+  // Recentre sur la France métropolitaine (exclut DOM-TOM pour le fit)
+  if (showRefuges) {
+    // Bounds métropole : lat 41–52 N, lng -6–10 E (Corse incluse)
+    const METRO = { latMin: 41, latMax: 52, lngMin: -6, lngMax: 10 };
+    const metroCoords = allRefuges
+      .filter(r => {
+        const lat = parseFloat(r.data.latitude), lng = parseFloat(r.data.longitude);
+        return !isNaN(lat) && !isNaN(lng)
+          && lat >= METRO.latMin && lat <= METRO.latMax
+          && lng >= METRO.lngMin && lng <= METRO.lngMax;
+      })
       .map(r => [parseFloat(r.data.latitude), parseFloat(r.data.longitude)]);
-    if (coords.length > 0) {
-      const existing = filteredRecords
-        .filter(r => r.fields['Latitude'] && r.fields['Longitude'])
-        .map(r => [parseFloat(r.fields['Latitude']), parseFloat(r.fields['Longitude'])]);
-      const all = [...coords, ...existing];
-      if (all.length > 0) map.fitBounds(L.latLngBounds(all), { padding:[40,40], maxZoom:10, animate:true });
+    if (metroCoords.length > 0) {
+      map.fitBounds(L.latLngBounds(metroCoords), { padding:[40,40], maxZoom:8, animate:true });
     }
   }
 }
