@@ -663,8 +663,15 @@
       </div>
 
       <div class="frow">
-        <label class="flbl" for="rfmSite">Site web</label>
-        <input type="url" id="rfmSite" class="finput" placeholder="https://www.refuge.fr">
+        <label class="flbl" for="rfmSite">Site web propre <span style="font-weight:400;color:var(--text-muted)">(optionnel)</span></label>
+        <input type="url" id="rfmSite" class="finput" placeholder="https://www.spa-bordeaux.fr">
+        <p class="fhint">Site de l'antenne locale. S'il est renseigné, le bouton "Site officiel La SPA" est masqué.</p>
+      </div>
+
+      <div class="frow">
+        <label class="flbl" for="rfmSpaUrl">Page La SPA officielle <span style="font-weight:400;color:var(--text-muted)">(optionnel)</span></label>
+        <input type="url" id="rfmSpaUrl" class="finput" placeholder="https://www.la-spa.fr/etablissement/refuge-spa-de-…/">
+        <p class="fhint">Page spécifique de ce refuge sur la-spa.fr. Utilisée pour le bouton "Adopter sur la-spa.fr".</p>
       </div>
 
       <div class="frow">
@@ -982,14 +989,15 @@ function openRefugeModal(id) {
     document.getElementById('rfmLogo').value    = r.logo_url  || '';
     document.getElementById('rfmEmail').value   = r.email     || '';
     document.getElementById('rfmTel').value     = r.telephone || '';
-    document.getElementById('rfmSite').value    = r.website   || '';
-    document.getElementById('rfmSlug').value    = r.slug      || '';
+    document.getElementById('rfmSite').value    = r.website          || '';
+    document.getElementById('rfmSpaUrl').value  = r.spa_official_url || '';
+    document.getElementById('rfmSlug').value    = r.slug             || '';
     document.getElementById('rfmVisible').checked = r.visible !== false;
   } else {
     // Mode création
     document.getElementById('rfmTitle').textContent = '🏠 Nouveau refuge';
     document.getElementById('rfmId').value = '';
-    ['rfmNom','rfmDesc','rfmAdresse','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSlug','rfmGerant']
+    ['rfmNom','rfmDesc','rfmAdresse','rfmVille','rfmCp','rfmLat','rfmLng','rfmLogo','rfmEmail','rfmTel','rfmSite','rfmSpaUrl','rfmSlug','rfmGerant']
       .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
     const gs = document.getElementById('rfmGerantStatus'); if(gs) gs.textContent = '';
     rfmGeoReset();
@@ -1095,8 +1103,9 @@ async function saveRefuge() {
     logo_url:    document.getElementById('rfmLogo').value.trim()  || null,
     email:       document.getElementById('rfmEmail').value.trim() || null,
     telephone:   document.getElementById('rfmTel').value.trim()   || null,
-    website:     document.getElementById('rfmSite').value.trim()  || null,
-    slug:        document.getElementById('rfmSlug').value.trim()  || slugify(nom),
+    website:          document.getElementById('rfmSite').value.trim()   || null,
+    spa_official_url: document.getElementById('rfmSpaUrl').value.trim() || null,
+    slug:             document.getElementById('rfmSlug').value.trim()   || slugify(nom),
     visible:     document.getElementById('rfmVisible').checked,
   };
 
