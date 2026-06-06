@@ -1155,11 +1155,16 @@ async function geocodeCity(cityName) {
     document.getElementById('geoCityInput').classList.add('has-value');
     status.textContent = geoCenter.name;
     status.className = 'geo-status';
-    const stepIdx = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
-    if (stepIdx > 0) {
-      geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
-      drawGeoCircle();
+    let stepIdx = parseInt(document.getElementById('geoRadiusSlider').value) || 0;
+    // Si le slider est à 0, on applique automatiquement un rayon de 10 km
+    // pour que les annonces de la ville s'affichent immédiatement
+    if (stepIdx === 0) {
+      stepIdx = 3; // index 3 → 10 km dans GEO_STEPS
+      document.getElementById('geoRadiusSlider').value = String(stepIdx);
+      updateGeoSliderUI(stepIdx);
     }
+    geoRadius = GEO_STEPS[stepIdx] === 99999 ? null : GEO_STEPS[stepIdx];
+    drawGeoCircle();
     applyFilters();
     updateResetBtn();
   } catch(e) {
