@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Google Analytics : chargé conditionnellement par cookies.js (RGPD) -->
+<meta charset="UTF-8">
+<meta name="theme-color" content="#7c3aed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPA du Roannais — Adoption animale à Roanne | YoupiZoo</title>
+<meta name="description" content="Adoptez un animal à Roanne (dép. 42) avec SPA du Roannais. Chiens, chats et autres animaux abandonnés cherchent un foyer aimant. Partenaire YoupiZoo.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.youpizoo.fr/spa/spa-du-roannais.html">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="SPA du Roannais — Adoption animale à Roanne | YoupiZoo">
+<meta property="og:description" content="Adoptez un animal à Roanne (dép. 42) avec SPA du Roannais. Chiens, chats et autres animaux abandonnés cherchent un foyer aimant. Partenaire YoupiZoo.">
+<meta property="og:url" content="https://www.youpizoo.fr/spa/spa-du-roannais.html">
+<meta property="og:image" content="https://www.youpizoo.fr/og-image.jpg">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="YoupiZoo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SPA du Roannais — Adoption animale à Roanne | YoupiZoo">
+<meta name="twitter:image" content="https://www.youpizoo.fr/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AnimalShelter",
+  "name": "SPA du Roannais",
+  "description": "La SPA du Roannais, accueil et adoption d'animaux dans la Loire.",
+  "url": "https://www.youpizoo.fr/spa/spa-du-roannais.html",
+  "sameAs": "https://www.la-spa.fr/",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "11 Allée Jules Clerjon De Champagny",
+    "addressLocality": "Roanne",
+    "postalCode": "42300",
+    "addressCountry": "FR"
+  },
+  "areaServed": "Roanne"
+}
+</script>
+<style>
+  :root {
+    --green: #5a9e1a; --green-dark: #478015; --green-light: #f0f8e6;
+    --purple: #7c3aed; --purple-dark: #6d28d9; --purple-light: #f5f3ff;
+    --text: #1a1a1a; --text-muted: #6b6b6b; --border: #e8e8e4;
+    --bg: #fafaf8; --white: #ffffff;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* HEADER */
+  header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 51px; width: auto; display: block; }
+  .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
+  .header-left { display: flex; align-items: center; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 6px 16px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+
+  /* BREADCRUMB */
+  .breadcrumb { padding: 10px 24px; font-size: 12px; color: var(--text-muted); background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--purple); }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  /* MAIN */
+  main { flex: 1; max-width: 960px; width: 100%; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border: 1px solid #ddd6fe; border-radius: 16px; padding: 28px 28px 24px; display: flex; align-items: flex-start; gap: 20px; }
+  .hero-logo { width: 88px; height: 88px; border-radius: 14px; border: 2px solid #ddd6fe; background: white; display: flex; align-items: center; justify-content: center; font-size: 40px; flex-shrink: 0; overflow: hidden; }
+  .hero-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-body { flex: 1; min-width: 0; }
+  .hero-type-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: var(--purple); color: white; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
+  .hero-name { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 10px; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--text-muted); }
+  .hero-meta-item { display: flex; align-items: center; gap: 5px; }
+  .hero-meta-item a { color: var(--purple-dark); text-decoration: none; font-weight: 500; }
+  .hero-meta-item a:hover { text-decoration: underline; }
+  .verified-spa { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: #dcfce7; color: #15803d; padding: 4px 12px; border-radius: 12px; border: 1px solid #bbf7d0; }
+
+  /* TWO-COLUMN */
+  .two-col { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+  .left-col { display: flex; flex-direction: column; gap: 20px; }
+
+  /* CARDS */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+  .card-title { font-family: var(--font-display); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 14px; }
+  .card-text { font-size: 14px; line-height: 1.7; color: var(--text); }
+  .card-text.empty { color: var(--text-muted); font-style: italic; }
+
+  /* INFOS PRATIQUES */
+  .info-list { display: flex; flex-direction: column; gap: 10px; }
+  .info-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+  .info-label { color: var(--text-muted); min-width: 80px; flex-shrink: 0; }
+  .info-value { color: var(--text); font-weight: 500; }
+  .info-value a { color: var(--purple-dark); text-decoration: none; }
+  .info-value a:hover { text-decoration: underline; }
+
+  /* RIGHT COL */
+  .right-col { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 16px; }
+  .contact-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .contact-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+  .contact-actions { display: flex; flex-direction: column; gap: 8px; }
+  .btn-action { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: all 0.15s; width: 100%; border: none; }
+  .btn-action-purple { background: var(--purple); color: white; }
+  .btn-action-purple:hover { background: var(--purple-dark); }
+  .btn-action-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-action-outline:hover { border-color: var(--purple); background: var(--purple-light); color: var(--purple-dark); }
+  .btn-action-green { background: var(--green); color: white; }
+  .btn-action-green:hover { background: var(--green-dark); }
+
+  /* LOCATION */
+  .location-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+  .location-inner { display: flex; align-items: center; gap: 10px; }
+  .location-city { font-size: 14px; font-weight: 500; }
+  .location-cp { font-size: 12px; color: var(--text-muted); }
+
+  /* SPA NETWORK CARD */
+  .spa-network-card { background: linear-gradient(135deg, #fff7ed, #fef3c7); border: 1px solid #fed7aa; border-radius: 12px; padding: 16px; }
+  .spa-network-card p { font-size: 12px; color: #92400e; line-height: 1.5; margin-bottom: 8px; }
+  .spa-network-card a { font-size: 12px; color: #c2410c; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+  .spa-network-card a:hover { text-decoration: underline; }
+
+  /* SECTION ANIMAUX */
+  .animals-section { display: flex; flex-direction: column; gap: 16px; }
+  .animals-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .animals-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .animals-count { font-size: 12px; font-weight: 500; background: var(--purple-light); color: var(--purple-dark); padding: 3px 10px; border-radius: 20px; }
+  .animals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .animal-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.15s; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+  .animal-card:hover { border-color: var(--purple); box-shadow: 0 4px 16px rgba(124,58,237,0.1); transform: translateY(-2px); }
+  .animal-photo { width: 100%; aspect-ratio: 4/3; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 44px; overflow: hidden; position: relative; flex-shrink: 0; }
+  .animal-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .animal-type-badge { position: absolute; bottom: 8px; left: 8px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 10px; }
+  .badge-vente { background: #f0f8e6; color: #478015; }
+  .badge-adopt { background: #dbeafe; color: #1d4ed8; }
+  .badge-don   { background: #fef3c7; color: #92400e; }
+  .badge-perdu { background: #fef2f2; color: #dc2626; }
+  .badge-trouve { background: #f5f3ff; color: #7c3aed; }
+  .animal-body { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .animal-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .animal-sub  { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .animal-price { font-size: 13px; font-weight: 600; color: var(--green); margin-top: 4px; }
+  .animal-price.don { color: #e8622a; }
+  .animal-price.adopt { color: #2563a8; }
+  .animals-empty { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; }
+  .animals-empty-icon { font-size: 40px; margin-bottom: 10px; }
+  .animals-loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 32px; color: var(--text-muted); font-size: 14px; }
+  .loading-spinner-sm { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ECO BANNER */
+  .eco-banner { background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%); border-bottom: 1px solid #a0d860; padding: 6px 44px 6px 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #4a7a12; font-family: var(--font-body); position: relative; flex-shrink: 0; text-align: center; line-height: 1.4; }
+  .eco-banner a { color: #4a7a12; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner-dismiss { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: none; background: rgba(90,158,26,0.12); color: #4a7a12; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
+
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .right-col { position: static; }
+    .tagline { display: none; }
+    .hero { flex-direction: column; gap: 14px; }
+    .hero-logo { width: 64px; height: 64px; font-size: 28px; }
+    .hero-name { font-size: 20px; }
+    .animals-grid { grid-template-columns: repeat(2, 1fr); }
+    .eco-banner { display: none !important; }
+    footer { display: none !important; }
+  }
+  @media (max-width: 420px) {
+    .animals-grid { grid-template-columns: 1fr 1fr; }
+    main { padding: 16px 16px 32px; }
+  }
+</style>
+<link rel="stylesheet" href="../cookies.css">
+</head>
+<body>
+
+<!-- ECO BANNER -->
+<div class="eco-banner" id="ecoBanner">
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/ecologie" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="../index.html" class="logo"><img src="../logo.png" alt="YoupiZoo" class="logo-img"></a>
+    <span class="tagline">Trouvez vos animaux près de chez vous</span>
+  </div>
+  <div class="header-right">
+    <a href="../refuges.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Tous les refuges
+    </a>
+    <div id="headerAuth">
+      <button class="btn-ghost" onclick="window.location.href='../login.html'">Se connecter</button>
+    </div>
+    <a href="../deposer.html" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Déposer une annonce
+    </a>
+  </div>
+</header>
+
+<nav class="breadcrumb">
+  <a href="../index.html">Accueil</a>
+  <span class="sep">›</span>
+  <a href="../refuges.html">Refuges &amp; Associations</a>
+  <span class="sep">›</span>
+  <span>SPA — Dép. 42</span>
+  <span class="sep">›</span>
+  <span>SPA du Roannais</span>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-logo">🐾</div>
+    <div class="hero-body">
+      <div class="hero-type-badge">🐾 SPA</div>
+      <h1 class="hero-name">SPA du Roannais</h1>
+      <div class="hero-meta">
+        <span class="hero-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Roanne (42300)
+        </span>
+        <span class="hero-meta-item">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 22 22 7 12 2"/></svg>
+          Auvergne-Rhône-Alpes
+        </span>
+        
+      </div>
+      <div class="verified-spa">✓ Partenaire SPA — YoupiZoo</div>
+    </div>
+  </div>
+
+  <!-- TWO-COL -->
+  <div class="two-col">
+    <!-- LEFT -->
+    <div class="left-col">
+      <!-- DESCRIPTION -->
+      <div class="card">
+        <p class="card-title">À propos</p>
+        <p class="card-text">La SPA du Roannais, accueil et adoption d&#39;animaux dans la Loire.</p>
+      </div>
+
+      <!-- INFOS PRATIQUES -->
+      <div class="card">
+        <p class="card-title">Informations pratiques</p>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">📍 Adresse</span>
+            <span class="info-value">11 Allée Jules Clerjon De Champagny, Roanne 42300</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">🏙 Ville</span>
+            <span class="info-value">Roanne</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">🗺 Département</span>
+            <span class="info-value">Dép. 42 — Auvergne-Rhône-Alpes</span>
+          </div>
+          
+          
+          <div class="info-row">
+            <span class="info-label">🏷 Type</span>
+            <span class="info-value">SPA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-col">
+      <!-- CONTACT -->
+      <div class="contact-card">
+        <p class="contact-card-title">Contacter la SPA</p>
+        <div class="contact-actions">
+          <a href="https://www.la-spa.fr/" target="_blank" rel="noopener noreferrer" class="btn-action btn-action-outline">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      La SPA nationale →
+    </a>
+        </div>
+      </div>
+
+      <!-- LOCALISATION -->
+      <div class="location-card">
+        <div class="location-inner">
+          <span style="font-size:22px">📍</span>
+          <div>
+            <div class="location-city">Roanne</div>
+            <div class="location-cp">42300 — Auvergne-Rhône-Alpes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPA RÉSEAU NATIONAL -->
+      <div class="spa-network-card">
+        <p>🐾 Membre du réseau <strong>La SPA France</strong> — organisation nationale de protection animale depuis 1845.</p>
+        <a href="https://www.la-spa.fr/" target="_blank" rel="noopener noreferrer">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          la-spa.fr →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION ANIMAUX (chargée depuis Firestore) -->
+  <div class="animals-section">
+    <div class="animals-header">
+      <h2 class="animals-title">
+        🐾 Animaux disponibles à l'adoption
+        <span class="animals-count" id="animalsCount">chargement…</span>
+      </h2>
+    </div>
+    <div id="animalsContainer">
+      <div class="animals-loading">
+        <div class="loading-spinner-sm"></div>
+        <span>Recherche des animaux disponibles…</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<link rel="stylesheet" href="../cookies.css">
+<script src="../cookies.js"></script>
+
+<footer style="text-align:center;padding:8px 16px 14px;font-size:12px;color:#888;border-top:1px solid #eee;">
+  © 2025 YoupiZoo &nbsp;·&nbsp;
+  <a href="../index.html" style="color:#5a9e1a;text-decoration:none;">Annonces</a> &nbsp;·&nbsp;
+  <a href="../refuges.html" style="color:#7c3aed;text-decoration:none;">🏠 Refuges</a> &nbsp;·&nbsp;
+  <a href="../apropos.html" style="color:#5a9e1a;text-decoration:none;">À propos</a> &nbsp;·&nbsp;
+  <a href="../cgu.html" style="color:#5a9e1a;text-decoration:none;">CGU</a>
+</footer>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:            "__FIREBASE_API_KEY__",
+  authDomain:        "__FIREBASE_AUTH_DOMAIN__",
+  projectId:         "__FIREBASE_PROJECT_ID__",
+  storageBucket:     "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:             "__FIREBASE_APP_ID__"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+const REFUGE_SLUG = "spa-du-roannais";
+
+function escHTML(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+/* ── Eco banner ── */
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    var b = document.getElementById('ecoBanner'); if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  var b = document.getElementById('ecoBanner'); if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+
+/* ── Header auth ── */
+const _sty = document.createElement('style');
+_sty.textContent = `.user-menu{position:relative}.user-btn{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 5px;border:1px solid var(--border);border-radius:20px;background:var(--white);cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text);transition:all .15s}.user-btn:hover{border-color:var(--green);background:var(--green-light)}.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--green);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;overflow:hidden}.user-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.user-dropdown{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.1);min-width:180px;z-index:1000;overflow:hidden}.user-dropdown.open{display:block}.user-dropdown-item{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:background .12s;border:none;background:transparent;width:100%;font-family:var(--font-body);text-align:left;text-decoration:none}.user-dropdown-item:hover{background:var(--green-light);color:var(--green-dark)}.user-dropdown-item.danger:hover{background:#fdf0ee;color:#c0392b}.dropdown-divider{height:1px;background:var(--border)}#headerAuth{display:flex;align-items:center;gap:8px}`;
+document.head.appendChild(_sty);
+
+function renderHeaderAuth(user) {
+  const el = document.getElementById('headerAuth');
+  if (!el) return;
+  if (!user) { el.innerHTML = `<button class="btn-ghost" onclick="window.location.href='../login.html'">Se connecter</button>`; return; }
+  const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const avatarHtml = user.photoURL ? `<img src="${user.photoURL}" alt="">` : initials;
+  const displayName = user.displayName || user.email.split('@')[0];
+  el.innerHTML = `<div class="user-menu" id="userMenu"><button class="user-btn" onclick="document.getElementById('userDropdown')?.classList.toggle('open')"><div class="user-avatar">${avatarHtml}</div><span class="user-name">${escHTML(displayName)}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></button><div class="user-dropdown" id="userDropdown"><a href="../mon-espace.html" class="user-dropdown-item">Mon espace</a><div class="dropdown-divider"></div><button onclick="auth.signOut()" class="user-dropdown-item danger">Se déconnecter</button></div></div>`;
+}
+document.addEventListener('click', e => { if (!e.target.closest('#userMenu')) document.getElementById('userDropdown')?.classList.remove('open'); });
+auth.onAuthStateChanged(renderHeaderAuth);
+
+/* ── Animaux depuis Firestore ── */
+const ESPECE_EMOJI = {'Chien':'🐕','Chat':'🐈','Cheval':'🐴','Poisson':'🐟','Oiseau':'🦜','Rongeur':'🐇','Reptile':'🦎','Furet':'🦔','Amphibien':'🐸','Crustacée':'🦐','Insecte':'🐛','Araignée':'🕷️','Plante':'🌿','Autre':'🔵'};
+const TYPE_LABEL = {'A vendre':'Vente','À vendre':'Vente','A donner':'Don','À donner':'Don','A adopter':'Adoption','À adopter':'Adoption','Perdu':'Perdu','Trouvé':'Trouvé'};
+const TYPE_CLASS = {'A vendre':'badge-vente','À vendre':'badge-vente','A donner':'badge-don','À donner':'badge-don','A adopter':'badge-adopt','À adopter':'badge-adopt','Perdu':'badge-perdu','Trouvé':'badge-trouve'};
+
+function formatPrice(val, type) {
+  const t = type || '';
+  if (t === 'A donner' || t === 'À donner') return { text: 'Don gratuit', cls: 'don' };
+  if (t === 'A adopter' || t === 'À adopter') return { text: 'Adoption', cls: 'adopt' };
+  if (!val) return { text: 'Prix non précisé', cls: '' };
+  const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+  return { text: isNaN(num) ? String(val) : num.toLocaleString('fr-FR') + ' €', cls: '' };
+}
+
+async function loadAnimals() {
+  try {
+    // Cherche le refuge par slug dans Firestore
+    const refugeSnap = await db.collection('refuges')
+      .where('slug', '==', REFUGE_SLUG)
+      .limit(1).get();
+
+    if (refugeSnap.empty) {
+      showNoAnimals();
+      return;
+    }
+    const refugeId = refugeSnap.docs[0].id;
+
+    const annonceSnap = await db.collection('annonces')
+      .where('refuge_id', '==', refugeId)
+      .where('Visible', '==', true)
+      .get();
+
+    const docs = annonceSnap.docs.filter(d => d.data().Statut !== 'Vendu');
+    document.getElementById('animalsCount').textContent =
+      docs.length + ' animal' + (docs.length > 1 ? 'x' : '');
+
+    if (docs.length === 0) { showNoAnimals(); return; }
+
+    document.getElementById('animalsContainer').innerHTML =
+      '<div class="animals-grid">' + docs.map(doc => {
+        const f = doc.data();
+        const emoji = ESPECE_EMOJI[f['Espèce']] || '🐾';
+        const photoUrl = f['Photos']?.[0]?.thumbnails?.small?.url || f['Photos']?.[0]?.url || '';
+        const price = formatPrice(f['Prix'], f['Type_annonce']);
+        const typeLabel = TYPE_LABEL[f['Type_annonce']] || f['Type_annonce'] || '';
+        const typeCls   = TYPE_CLASS[f['Type_annonce']] || 'badge-vente';
+        const sub = [f['Espèce'], f['Race'], f['Ville']].filter(Boolean).map(escHTML).join(' · ');
+        return `<a class="animal-card" href="../annonce.html?id=${escHTML(doc.id)}">
+          <div class="animal-photo" data-fb="${emoji}">
+            ${photoUrl ? `<img src="${escHTML(photoUrl)}" alt="${escHTML(f['Titre']||'')}" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.fb">` : emoji}
+            ${typeLabel ? `<span class="animal-type-badge ${typeCls}">${typeLabel}</span>` : ''}
+          </div>
+          <div class="animal-body">
+            <div class="animal-name">${escHTML(f['Titre']) || 'Sans titre'}</div>
+            <div class="animal-sub">${sub}</div>
+            <div class="animal-price ${price.cls}">${escHTML(price.text)}</div>
+          </div>
+        </a>`;
+      }).join('') + '</div>';
+  } catch(e) {
+    showNoAnimals();
+  }
+}
+
+function showNoAnimals() {
+  document.getElementById('animalsCount').textContent = '0 animal';
+  document.getElementById('animalsContainer').innerHTML = `
+    <div class="animals-empty">
+      <div class="animals-empty-icon">🐾</div>
+      <p>Pas encore d'animaux publiés sur YoupiZoo.</p>
+      <p style="margin-top:6px;font-size:13px">Contactez ce refuge directement pour connaître les animaux disponibles.</p>
+    </div>`;
+}
+
+loadAnimals();
+</script>
+</body>
+</html>

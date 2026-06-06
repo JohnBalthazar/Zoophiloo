@@ -1,0 +1,1613 @@
+[
+  {
+    "slug": "refuge-fourriere-du-haut-bugey",
+    "nom": "Refuge Fourrière du Haut Bugey",
+    "type": "Refuge",
+    "ville": "Oyonnax",
+    "code_postal": "01100",
+    "departement": "01",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-doyonnax",
+    "nom": "SPA d'Oyonnax",
+    "type": "SPA",
+    "ville": "Oyonnax",
+    "code_postal": "01100",
+    "departement": "01",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "refuge-spa-de-dompierre-sur-veyle",
+    "nom": "Refuge SPA de Dompierre-sur-Veyle",
+    "type": "SPA",
+    "ville": "Dompierre-sur-Veyle",
+    "code_postal": "01240",
+    "departement": "01",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "refuge-fourriere-du-pays-de-gex",
+    "nom": "Refuge Fourrière du Pays de Gex",
+    "type": "Refuge",
+    "ville": "Gex",
+    "code_postal": "01170",
+    "departement": "01",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "refuge-spa-de-laon",
+    "nom": "Refuge SPA de Laon",
+    "type": "SPA",
+    "ville": "Laon",
+    "code_postal": "02000",
+    "departement": "02",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-dhirson-refuge-du-vivier",
+    "nom": "SPA d'Hirson - Refuge du Vivier",
+    "type": "SPA",
+    "ville": "Hirson",
+    "code_postal": "02500",
+    "departement": "02",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-montlucon",
+    "nom": "Refuge SPA de Montluçon",
+    "type": "SPA",
+    "ville": "Montluçon",
+    "code_postal": "03100",
+    "departement": "03",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-du-bourbonnais",
+    "nom": "SPA du Bourbonnais",
+    "type": "SPA",
+    "ville": "Lusigny",
+    "code_postal": "03230",
+    "departement": "03",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "refuge-spa-de-brugheas",
+    "nom": "Refuge SPA de Brugheas",
+    "type": "SPA",
+    "ville": "Brugheas",
+    "code_postal": "03700",
+    "departement": "03",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "aspa-association-secours-protection-animale",
+    "nom": "ASPA - Association Secours Protection Animale",
+    "type": "Association",
+    "ville": "Manosque",
+    "code_postal": "04100",
+    "departement": "04",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-sud-alpine",
+    "nom": "SPA Sud Alpine",
+    "type": "SPA",
+    "ville": "Gap",
+    "code_postal": "05000",
+    "departement": "05",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "refuge-spa-de-briancon",
+    "nom": "Refuge SPA de Briançon",
+    "type": "SPA",
+    "ville": "Briançon",
+    "code_postal": "05100",
+    "departement": "05",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-cote-dazur",
+    "nom": "SPA Côte d'Azur",
+    "type": "SPA",
+    "ville": "Vence",
+    "code_postal": "06140",
+    "departement": "06",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-de-grasse-refuge-de-lespoir",
+    "nom": "SPA de Grasse - Refuge de l'Espoir",
+    "type": "SPA",
+    "ville": "Mougins",
+    "code_postal": "06250",
+    "departement": "06",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-de-menton",
+    "nom": "SPA de Menton",
+    "type": "SPA",
+    "ville": "Sospel",
+    "code_postal": "06380",
+    "departement": "06",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-les-amandiers",
+    "nom": "SPA Les Amandiers",
+    "type": "SPA",
+    "ville": "Lavilledieu",
+    "code_postal": "07170",
+    "departement": "07",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-tain-tournon",
+    "nom": "SPA Tain-Tournon",
+    "type": "SPA",
+    "ville": "Tournon-sur-Rhône",
+    "code_postal": "07300",
+    "departement": "07",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-la-vivaroise",
+    "nom": "SPA la Vivaroise",
+    "type": "SPA",
+    "ville": "Annonay",
+    "code_postal": "07100",
+    "departement": "07",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-sud-ardennaise",
+    "nom": "SPA Sud Ardennaise",
+    "type": "SPA",
+    "ville": "Rethel",
+    "code_postal": "08300",
+    "departement": "08",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "refuge-spa-de-cliron",
+    "nom": "Refuge SPA de Cliron",
+    "type": "SPA",
+    "ville": "Cliron",
+    "code_postal": "08090",
+    "departement": "08",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "refuge-spa-de-mirepoix",
+    "nom": "Refuge SPA de Mirepoix",
+    "type": "SPA",
+    "ville": "Mirepoix",
+    "code_postal": "09500",
+    "departement": "09",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-saint-parres-aux-tertres",
+    "nom": "Refuge SPA de Saint-Parres-aux-Tertres",
+    "type": "SPA",
+    "ville": "Saint-Parres-aux-Tertres",
+    "code_postal": "10410",
+    "departement": "10",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-carcassonne",
+    "nom": "SPA de Carcassonne",
+    "type": "SPA",
+    "ville": "Berriac",
+    "code_postal": "11000",
+    "departement": "11",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-port-la-nouvelle",
+    "nom": "Refuge SPA de Port-la-Nouvelle",
+    "type": "SPA",
+    "ville": "Port-la-Nouvelle",
+    "code_postal": "11210",
+    "departement": "11",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-millau",
+    "nom": "Refuge SPA de Millau",
+    "type": "SPA",
+    "ville": "Millau",
+    "code_postal": "12100",
+    "departement": "12",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-rodez",
+    "nom": "SPA de Rodez",
+    "type": "SPA",
+    "ville": "Sainte-Radegonde",
+    "code_postal": "12850",
+    "departement": "12",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "complexe-animalier-daix-en-provence",
+    "nom": "Complexe Animalier d'Aix-en-Provence",
+    "type": "Refuge",
+    "ville": "Aix-en-Provence",
+    "code_postal": "13290",
+    "departement": "13",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "refuge-spa-daix-en-provence",
+    "nom": "Refuge SPA d'Aix-en-Provence",
+    "type": "SPA",
+    "ville": "Aix-en-Provence",
+    "code_postal": "13290",
+    "departement": "13",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-de-salon-de-provence",
+    "nom": "SPA de Salon-de-Provence",
+    "type": "SPA",
+    "ville": "Salon-de-Provence",
+    "code_postal": "13300",
+    "departement": "13",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-darles",
+    "nom": "SPA d'Arles",
+    "type": "SPA",
+    "ville": "Les-Baux-de-Provence",
+    "code_postal": "13520",
+    "departement": "13",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-de-balleroy",
+    "nom": "SPA de Balleroy",
+    "type": "SPA",
+    "ville": "Bayeux",
+    "code_postal": "14400",
+    "departement": "14",
+    "region": "Normandie"
+  },
+  {
+    "slug": "refuge-spa-de-cabourg",
+    "nom": "Refuge SPA de Cabourg",
+    "type": "SPA",
+    "ville": "Cabourg",
+    "code_postal": "14390",
+    "departement": "14",
+    "region": "Normandie"
+  },
+  {
+    "slug": "spa-du-cantal",
+    "nom": "SPA du Cantal",
+    "type": "SPA",
+    "ville": "Arpajon-sur-Cère",
+    "code_postal": "15130",
+    "departement": "15",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "refuge-fourriere-du-pays-gentiane",
+    "nom": "Refuge Fourrière du Pays Gentiane",
+    "type": "Refuge",
+    "ville": "Riom-ès-Montagnes",
+    "code_postal": "15400",
+    "departement": "15",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-refuge-de-langoumois",
+    "nom": "SPA Refuge de l'Angoumois",
+    "type": "SPA",
+    "ville": "Mornac",
+    "code_postal": "16600",
+    "departement": "16",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-cognac-refuge-de-bonbonnet",
+    "nom": "SPA de Cognac - Refuge de Bonbonnet",
+    "type": "SPA",
+    "ville": "Ars",
+    "code_postal": "16130",
+    "departement": "16",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "aspac-refuge-les-murmures",
+    "nom": "ASPAC - Refuge Les Murmures",
+    "type": "Association",
+    "ville": "Châtelaillon-Plage",
+    "code_postal": "17340",
+    "departement": "17",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-la-rochelle",
+    "nom": "SPA de La Rochelle",
+    "type": "SPA",
+    "ville": "Lagord",
+    "code_postal": "17140",
+    "departement": "17",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-saintes",
+    "nom": "SPA de Saintes",
+    "type": "SPA",
+    "ville": "Saintes",
+    "code_postal": "17100",
+    "departement": "17",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-du-cher-et-du-centre",
+    "nom": "SPA du Cher et du Centre",
+    "type": "SPA",
+    "ville": "Bourges",
+    "code_postal": "18000",
+    "departement": "18",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "societe-berrichonne-de-protection-des-animaux",
+    "nom": "Société Berrichonne de Protection des Animaux",
+    "type": "Association",
+    "ville": "Marmagne",
+    "code_postal": "18500",
+    "departement": "18",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "spa-de-brive-la-gaillarde",
+    "nom": "SPA de Brive-la-Gaillarde",
+    "type": "SPA",
+    "ville": "Brive-la-Gaillarde",
+    "code_postal": "19100",
+    "departement": "19",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "refuge-animalier-bortois",
+    "nom": "Refuge Animalier Bortois",
+    "type": "Refuge",
+    "ville": "Bort-les-Orgues",
+    "code_postal": "19110",
+    "departement": "19",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "refuge-spa-de-tulle",
+    "nom": "Refuge SPA de Tulle",
+    "type": "SPA",
+    "ville": "Chameyrat",
+    "code_postal": "19330",
+    "departement": "19",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-loudeacienne",
+    "nom": "SPA Loudéacienne",
+    "type": "SPA",
+    "ville": "Saint-Solen",
+    "code_postal": "22100",
+    "departement": "22",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-cotes-darmor-la-briochine",
+    "nom": "SPA Côtes-d'Armor - La Briochine",
+    "type": "SPA",
+    "ville": "Saint-Brieuc",
+    "code_postal": "22000",
+    "departement": "22",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-de-la-creuse",
+    "nom": "SPA de la Creuse",
+    "type": "SPA",
+    "ville": "Saint-Sulpice-le-Guérétois",
+    "code_postal": "23000",
+    "departement": "23",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-bergerac",
+    "nom": "SPA de Bergerac",
+    "type": "SPA",
+    "ville": "Bergerac",
+    "code_postal": "24100",
+    "departement": "24",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-perigueux",
+    "nom": "SPA de Périgueux",
+    "type": "SPA",
+    "ville": "Marsac-sur-l'Isle",
+    "code_postal": "24430",
+    "departement": "24",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-pontarlier",
+    "nom": "SPA de Pontarlier",
+    "type": "SPA",
+    "ville": "Pontarlier",
+    "code_postal": "25300",
+    "departement": "25",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-besancon",
+    "nom": "SPA de Besançon",
+    "type": "SPA",
+    "ville": "Besançon",
+    "code_postal": "25000",
+    "departement": "25",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-du-pays-de-montbeliard",
+    "nom": "SPA du Pays de Montbéliard",
+    "type": "SPA",
+    "ville": "Bavans",
+    "code_postal": "25550",
+    "departement": "25",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "aspa-valence-refuge-saint-roch",
+    "nom": "ASPA Valence - Refuge Saint-Roch",
+    "type": "Association",
+    "ville": "Valence",
+    "code_postal": "26000",
+    "departement": "26",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-pierrelatte-et-du-tricastin",
+    "nom": "SPA de Pierrelatte et du Tricastin",
+    "type": "SPA",
+    "ville": "Pierrelatte",
+    "code_postal": "26700",
+    "departement": "26",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-piegon-refuge-des-grands-champs",
+    "nom": "SPA de Piégon - Refuge des Grands Champs",
+    "type": "SPA",
+    "ville": "Piégon",
+    "code_postal": "26110",
+    "departement": "26",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-leure",
+    "nom": "SPA de l'Eure",
+    "type": "SPA",
+    "ville": "Évreux",
+    "code_postal": "27000",
+    "departement": "27",
+    "region": "Normandie"
+  },
+  {
+    "slug": "spa-de-chartres",
+    "nom": "SPA de Chartres",
+    "type": "SPA",
+    "ville": "Mainvilliers",
+    "code_postal": "28300",
+    "departement": "28",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "spa-de-chateaudun",
+    "nom": "SPA de Châteaudun",
+    "type": "SPA",
+    "ville": "Châteaudun",
+    "code_postal": "28200",
+    "departement": "28",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "refuge-spa-de-quimper",
+    "nom": "Refuge SPA de Quimper",
+    "type": "SPA",
+    "ville": "Quimper",
+    "code_postal": "29000",
+    "departement": "29",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-de-crozon",
+    "nom": "Refuge SPA de Crozon",
+    "type": "SPA",
+    "ville": "Crozon",
+    "code_postal": "29160",
+    "departement": "29",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-de-plouhinec",
+    "nom": "Refuge SPA de Plouhinec",
+    "type": "SPA",
+    "ville": "Plouhinec",
+    "code_postal": "29780",
+    "departement": "29",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-de-cornouaille",
+    "nom": "SPA de Cornouaille",
+    "type": "SPA",
+    "ville": "Concarneau",
+    "code_postal": "29900",
+    "departement": "29",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-de-nimes-et-du-gard",
+    "nom": "SPA de Nîmes et du Gard",
+    "type": "SPA",
+    "ville": "Nîmes",
+    "code_postal": "30900",
+    "departement": "30",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-vallerargues",
+    "nom": "Refuge SPA de Vallérargues",
+    "type": "SPA",
+    "ville": "Vallérargues",
+    "code_postal": "30580",
+    "departement": "30",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-du-gers",
+    "nom": "SPA du Gers",
+    "type": "SPA",
+    "ville": "Ordan-Larroque",
+    "code_postal": "32350",
+    "departement": "32",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-bordeaux",
+    "nom": "SPA de Bordeaux",
+    "type": "SPA",
+    "ville": "Mérignac",
+    "code_postal": "33700",
+    "departement": "33",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-beziers",
+    "nom": "SPA de Béziers",
+    "type": "SPA",
+    "ville": "Béziers",
+    "code_postal": "34500",
+    "departement": "34",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-montpellier",
+    "nom": "SPA de Montpellier",
+    "type": "SPA",
+    "ville": "Villeneuve-lès-Maguelone",
+    "code_postal": "34750",
+    "departement": "34",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-meze",
+    "nom": "SPA de Mèze",
+    "type": "SPA",
+    "ville": "Cournonterral",
+    "code_postal": "34660",
+    "departement": "34",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-rennes",
+    "nom": "Refuge SPA de Rennes",
+    "type": "SPA",
+    "ville": "Rennes",
+    "code_postal": "35000",
+    "departement": "35",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-de-chateaubourg",
+    "nom": "Refuge SPA de Châteaubourg",
+    "type": "SPA",
+    "ville": "Châteaubourg",
+    "code_postal": "35220",
+    "departement": "35",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-darmor",
+    "nom": "SPA d'Armor",
+    "type": "SPA",
+    "ville": "Montauban-de-Bretagne",
+    "code_postal": "35360",
+    "departement": "35",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-du-pays-de-saint-malo",
+    "nom": "SPA du Pays de Saint-Malo",
+    "type": "SPA",
+    "ville": "Saint-Malo",
+    "code_postal": "35400",
+    "departement": "35",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-de-vitre",
+    "nom": "Refuge SPA de Vitré",
+    "type": "SPA",
+    "ville": "Vitré",
+    "code_postal": "35500",
+    "departement": "35",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-de-redon",
+    "nom": "Refuge SPA de Redon",
+    "type": "SPA",
+    "ville": "Sainte-Marie-de-Redon",
+    "code_postal": "35600",
+    "departement": "35",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-de-lindre",
+    "nom": "SPA de l'Indre",
+    "type": "SPA",
+    "ville": "Montierchaume",
+    "code_postal": "36130",
+    "departement": "36",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "refuge-spa-de-luynes-tours",
+    "nom": "Refuge SPA de Luynes - Tours",
+    "type": "SPA",
+    "ville": "Luynes",
+    "code_postal": "37230",
+    "departement": "37",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "spa-du-dauphine",
+    "nom": "SPA du Dauphiné",
+    "type": "SPA",
+    "ville": "Uriage",
+    "code_postal": "38410",
+    "departement": "38",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-dole-et-de-sa-region",
+    "nom": "SPA de Dole et de sa région",
+    "type": "SPA",
+    "ville": "Biarne",
+    "code_postal": "39290",
+    "departement": "39",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-morez",
+    "nom": "SPA de Morez",
+    "type": "SPA",
+    "ville": "Morez",
+    "code_postal": "39400",
+    "departement": "39",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "refuge-spa-de-saint-pierre-du-mont",
+    "nom": "Refuge SPA de Saint-Pierre-du-Mont",
+    "type": "SPA",
+    "ville": "Saint-Pierre-du-Mont",
+    "code_postal": "40280",
+    "departement": "40",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "refuge-spa-de-moree-jean-leriche",
+    "nom": "Refuge SPA de Morée - Jean Leriche",
+    "type": "SPA",
+    "ville": "Morée",
+    "code_postal": "41160",
+    "departement": "41",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "spa-du-roannais",
+    "nom": "SPA du Roannais",
+    "type": "SPA",
+    "ville": "Roanne",
+    "code_postal": "42300",
+    "departement": "42",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-la-loire",
+    "nom": "SPA de la Loire",
+    "type": "SPA",
+    "ville": "Saint-Étienne",
+    "code_postal": "42000",
+    "departement": "42",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-brioude",
+    "nom": "SPA de Brioude",
+    "type": "SPA",
+    "ville": "Brioude",
+    "code_postal": "43100",
+    "departement": "43",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-la-haute-loire",
+    "nom": "SPA de la Haute-Loire",
+    "type": "SPA",
+    "ville": "Polignac",
+    "code_postal": "43000",
+    "departement": "43",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-loire-atlantique",
+    "nom": "SPA de Loire-Atlantique",
+    "type": "SPA",
+    "ville": "Carquefou",
+    "code_postal": "44470",
+    "departement": "44",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "refuge-spa-de-pornic",
+    "nom": "Refuge SPA de Pornic",
+    "type": "SPA",
+    "ville": "Pornic",
+    "code_postal": "44210",
+    "departement": "44",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "refuge-spa-de-bouguenais",
+    "nom": "Refuge SPA de Bouguenais",
+    "type": "SPA",
+    "ville": "Bouguenais",
+    "code_postal": "44340",
+    "departement": "44",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "spa-du-centre",
+    "nom": "SPA du Centre",
+    "type": "SPA",
+    "ville": "Orléans",
+    "code_postal": "45100",
+    "departement": "45",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "refuge-spa-de-chilleurs-aux-bois",
+    "nom": "Refuge SPA de Chilleurs-aux-Bois",
+    "type": "SPA",
+    "ville": "Chilleurs-aux-Bois",
+    "code_postal": "45170",
+    "departement": "45",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "spa-du-giennois",
+    "nom": "SPA du Giennois",
+    "type": "SPA",
+    "ville": "Gien",
+    "code_postal": "45500",
+    "departement": "45",
+    "region": "Centre-Val de Loire"
+  },
+  {
+    "slug": "spa-du-lot-et-garonne",
+    "nom": "SPA du Lot-et-Garonne",
+    "type": "SPA",
+    "ville": "Caubeyres",
+    "code_postal": "47160",
+    "departement": "47",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-la-lozere",
+    "nom": "SPA de la Lozère",
+    "type": "SPA",
+    "ville": "Bourgs-sur-Colagne",
+    "code_postal": "48100",
+    "departement": "48",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-maine-et-loire",
+    "nom": "SPA de Maine-et-Loire",
+    "type": "SPA",
+    "ville": "Angers",
+    "code_postal": "49000",
+    "departement": "49",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "refuge-spa-de-cholet",
+    "nom": "Refuge SPA de Cholet",
+    "type": "SPA",
+    "ville": "Cholet",
+    "code_postal": "49300",
+    "departement": "49",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "refuge-spa-de-cherbourg",
+    "nom": "Refuge SPA de Cherbourg",
+    "type": "SPA",
+    "ville": "Tollevast",
+    "code_postal": "50470",
+    "departement": "50",
+    "region": "Normandie"
+  },
+  {
+    "slug": "spa-de-la-mayenne",
+    "nom": "SPA de la Mayenne",
+    "type": "SPA",
+    "ville": "Laval",
+    "code_postal": "53000",
+    "departement": "53",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "spa-de-lorraine",
+    "nom": "SPA de Lorraine",
+    "type": "SPA",
+    "ville": "Velaine-en-Haye",
+    "code_postal": "54840",
+    "departement": "54",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-refuge-de-cathy",
+    "nom": "SPA Refuge de Cathy",
+    "type": "SPA",
+    "ville": "Fains-Véel",
+    "code_postal": "55000",
+    "departement": "55",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-letang-bleu",
+    "nom": "SPA de l'Étang Bleu",
+    "type": "SPA",
+    "ville": "Thierville-sur-Meuse",
+    "code_postal": "55840",
+    "departement": "55",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-lorient",
+    "nom": "SPA de Lorient",
+    "type": "SPA",
+    "ville": "Larmor-Plage",
+    "code_postal": "56260",
+    "departement": "56",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "spa-de-pontivy",
+    "nom": "SPA de Pontivy",
+    "type": "SPA",
+    "ville": "Malguénac",
+    "code_postal": "56300",
+    "departement": "56",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-dinzinzac-lochrist",
+    "nom": "Refuge SPA d'Inzinzac-Lochrist",
+    "type": "SPA",
+    "ville": "Inzinzac-Lochrist",
+    "code_postal": "56650",
+    "departement": "56",
+    "region": "Bretagne"
+  },
+  {
+    "slug": "refuge-spa-de-thionville",
+    "nom": "Refuge SPA de Thionville",
+    "type": "SPA",
+    "ville": "Thionville",
+    "code_postal": "57100",
+    "departement": "57",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "refuge-spa-de-sarreguemines",
+    "nom": "Refuge SPA de Sarreguemines",
+    "type": "SPA",
+    "ville": "Sarreguemines",
+    "code_postal": "57200",
+    "departement": "57",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "refuge-spa-de-forbach",
+    "nom": "Refuge SPA de Forbach",
+    "type": "SPA",
+    "ville": "Forbach",
+    "code_postal": "57600",
+    "departement": "57",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "refuge-spa-darry",
+    "nom": "Refuge SPA d'Arry",
+    "type": "SPA",
+    "ville": "Arry",
+    "code_postal": "57680",
+    "departement": "57",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-la-region-de-flandres",
+    "nom": "SPA de la région de Flandres",
+    "type": "SPA",
+    "ville": "Dunkerque",
+    "code_postal": "59640",
+    "departement": "59",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-des-monts-de-flandre",
+    "nom": "SPA des Monts de Flandre",
+    "type": "SPA",
+    "ville": "Hazebrouck",
+    "code_postal": "59190",
+    "departement": "59",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-de-la-vallee-de-la-lys",
+    "nom": "SPA de la Vallée de la Lys",
+    "type": "SPA",
+    "ville": "Méteren",
+    "code_postal": "59270",
+    "departement": "59",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-des-rives-de-laa",
+    "nom": "SPA des Rives de l'AA",
+    "type": "SPA",
+    "ville": "Saint-Georges-sur-l'Aa",
+    "code_postal": "59820",
+    "departement": "59",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-des-departements-du-nord",
+    "nom": "SPA des départements du Nord",
+    "type": "SPA",
+    "ville": "Marly",
+    "code_postal": "59770",
+    "departement": "59",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-compiegne",
+    "nom": "Refuge SPA de Compiègne",
+    "type": "SPA",
+    "ville": "Compiègne",
+    "code_postal": "60200",
+    "departement": "60",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-dessuiles-et-de-loise",
+    "nom": "SPA d'Essuiles et de l'Oise",
+    "type": "SPA",
+    "ville": "Essuiles",
+    "code_postal": "60510",
+    "departement": "60",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-pervencheres",
+    "nom": "Refuge SPA de Pervenchères",
+    "type": "SPA",
+    "ville": "Pervenchères",
+    "code_postal": "61360",
+    "departement": "61",
+    "region": "Normandie"
+  },
+  {
+    "slug": "spa-canche",
+    "nom": "SPA Canche",
+    "type": "SPA",
+    "ville": "Saint-Aubin",
+    "code_postal": "62170",
+    "departement": "62",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-tilloy-les-mofflaines",
+    "nom": "Refuge SPA de Tilloy-lès-Mofflaines",
+    "type": "SPA",
+    "ville": "Tilloy-lès-Mofflaines",
+    "code_postal": "62217",
+    "departement": "62",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-saint-omer",
+    "nom": "Refuge SPA de Saint-Omer",
+    "type": "SPA",
+    "ville": "Saint-Omer",
+    "code_postal": "62500",
+    "departement": "62",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "spa-du-boulonnais-refuge-du-moulin-wibert",
+    "nom": "SPA du Boulonnais - Refuge du Moulin Wibert",
+    "type": "SPA",
+    "ville": "Wimereux",
+    "code_postal": "62930",
+    "departement": "62",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "apa-63-association-protectrice-des-animaux",
+    "nom": "APA 63 - Association Protectrice des Animaux",
+    "type": "Association",
+    "ville": "Gerzat",
+    "code_postal": "63360",
+    "departement": "63",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "sos-animaux-le-broc",
+    "nom": "SOS Animaux Le Broc",
+    "type": "Association",
+    "ville": "Le Broc",
+    "code_postal": "63500",
+    "departement": "63",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-dazereix",
+    "nom": "SPA d'Azereix",
+    "type": "SPA",
+    "ville": "Azereix",
+    "code_postal": "65380",
+    "departement": "65",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-des-hautes-pyrenees",
+    "nom": "Refuge SPA des Hautes-Pyrénées",
+    "type": "SPA",
+    "ville": "Ibos",
+    "code_postal": "65420",
+    "departement": "65",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-bigorre",
+    "nom": "SPA Bigorre",
+    "type": "SPA",
+    "ville": "Tarbes",
+    "code_postal": "65000",
+    "departement": "65",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-perpignan",
+    "nom": "Refuge SPA de Perpignan",
+    "type": "SPA",
+    "ville": "Perpignan",
+    "code_postal": "66000",
+    "departement": "66",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-des-pyrenees-orientales",
+    "nom": "SPA des Pyrénées-Orientales",
+    "type": "SPA",
+    "ville": "Perpignan",
+    "code_postal": "66000",
+    "departement": "66",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-torreilles",
+    "nom": "Refuge SPA de Torreilles",
+    "type": "SPA",
+    "ville": "Torreilles",
+    "code_postal": "66440",
+    "departement": "66",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-haguenau",
+    "nom": "SPA de Haguenau",
+    "type": "SPA",
+    "ville": "Haguenau",
+    "code_postal": "67500",
+    "departement": "67",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-strasbourg",
+    "nom": "SPA de Strasbourg",
+    "type": "SPA",
+    "ville": "Strasbourg",
+    "code_postal": "67200",
+    "departement": "67",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-moyenne-alsace",
+    "nom": "SPA de Moyenne Alsace",
+    "type": "SPA",
+    "ville": "Ebersheim",
+    "code_postal": "67600",
+    "departement": "67",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-colmar-et-environs",
+    "nom": "SPA de Colmar et Environs",
+    "type": "SPA",
+    "ville": "Colmar",
+    "code_postal": "68000",
+    "departement": "68",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-de-mulhouse-haute-alsace",
+    "nom": "SPA de Mulhouse - Haute Alsace",
+    "type": "SPA",
+    "ville": "Mulhouse",
+    "code_postal": "68100",
+    "departement": "68",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "refuge-spa-de-marennes",
+    "nom": "Refuge SPA de Marennes",
+    "type": "SPA",
+    "ville": "Marennes",
+    "code_postal": "69970",
+    "departement": "69",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-lyon-et-du-sud-est",
+    "nom": "SPA de Lyon et du Sud-Est",
+    "type": "SPA",
+    "ville": "Lyon",
+    "code_postal": "69002",
+    "departement": "69",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-de-gray-et-de-haute-saone",
+    "nom": "SPA de Gray et de Haute-Saône",
+    "type": "SPA",
+    "ville": "Gray",
+    "code_postal": "70100",
+    "departement": "70",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-la-region-chalonnaise",
+    "nom": "SPA de la Région Chalonnaise",
+    "type": "SPA",
+    "ville": "Châtenoy-le-Royal",
+    "code_postal": "71880",
+    "departement": "71",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-la-region-creusotine",
+    "nom": "SPA de la Région Creusotine",
+    "type": "SPA",
+    "ville": "Marmagne",
+    "code_postal": "71710",
+    "departement": "71",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-macon",
+    "nom": "SPA de Mâcon",
+    "type": "SPA",
+    "ville": "Mâcon",
+    "code_postal": "71000",
+    "departement": "71",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-montceau-les-mines",
+    "nom": "SPA de Montceau-les-Mines",
+    "type": "SPA",
+    "ville": "Montceau-les-Mines",
+    "code_postal": "71300",
+    "departement": "71",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-chagny",
+    "nom": "SPA de Chagny",
+    "type": "SPA",
+    "ville": "Chagny",
+    "code_postal": "71150",
+    "departement": "71",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "refuge-spa-dyvre-leveque",
+    "nom": "Refuge SPA d'Yvré-l'Évêque",
+    "type": "SPA",
+    "ville": "Yvré-l'Évêque",
+    "code_postal": "72530",
+    "departement": "72",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "spa-de-savoie",
+    "nom": "SPA de Savoie",
+    "type": "SPA",
+    "ville": "Chambéry",
+    "code_postal": "73000",
+    "departement": "73",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-dannecy-refuge-le-penez",
+    "nom": "SPA d'Annecy - Refuge Le Penez",
+    "type": "SPA",
+    "ville": "Marlioz",
+    "code_postal": "74270",
+    "departement": "74",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "spa-du-chablais",
+    "nom": "SPA du Chablais",
+    "type": "SPA",
+    "ville": "Thonon-les-Bains",
+    "code_postal": "74200",
+    "departement": "74",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "refuge-spa-de-cluses",
+    "nom": "Refuge SPA de Cluses",
+    "type": "SPA",
+    "ville": "Cluses",
+    "code_postal": "74300",
+    "departement": "74",
+    "region": "Auvergne-Rhône-Alpes"
+  },
+  {
+    "slug": "la-spa-siege-social",
+    "nom": "La SPA - Siège Social",
+    "type": "SPA",
+    "ville": "Paris",
+    "code_postal": "75017",
+    "departement": "75",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "spa-dieppoise",
+    "nom": "SPA Dieppoise",
+    "type": "SPA",
+    "ville": "Saint-Aubin-sur-Scie",
+    "code_postal": "76550",
+    "departement": "76",
+    "region": "Normandie"
+  },
+  {
+    "slug": "refuge-spa-detalondes",
+    "nom": "Refuge SPA d'Étalondes",
+    "type": "SPA",
+    "ville": "Étalondes",
+    "code_postal": "76260",
+    "departement": "76",
+    "region": "Normandie"
+  },
+  {
+    "slug": "refuge-spa-de-vaux-le-penil",
+    "nom": "Refuge SPA de Vaux-le-Pénil",
+    "type": "SPA",
+    "ville": "Vaux-le-Pénil",
+    "code_postal": "77000",
+    "departement": "77",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "refuge-pas-si-betes",
+    "nom": "Refuge Pas si Bêtes",
+    "type": "Refuge",
+    "ville": "Vimpelles",
+    "code_postal": "77520",
+    "departement": "77",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "refuge-spa-dhermeray",
+    "nom": "Refuge SPA d'Hermeray",
+    "type": "SPA",
+    "ville": "Hermeray",
+    "code_postal": "78125",
+    "departement": "78",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-plaisir",
+    "nom": "Refuge SPA de Plaisir",
+    "type": "SPA",
+    "ville": "Plaisir",
+    "code_postal": "78370",
+    "departement": "78",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "refuge-spa-dorgeval",
+    "nom": "Refuge SPA d'Orgeval",
+    "type": "SPA",
+    "ville": "Orgeval",
+    "code_postal": "78630",
+    "departement": "78",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "refuge-spa-ponthieu-marquenterre",
+    "nom": "Refuge SPA Ponthieu Marquenterre",
+    "type": "SPA",
+    "ville": "Buigny-Saint-Maclou",
+    "code_postal": "80132",
+    "departement": "80",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-poulainville",
+    "nom": "Refuge SPA de Poulainville",
+    "type": "SPA",
+    "ville": "Poulainville",
+    "code_postal": "80260",
+    "departement": "80",
+    "region": "Hauts-de-France"
+  },
+  {
+    "slug": "refuge-spa-du-garric",
+    "nom": "Refuge SPA du Garric",
+    "type": "SPA",
+    "ville": "Le Garric",
+    "code_postal": "81450",
+    "departement": "81",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "spa-de-montauban",
+    "nom": "SPA de Montauban",
+    "type": "SPA",
+    "ville": "Montauban",
+    "code_postal": "82000",
+    "departement": "82",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "refuge-spa-de-golfech",
+    "nom": "Refuge SPA de Golfech",
+    "type": "SPA",
+    "ville": "Golfech",
+    "code_postal": "82400",
+    "departement": "82",
+    "region": "Occitanie"
+  },
+  {
+    "slug": "comite-daction-et-de-vigilance-spa",
+    "nom": "Comité d'Action et de Vigilance SPA",
+    "type": "Association",
+    "ville": "La Seyne-sur-Mer",
+    "code_postal": "83500",
+    "departement": "83",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "refuge-spa-de-flayosc",
+    "nom": "Refuge SPA de Flayosc",
+    "type": "SPA",
+    "ville": "Flayosc",
+    "code_postal": "83780",
+    "departement": "83",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-vauclusienne",
+    "nom": "SPA Vauclusienne",
+    "type": "SPA",
+    "ville": "L'Isle-sur-la-Sorgue",
+    "code_postal": "84800",
+    "departement": "84",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "spa-de-lenclave-des-papes",
+    "nom": "SPA de l'Enclave des Papes",
+    "type": "SPA",
+    "ville": "Grillon",
+    "code_postal": "84600",
+    "departement": "84",
+    "region": "Provence-Alpes-Côte d'Azur"
+  },
+  {
+    "slug": "refuge-spa-de-la-roche-sur-yon",
+    "nom": "Refuge SPA de La Roche-sur-Yon",
+    "type": "SPA",
+    "ville": "La Roche-sur-Yon",
+    "code_postal": "85000",
+    "departement": "85",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "refuge-spa-de-chateau-dolonne",
+    "nom": "Refuge SPA de Château-d'Olonne",
+    "type": "SPA",
+    "ville": "Château-d'Olonne",
+    "code_postal": "85180",
+    "departement": "85",
+    "region": "Pays de la Loire"
+  },
+  {
+    "slug": "spa-de-chatellerault",
+    "nom": "SPA de Châtellerault",
+    "type": "SPA",
+    "ville": "Châtellerault",
+    "code_postal": "86100",
+    "departement": "86",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-poitiers",
+    "nom": "SPA de Poitiers",
+    "type": "SPA",
+    "ville": "Poitiers",
+    "code_postal": "86000",
+    "departement": "86",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "spa-de-limoges-et-haute-vienne",
+    "nom": "SPA de Limoges et Haute-Vienne",
+    "type": "SPA",
+    "ville": "Couseix",
+    "code_postal": "87270",
+    "departement": "87",
+    "region": "Nouvelle-Aquitaine"
+  },
+  {
+    "slug": "societe-vosgienne-de-protection-animale",
+    "nom": "Société Vosgienne de Protection Animale",
+    "type": "Association",
+    "ville": "Brouvelieures",
+    "code_postal": "88600",
+    "departement": "88",
+    "region": "Grand Est"
+  },
+  {
+    "slug": "spa-dauxerre",
+    "nom": "SPA d'Auxerre",
+    "type": "SPA",
+    "ville": "Auxerre",
+    "code_postal": "89000",
+    "departement": "89",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-lyonne",
+    "nom": "SPA de l'Yonne",
+    "type": "SPA",
+    "ville": "Nailly",
+    "code_postal": "89100",
+    "departement": "89",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "spa-de-belfort",
+    "nom": "SPA de Belfort",
+    "type": "SPA",
+    "ville": "Belfort",
+    "code_postal": "90000",
+    "departement": "90",
+    "region": "Bourgogne-Franche-Comté"
+  },
+  {
+    "slug": "refuge-spa-de-chamarande",
+    "nom": "Refuge SPA de Chamarande",
+    "type": "SPA",
+    "ville": "Chamarande",
+    "code_postal": "91730",
+    "departement": "91",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "refuge-spa-de-gennevilliers",
+    "nom": "Refuge SPA de Gennevilliers",
+    "type": "SPA",
+    "ville": "Gennevilliers",
+    "code_postal": "92230",
+    "departement": "92",
+    "region": "Île-de-France"
+  },
+  {
+    "slug": "spa-de-la-guadeloupe",
+    "nom": "SPA de la Guadeloupe",
+    "type": "SPA",
+    "ville": "Les Abymes",
+    "code_postal": "97139",
+    "departement": "971",
+    "region": "Guadeloupe"
+  },
+  {
+    "slug": "refuge-spa-du-papillon",
+    "nom": "Refuge SPA du Papillon",
+    "type": "SPA",
+    "ville": "Les Abymes",
+    "code_postal": "97139",
+    "departement": "971",
+    "region": "Guadeloupe"
+  },
+  {
+    "slug": "spa-de-la-martinique",
+    "nom": "SPA de la Martinique",
+    "type": "SPA",
+    "ville": "Sainte-Luce",
+    "code_postal": "97228",
+    "departement": "972",
+    "region": "Martinique"
+  },
+  {
+    "slug": "spa-de-la-reunion",
+    "nom": "SPA de la Réunion",
+    "type": "SPA",
+    "ville": "Saint-Denis",
+    "code_postal": "97479",
+    "departement": "974",
+    "region": "La Réunion"
+  },
+  {
+    "slug": "spap-fare-animara-de-polynesie",
+    "nom": "SPAP Fare Animara de Polynésie",
+    "type": "Association",
+    "ville": "Papeete",
+    "code_postal": "98713",
+    "departement": "987",
+    "region": "Polynésie française"
+  }
+]

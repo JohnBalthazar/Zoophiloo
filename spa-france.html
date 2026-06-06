@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<!-- Google Analytics : chargé conditionnellement par cookies.js (RGPD) -->
+<meta charset="UTF-8">
+<meta name="theme-color" content="#c2410c">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toutes les SPAs de France — Annuaire refuges SPA | YoupiZoo</title>
+<meta name="description" content="Annuaire complet des 179 refuges SPA et associations de protection animale en France. Trouvez la SPA la plus proche et adoptez un animal abandonné.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.youpizoo.fr/spa-france.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Toutes les SPAs de France — YoupiZoo">
+<meta property="og:description" content="Annuaire complet des 179 refuges SPA et associations de protection animale en France. Trouvez la SPA près de chez vous.">
+<meta property="og:url" content="https://www.youpizoo.fr/spa-france.html">
+<meta property="og:image" content="https://www.youpizoo.fr/og-image.jpg">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="YoupiZoo">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Annuaire des SPAs et refuges animaux de France",
+  "description": "Liste complète des refuges SPA et associations de protection animale en France métropolitaine et DOM",
+  "url": "https://www.youpizoo.fr/spa-france.html",
+  "numberOfItems": 179
+}
+</script>
+<style>
+  :root {
+    --green: #5a9e1a; --green-dark: #478015; --green-light: #f0f8e6;
+    --purple: #7c3aed; --purple-dark: #6d28d9; --purple-light: #f5f3ff;
+    --orange: #c2410c; --orange-dark: #9a3412; --orange-light: #fff7ed;
+    --text: #1a1a1a; --text-muted: #6b6b6b; --border: #e8e8e4;
+    --bg: #fafaf8; --white: #ffffff;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+  .logo { text-decoration: none; display: inline-flex; align-items: center; }
+  .logo-img { height: 51px; width: auto; display: block; }
+  .tagline { font-size: 12px; color: var(--text-muted); font-weight: 300; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
+  .header-left { display: flex; align-items: center; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-ghost:hover { border-color: var(--green); background: var(--green-light); }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 6px 16px; border: none; border-radius: 8px; background: var(--green); color: white; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--green-dark); }
+
+  .breadcrumb { padding: 10px 24px; font-size: 12px; color: var(--text-muted); background: var(--white); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--orange); }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  .hero-banner { background: linear-gradient(135deg, #c2410c 0%, #9a3412 50%, #7c2d12 100%); padding: 40px 24px 36px; text-align: center; color: white; }
+  .hero-banner h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+  .hero-banner p { font-size: 15px; opacity: 0.88; max-width: 560px; margin: 0 auto 20px; line-height: 1.6; }
+  .hero-stats { display: flex; justify-content: center; gap: 32px; font-size: 13px; opacity: 0.85; }
+  .hero-stat strong { font-size: 22px; font-weight: 700; display: block; }
+  .hero-spa-logo { font-size: 48px; margin-bottom: 12px; display: block; }
+
+  .region-nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .region-pill { font-size: 12px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; text-decoration: none; color: var(--text-muted); white-space: nowrap; transition: all 0.15s; }
+  .region-pill:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+
+  .sticky-search { position: sticky; top: 64px; z-index: 90; background: var(--white); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; gap: 12px; }
+  .search-bar { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; flex: 1; max-width: 420px; }
+  .search-bar input { flex: 1; border: none; outline: none; font-family: var(--font-body); font-size: 14px; background: transparent; color: var(--text); }
+  .search-bar input::placeholder { color: var(--text-muted); }
+  .total-count { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+  .total-count strong { color: var(--text); }
+
+  main { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; display: flex; flex-direction: column; gap: 40px; }
+
+  .region-section {}
+  .region-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+  .region-emoji { font-size: 22px; }
+  .region-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--text); }
+  .region-count { font-size: 12px; font-weight: 500; background: var(--orange-light); color: var(--orange); padding: 3px 10px; border-radius: 12px; border: 1px solid #fed7aa; margin-left: auto; }
+  .region-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+
+  .spa-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 5px; transition: all 0.15s; }
+  .spa-card:hover { border-color: var(--orange); box-shadow: 0 4px 14px rgba(194,65,12,0.1); transform: translateY(-2px); }
+  .spa-card-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .spa-type-badge { font-size: 10px; font-weight: 700; color: var(--orange); background: var(--orange-light); padding: 2px 7px; border-radius: 9px; border: 1px solid #fed7aa; }
+  .spa-dept { font-size: 11px; color: var(--text-muted); font-family: monospace; letter-spacing: 0.04em; }
+  .spa-card-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.35; }
+  .spa-card-loc { font-size: 12px; color: var(--text-muted); }
+  .spa-card-tel { font-size: 12px; color: var(--purple-dark); font-weight: 500; }
+
+  .eco-banner { background: linear-gradient(90deg, #d8f0b0 0%, #e8f8d0 100%); border-bottom: 1px solid #a0d860; padding: 6px 44px 6px 16px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #4a7a12; position: relative; flex-shrink: 0; text-align: center; line-height: 1.4; }
+  .eco-banner a { color: #4a7a12; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; }
+  .eco-banner-dismiss { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: none; background: rgba(90,158,26,0.12); color: #4a7a12; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .eco-banner-dismiss:hover { background: rgba(90,158,26,0.25); }
+  .hidden { display: none !important; }
+
+  @media (max-width: 680px) {
+    .eco-banner, footer { display: none !important; }
+    .tagline { display: none; }
+    .hero-banner h1 { font-size: 22px; }
+    .hero-stats { gap: 16px; }
+    main { padding: 16px 16px 40px; gap: 28px; }
+    .region-grid { grid-template-columns: 1fr; }
+    .sticky-search { padding: 8px 16px; flex-wrap: wrap; }
+    .total-count { margin-left: 0; }
+  }
+</style>
+<link rel="stylesheet" href="cookies.css">
+</head>
+<body>
+
+<div class="eco-banner" id="ecoBanner">
+  🌿 <strong>Site écoresponsable</strong> · Hébergé chez <a href="https://www.infomaniak.com/fr/ecologie" target="_blank" rel="noopener noreferrer">Infomaniak</a> &nbsp;·&nbsp; Engagement pour le bien-être animal 🐾
+  <button class="eco-banner-dismiss" onclick="dismissEcoBanner()" title="Fermer" aria-label="Fermer le bandeau">✕</button>
+</div>
+
+<header>
+  <div class="header-left">
+    <a href="index.html" class="logo"><img src="logo.png" alt="YoupiZoo" class="logo-img"></a>
+    <span class="tagline">Trouvez vos animaux près de chez vous</span>
+  </div>
+  <div class="header-right">
+    <a href="refuges.html" class="btn-ghost">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Refuges partenaires
+    </a>
+    <a href="deposer.html" class="btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Déposer une annonce
+    </a>
+  </div>
+</header>
+
+<nav class="breadcrumb">
+  <a href="index.html">Accueil</a>
+  <span class="sep">›</span>
+  <a href="refuges.html">Refuges &amp; Associations</a>
+  <span class="sep">›</span>
+  <span>Annuaire SPAs France</span>
+</nav>
+
+<div class="hero-banner">
+  <span class="hero-spa-logo">🐾</span>
+  <h1>Toutes les SPAs de France</h1>
+  <p>Annuaire complet des refuges SPA et associations de protection animale. Partenariat officiel YoupiZoo × La SPA.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>179</strong>refuges &amp; SPAs</div>
+    <div class="hero-stat"><strong>16</strong>régions couvertes</div>
+    <div class="hero-stat"><strong>87</strong>départements</div>
+  </div>
+</div>
+
+<nav class="region-nav" aria-label="Navigation par région">
+<a href="#region-auvergne-rhone-alpes" class="region-pill">🏔 Auvergne-Rhône-Alpes</a>
+<a href="#region-bourgogne-franche-comte" class="region-pill">🍷 Bourgogne-Franche-Comté</a>
+<a href="#region-bretagne" class="region-pill">⚓ Bretagne</a>
+<a href="#region-centre-val-de-loire" class="region-pill">🏰 Centre-Val de Loire</a>
+<a href="#region-grand-est" class="region-pill">🥨 Grand Est</a>
+<a href="#region-hauts-de-france" class="region-pill">🌾 Hauts-de-France</a>
+<a href="#region-ile-de-france" class="region-pill">🗼 Île-de-France</a>
+<a href="#region-normandie" class="region-pill">🍎 Normandie</a>
+<a href="#region-nouvelle-aquitaine" class="region-pill">🌊 Nouvelle-Aquitaine</a>
+<a href="#region-occitanie" class="region-pill">☀️ Occitanie</a>
+<a href="#region-pays-de-la-loire" class="region-pill">🌿 Pays de la Loire</a>
+<a href="#region-provence-alpes-cote-dazur" class="region-pill">🌞 Provence-Alpes-Côte d'Azur</a>
+<a href="#region-guadeloupe" class="region-pill">🌴 Guadeloupe</a>
+<a href="#region-la-reunion" class="region-pill">🌋 La Réunion</a>
+<a href="#region-martinique" class="region-pill">🌺 Martinique</a>
+<a href="#region-polynesie-francaise" class="region-pill">🐠 Polynésie française</a>
+</nav>
+
+<div class="sticky-search">
+  <div class="search-bar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Rechercher une SPA ou une ville…" oninput="filterCards()" autocomplete="off">
+  </div>
+  <span class="total-count"><strong id="visibleCount">179</strong> refuges affichés</span>
+</div>
+
+<main id="mainContent">
+
+      <section class="region-section" id="region-auvergne-rhone-alpes">
+        <div class="region-header">
+          <span class="region-emoji">🏔</span>
+          <h2 class="region-name">Auvergne-Rhône-Alpes</h2>
+          <span class="region-count">28 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/apa-63-association-protectrice-des-animaux.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">63360</span>
+            </div>
+            <div class="spa-card-name">APA 63 - Association Protectrice des Animaux</div>
+            <div class="spa-card-loc">Gerzat</div>
+            <div class="spa-card-tel">04 73 91 35 36</div>
+          </a>
+          <a class="spa-card" href="spa/aspa-valence-refuge-saint-roch.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">26000</span>
+            </div>
+            <div class="spa-card-name">ASPA Valence - Refuge Saint-Roch</div>
+            <div class="spa-card-loc">Valence</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-fourriere-du-haut-bugey.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🏠 Refuge</span>
+              <span class="spa-dept">01100</span>
+            </div>
+            <div class="spa-card-name">Refuge Fourrière du Haut Bugey</div>
+            <div class="spa-card-loc">Oyonnax</div>
+            <div class="spa-card-tel">06 33 48 06 21</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-fourriere-du-pays-de-gex.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🏠 Refuge</span>
+              <span class="spa-dept">01170</span>
+            </div>
+            <div class="spa-card-name">Refuge Fourrière du Pays de Gex</div>
+            <div class="spa-card-loc">Gex</div>
+            <div class="spa-card-tel">04 50 41 74 80</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-fourriere-du-pays-gentiane.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🏠 Refuge</span>
+              <span class="spa-dept">15400</span>
+            </div>
+            <div class="spa-card-name">Refuge Fourrière du Pays Gentiane</div>
+            <div class="spa-card-loc">Riom-ès-Montagnes</div>
+            <div class="spa-card-tel">04 71 78 09 80</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-brugheas.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">03700</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Brugheas</div>
+            <div class="spa-card-loc">Brugheas</div>
+            <div class="spa-card-tel">04 70 32 43 42</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-cluses.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">74300</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Cluses</div>
+            <div class="spa-card-loc">Cluses</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-dompierre-sur-veyle.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">01240</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Dompierre-sur-Veyle</div>
+            <div class="spa-card-loc">Dompierre-sur-Veyle</div>
+            <div class="spa-card-tel">04 74 30 35 76</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-marennes.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">69970</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Marennes</div>
+            <div class="spa-card-loc">Marennes</div>
+            <div class="spa-card-tel">04 72 70 46 36</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-montlucon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">03100</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Montluçon</div>
+            <div class="spa-card-loc">Montluçon</div>
+            <div class="spa-card-tel">04 70 29 63 23</div>
+          </a>
+          <a class="spa-card" href="spa/sos-animaux-le-broc.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">63500</span>
+            </div>
+            <div class="spa-card-name">SOS Animaux Le Broc</div>
+            <div class="spa-card-loc">Le Broc</div>
+            <div class="spa-card-tel">04 73 71 62 43</div>
+          </a>
+          <a class="spa-card" href="spa/spa-dannecy-refuge-le-penez.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">74270</span>
+            </div>
+            <div class="spa-card-name">SPA d'Annecy - Refuge Le Penez</div>
+            <div class="spa-card-loc">Marlioz</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-doyonnax.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">01100</span>
+            </div>
+            <div class="spa-card-name">SPA d'Oyonnax</div>
+            <div class="spa-card-loc">Oyonnax</div>
+            <div class="spa-card-tel">04 74 77 53 64</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-brioude.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">43100</span>
+            </div>
+            <div class="spa-card-name">SPA de Brioude</div>
+            <div class="spa-card-loc">Brioude</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-haute-loire.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">43000</span>
+            </div>
+            <div class="spa-card-name">SPA de la Haute-Loire</div>
+            <div class="spa-card-loc">Polignac</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-loire.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">42000</span>
+            </div>
+            <div class="spa-card-name">SPA de la Loire</div>
+            <div class="spa-card-loc">Saint-Étienne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-lyon-et-du-sud-est.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">69002</span>
+            </div>
+            <div class="spa-card-name">SPA de Lyon et du Sud-Est</div>
+            <div class="spa-card-loc">Lyon</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-piegon-refuge-des-grands-champs.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">26110</span>
+            </div>
+            <div class="spa-card-name">SPA de Piégon - Refuge des Grands Champs</div>
+            <div class="spa-card-loc">Piégon</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-pierrelatte-et-du-tricastin.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">26700</span>
+            </div>
+            <div class="spa-card-name">SPA de Pierrelatte et du Tricastin</div>
+            <div class="spa-card-loc">Pierrelatte</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-savoie.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">73000</span>
+            </div>
+            <div class="spa-card-name">SPA de Savoie</div>
+            <div class="spa-card-loc">Chambéry</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-bourbonnais.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">03230</span>
+            </div>
+            <div class="spa-card-name">SPA du Bourbonnais</div>
+            <div class="spa-card-loc">Lusigny</div>
+            <div class="spa-card-tel">04 70 20 24 19</div>
+          </a>
+          <a class="spa-card" href="spa/spa-du-cantal.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">15130</span>
+            </div>
+            <div class="spa-card-name">SPA du Cantal</div>
+            <div class="spa-card-loc">Arpajon-sur-Cère</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-chablais.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">74200</span>
+            </div>
+            <div class="spa-card-name">SPA du Chablais</div>
+            <div class="spa-card-loc">Thonon-les-Bains</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-dauphine.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">38410</span>
+            </div>
+            <div class="spa-card-name">SPA du Dauphiné</div>
+            <div class="spa-card-loc">Uriage</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-roannais.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">42300</span>
+            </div>
+            <div class="spa-card-name">SPA du Roannais</div>
+            <div class="spa-card-loc">Roanne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-la-vivaroise.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">07100</span>
+            </div>
+            <div class="spa-card-name">SPA la Vivaroise</div>
+            <div class="spa-card-loc">Annonay</div>
+            <div class="spa-card-tel">04 75 67 04 11</div>
+          </a>
+          <a class="spa-card" href="spa/spa-les-amandiers.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">07170</span>
+            </div>
+            <div class="spa-card-name">SPA Les Amandiers</div>
+            <div class="spa-card-loc">Lavilledieu</div>
+            <div class="spa-card-tel">04 75 94 27 05</div>
+          </a>
+          <a class="spa-card" href="spa/spa-tain-tournon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">07300</span>
+            </div>
+            <div class="spa-card-name">SPA Tain-Tournon</div>
+            <div class="spa-card-loc">Tournon-sur-Rhône</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-bourgogne-franche-comte">
+        <div class="region-header">
+          <span class="region-emoji">🍷</span>
+          <h2 class="region-name">Bourgogne-Franche-Comté</h2>
+          <span class="region-count">14 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/spa-dauxerre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">89000</span>
+            </div>
+            <div class="spa-card-name">SPA d'Auxerre</div>
+            <div class="spa-card-loc">Auxerre</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-belfort.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">90000</span>
+            </div>
+            <div class="spa-card-name">SPA de Belfort</div>
+            <div class="spa-card-loc">Belfort</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-besancon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">25000</span>
+            </div>
+            <div class="spa-card-name">SPA de Besançon</div>
+            <div class="spa-card-loc">Besançon</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-chagny.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">71150</span>
+            </div>
+            <div class="spa-card-name">SPA de Chagny</div>
+            <div class="spa-card-loc">Chagny</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-dole-et-de-sa-region.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">39290</span>
+            </div>
+            <div class="spa-card-name">SPA de Dole et de sa région</div>
+            <div class="spa-card-loc">Biarne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-gray-et-de-haute-saone.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">70100</span>
+            </div>
+            <div class="spa-card-name">SPA de Gray et de Haute-Saône</div>
+            <div class="spa-card-loc">Gray</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-lyonne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">89100</span>
+            </div>
+            <div class="spa-card-name">SPA de l'Yonne</div>
+            <div class="spa-card-loc">Nailly</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-region-chalonnaise.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">71880</span>
+            </div>
+            <div class="spa-card-name">SPA de la Région Chalonnaise</div>
+            <div class="spa-card-loc">Châtenoy-le-Royal</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-region-creusotine.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">71710</span>
+            </div>
+            <div class="spa-card-name">SPA de la Région Creusotine</div>
+            <div class="spa-card-loc">Marmagne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-macon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">71000</span>
+            </div>
+            <div class="spa-card-name">SPA de Mâcon</div>
+            <div class="spa-card-loc">Mâcon</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-montceau-les-mines.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">71300</span>
+            </div>
+            <div class="spa-card-name">SPA de Montceau-les-Mines</div>
+            <div class="spa-card-loc">Montceau-les-Mines</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-morez.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">39400</span>
+            </div>
+            <div class="spa-card-name">SPA de Morez</div>
+            <div class="spa-card-loc">Morez</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-pontarlier.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">25300</span>
+            </div>
+            <div class="spa-card-name">SPA de Pontarlier</div>
+            <div class="spa-card-loc">Pontarlier</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-pays-de-montbeliard.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">25550</span>
+            </div>
+            <div class="spa-card-name">SPA du Pays de Montbéliard</div>
+            <div class="spa-card-loc">Bavans</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-bretagne">
+        <div class="region-header">
+          <span class="region-emoji">⚓</span>
+          <h2 class="region-name">Bretagne</h2>
+          <span class="region-count">15 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-dinzinzac-lochrist.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">56650</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Inzinzac-Lochrist</div>
+            <div class="spa-card-loc">Inzinzac-Lochrist</div>
+            <div class="spa-card-tel">02 07 36 02 26</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-chateaubourg.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">35220</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Châteaubourg</div>
+            <div class="spa-card-loc">Châteaubourg</div>
+            <div class="spa-card-tel">02 99 62 32 65</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-crozon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">29160</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Crozon</div>
+            <div class="spa-card-loc">Crozon</div>
+            <div class="spa-card-tel">02 30 14 05 42</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-plouhinec.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">29780</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Plouhinec</div>
+            <div class="spa-card-loc">Plouhinec</div>
+            <div class="spa-card-tel">02 98 70 44 93</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-quimper.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">29000</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Quimper</div>
+            <div class="spa-card-loc">Quimper</div>
+            <div class="spa-card-tel">02 98 64 87 35</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-redon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">35600</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Redon</div>
+            <div class="spa-card-loc">Sainte-Marie-de-Redon</div>
+            <div class="spa-card-tel">02 99 72 40 97</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-rennes.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">35000</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Rennes</div>
+            <div class="spa-card-loc">Rennes</div>
+            <div class="spa-card-tel">02 99 59 32 74</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-vitre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">35500</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Vitré</div>
+            <div class="spa-card-loc">Vitré</div>
+            <div class="spa-card-tel">02 99 75 21 32</div>
+          </a>
+          <a class="spa-card" href="spa/spa-cotes-darmor-la-briochine.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">22000</span>
+            </div>
+            <div class="spa-card-name">SPA Côtes-d'Armor - La Briochine</div>
+            <div class="spa-card-loc">Saint-Brieuc</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-darmor.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">35360</span>
+            </div>
+            <div class="spa-card-name">SPA d'Armor</div>
+            <div class="spa-card-loc">Montauban-de-Bretagne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-cornouaille.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">29900</span>
+            </div>
+            <div class="spa-card-name">SPA de Cornouaille</div>
+            <div class="spa-card-loc">Concarneau</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-lorient.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">56260</span>
+            </div>
+            <div class="spa-card-name">SPA de Lorient</div>
+            <div class="spa-card-loc">Larmor-Plage</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-pontivy.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">56300</span>
+            </div>
+            <div class="spa-card-name">SPA de Pontivy</div>
+            <div class="spa-card-loc">Malguénac</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-pays-de-saint-malo.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">35400</span>
+            </div>
+            <div class="spa-card-name">SPA du Pays de Saint-Malo</div>
+            <div class="spa-card-loc">Saint-Malo</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-loudeacienne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">22100</span>
+            </div>
+            <div class="spa-card-name">SPA Loudéacienne</div>
+            <div class="spa-card-loc">Saint-Solen</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-centre-val-de-loire">
+        <div class="region-header">
+          <span class="region-emoji">🏰</span>
+          <h2 class="region-name">Centre-Val de Loire</h2>
+          <span class="region-count">10 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-de-chilleurs-aux-bois.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">45170</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Chilleurs-aux-Bois</div>
+            <div class="spa-card-loc">Chilleurs-aux-Bois</div>
+            <div class="spa-card-tel">02 38 32 98 11</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-luynes-tours.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">37230</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Luynes - Tours</div>
+            <div class="spa-card-loc">Luynes</div>
+            <div class="spa-card-tel">02 47 42 10 47</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-moree-jean-leriche.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">41160</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Morée - Jean Leriche</div>
+            <div class="spa-card-loc">Morée</div>
+            <div class="spa-card-tel">02 54 82 09 79</div>
+          </a>
+          <a class="spa-card" href="spa/societe-berrichonne-de-protection-des-animaux.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">18500</span>
+            </div>
+            <div class="spa-card-name">Société Berrichonne de Protection des Animaux</div>
+            <div class="spa-card-loc">Marmagne</div>
+            <div class="spa-card-tel">02 48 26 06 06</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-chartres.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">28300</span>
+            </div>
+            <div class="spa-card-name">SPA de Chartres</div>
+            <div class="spa-card-loc">Mainvilliers</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-chateaudun.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">28200</span>
+            </div>
+            <div class="spa-card-name">SPA de Châteaudun</div>
+            <div class="spa-card-loc">Châteaudun</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-lindre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">36130</span>
+            </div>
+            <div class="spa-card-name">SPA de l'Indre</div>
+            <div class="spa-card-loc">Montierchaume</div>
+            <div class="spa-card-tel">02 54 34 74 27</div>
+          </a>
+          <a class="spa-card" href="spa/spa-du-centre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">45100</span>
+            </div>
+            <div class="spa-card-name">SPA du Centre</div>
+            <div class="spa-card-loc">Orléans</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-cher-et-du-centre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">18000</span>
+            </div>
+            <div class="spa-card-name">SPA du Cher et du Centre</div>
+            <div class="spa-card-loc">Bourges</div>
+            <div class="spa-card-tel">02 48 24 13 32</div>
+          </a>
+          <a class="spa-card" href="spa/spa-du-giennois.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">45500</span>
+            </div>
+            <div class="spa-card-name">SPA du Giennois</div>
+            <div class="spa-card-loc">Gien</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-grand-est">
+        <div class="region-header">
+          <span class="region-emoji">🥨</span>
+          <h2 class="region-name">Grand Est</h2>
+          <span class="region-count">16 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-darry.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">57680</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Arry</div>
+            <div class="spa-card-loc">Arry</div>
+            <div class="spa-card-tel">03 87 52 08 99</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-cliron.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">08090</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Cliron</div>
+            <div class="spa-card-loc">Cliron</div>
+            <div class="spa-card-tel">03 24 54 90 40</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-forbach.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">57600</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Forbach</div>
+            <div class="spa-card-loc">Forbach</div>
+            <div class="spa-card-tel">03 87 87 29 30</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-saint-parres-aux-tertres.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">10410</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Saint-Parres-aux-Tertres</div>
+            <div class="spa-card-loc">Saint-Parres-aux-Tertres</div>
+            <div class="spa-card-tel">03 25 81 17 83</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-sarreguemines.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">57200</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Sarreguemines</div>
+            <div class="spa-card-loc">Sarreguemines</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-thionville.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">57100</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Thionville</div>
+            <div class="spa-card-loc">Thionville</div>
+            <div class="spa-card-tel">03 82 50 31 45</div>
+          </a>
+          <a class="spa-card" href="spa/societe-vosgienne-de-protection-animale.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">88600</span>
+            </div>
+            <div class="spa-card-name">Société Vosgienne de Protection Animale</div>
+            <div class="spa-card-loc">Brouvelieures</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-colmar-et-environs.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">68000</span>
+            </div>
+            <div class="spa-card-name">SPA de Colmar et Environs</div>
+            <div class="spa-card-loc">Colmar</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-haguenau.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">67500</span>
+            </div>
+            <div class="spa-card-name">SPA de Haguenau</div>
+            <div class="spa-card-loc">Haguenau</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-letang-bleu.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">55840</span>
+            </div>
+            <div class="spa-card-name">SPA de l'Étang Bleu</div>
+            <div class="spa-card-loc">Thierville-sur-Meuse</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-lorraine.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">54840</span>
+            </div>
+            <div class="spa-card-name">SPA de Lorraine</div>
+            <div class="spa-card-loc">Velaine-en-Haye</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-moyenne-alsace.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">67600</span>
+            </div>
+            <div class="spa-card-name">SPA de Moyenne Alsace</div>
+            <div class="spa-card-loc">Ebersheim</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-mulhouse-haute-alsace.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">68100</span>
+            </div>
+            <div class="spa-card-name">SPA de Mulhouse - Haute Alsace</div>
+            <div class="spa-card-loc">Mulhouse</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-strasbourg.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">67200</span>
+            </div>
+            <div class="spa-card-name">SPA de Strasbourg</div>
+            <div class="spa-card-loc">Strasbourg</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-refuge-de-cathy.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">55000</span>
+            </div>
+            <div class="spa-card-name">SPA Refuge de Cathy</div>
+            <div class="spa-card-loc">Fains-Véel</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-sud-ardennaise.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">08300</span>
+            </div>
+            <div class="spa-card-name">SPA Sud Ardennaise</div>
+            <div class="spa-card-loc">Rethel</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-hauts-de-france">
+        <div class="region-header">
+          <span class="region-emoji">🌾</span>
+          <h2 class="region-name">Hauts-de-France</h2>
+          <span class="region-count">15 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-de-compiegne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">60200</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Compiègne</div>
+            <div class="spa-card-loc">Compiègne</div>
+            <div class="spa-card-tel">03 44 40 21 20</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-laon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">02000</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Laon</div>
+            <div class="spa-card-loc">Laon</div>
+            <div class="spa-card-tel">03 23 20 42 54</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-poulainville.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">80260</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Poulainville</div>
+            <div class="spa-card-loc">Poulainville</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-saint-omer.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">62500</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Saint-Omer</div>
+            <div class="spa-card-loc">Saint-Omer</div>
+            <div class="spa-card-tel">03 21 98 43 03</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-tilloy-les-mofflaines.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">62217</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Tilloy-lès-Mofflaines</div>
+            <div class="spa-card-loc">Tilloy-lès-Mofflaines</div>
+            <div class="spa-card-tel">03 21 60 09 74</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-ponthieu-marquenterre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">80132</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA Ponthieu Marquenterre</div>
+            <div class="spa-card-loc">Buigny-Saint-Maclou</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-canche.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">62170</span>
+            </div>
+            <div class="spa-card-name">SPA Canche</div>
+            <div class="spa-card-loc">Saint-Aubin</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-dessuiles-et-de-loise.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">60510</span>
+            </div>
+            <div class="spa-card-name">SPA d'Essuiles et de l'Oise</div>
+            <div class="spa-card-loc">Essuiles</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-dhirson-refuge-du-vivier.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">02500</span>
+            </div>
+            <div class="spa-card-name">SPA d'Hirson - Refuge du Vivier</div>
+            <div class="spa-card-loc">Hirson</div>
+            <div class="spa-card-tel">07 71 00 58 53</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-region-de-flandres.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">59640</span>
+            </div>
+            <div class="spa-card-name">SPA de la région de Flandres</div>
+            <div class="spa-card-loc">Dunkerque</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-vallee-de-la-lys.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">59270</span>
+            </div>
+            <div class="spa-card-name">SPA de la Vallée de la Lys</div>
+            <div class="spa-card-loc">Méteren</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-des-departements-du-nord.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">59770</span>
+            </div>
+            <div class="spa-card-name">SPA des départements du Nord</div>
+            <div class="spa-card-loc">Marly</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-des-monts-de-flandre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">59190</span>
+            </div>
+            <div class="spa-card-name">SPA des Monts de Flandre</div>
+            <div class="spa-card-loc">Hazebrouck</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-des-rives-de-laa.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">59820</span>
+            </div>
+            <div class="spa-card-name">SPA des Rives de l'AA</div>
+            <div class="spa-card-loc">Saint-Georges-sur-l'Aa</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-boulonnais-refuge-du-moulin-wibert.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">62930</span>
+            </div>
+            <div class="spa-card-name">SPA du Boulonnais - Refuge du Moulin Wibert</div>
+            <div class="spa-card-loc">Wimereux</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-ile-de-france">
+        <div class="region-header">
+          <span class="region-emoji">🗼</span>
+          <h2 class="region-name">Île-de-France</h2>
+          <span class="region-count">8 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/la-spa-siege-social.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">75017</span>
+            </div>
+            <div class="spa-card-name">La SPA - Siège Social</div>
+            <div class="spa-card-loc">Paris</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-pas-si-betes.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🏠 Refuge</span>
+              <span class="spa-dept">77520</span>
+            </div>
+            <div class="spa-card-name">Refuge Pas si Bêtes</div>
+            <div class="spa-card-loc">Vimpelles</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-dhermeray.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">78125</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Hermeray</div>
+            <div class="spa-card-loc">Hermeray</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-dorgeval.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">78630</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Orgeval</div>
+            <div class="spa-card-loc">Orgeval</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-chamarande.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">91730</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Chamarande</div>
+            <div class="spa-card-loc">Chamarande</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-gennevilliers.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">92230</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Gennevilliers</div>
+            <div class="spa-card-loc">Gennevilliers</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-plaisir.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">78370</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Plaisir</div>
+            <div class="spa-card-loc">Plaisir</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-vaux-le-penil.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">77000</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Vaux-le-Pénil</div>
+            <div class="spa-card-loc">Vaux-le-Pénil</div>
+            <div class="spa-card-tel">01 60 56 54 60</div>
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-normandie">
+        <div class="region-header">
+          <span class="region-emoji">🍎</span>
+          <h2 class="region-name">Normandie</h2>
+          <span class="region-count">7 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-detalondes.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">76260</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Étalondes</div>
+            <div class="spa-card-loc">Étalondes</div>
+            <div class="spa-card-tel">02 35 86 88 51</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-cabourg.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">14390</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Cabourg</div>
+            <div class="spa-card-loc">Cabourg</div>
+            <div class="spa-card-tel">02 31 28 09 71</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-cherbourg.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">50470</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Cherbourg</div>
+            <div class="spa-card-loc">Tollevast</div>
+            <div class="spa-card-tel">02 33 20 49 74</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-pervencheres.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">61360</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Pervenchères</div>
+            <div class="spa-card-loc">Pervenchères</div>
+            <div class="spa-card-tel">02 33 83 08 66</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-balleroy.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">14400</span>
+            </div>
+            <div class="spa-card-name">SPA de Balleroy</div>
+            <div class="spa-card-loc">Bayeux</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-leure.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">27000</span>
+            </div>
+            <div class="spa-card-name">SPA de l'Eure</div>
+            <div class="spa-card-loc">Évreux</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-dieppoise.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">76550</span>
+            </div>
+            <div class="spa-card-name">SPA Dieppoise</div>
+            <div class="spa-card-loc">Saint-Aubin-sur-Scie</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-nouvelle-aquitaine">
+        <div class="region-header">
+          <span class="region-emoji">🌊</span>
+          <h2 class="region-name">Nouvelle-Aquitaine</h2>
+          <span class="region-count">17 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/aspac-refuge-les-murmures.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">17340</span>
+            </div>
+            <div class="spa-card-name">ASPAC - Refuge Les Murmures</div>
+            <div class="spa-card-loc">Châtelaillon-Plage</div>
+            <div class="spa-card-tel">05 46 56 29 81</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-animalier-bortois.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🏠 Refuge</span>
+              <span class="spa-dept">19110</span>
+            </div>
+            <div class="spa-card-name">Refuge Animalier Bortois</div>
+            <div class="spa-card-loc">Bort-les-Orgues</div>
+            <div class="spa-card-tel">05 55 96 70 51</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-saint-pierre-du-mont.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">40280</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Saint-Pierre-du-Mont</div>
+            <div class="spa-card-loc">Saint-Pierre-du-Mont</div>
+            <div class="spa-card-tel">05 58 46 00 99</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-tulle.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">19330</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Tulle</div>
+            <div class="spa-card-loc">Chameyrat</div>
+            <div class="spa-card-tel">05 55 27 26 81</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-bergerac.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">24100</span>
+            </div>
+            <div class="spa-card-name">SPA de Bergerac</div>
+            <div class="spa-card-loc">Bergerac</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-bordeaux.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">33700</span>
+            </div>
+            <div class="spa-card-name">SPA de Bordeaux</div>
+            <div class="spa-card-loc">Mérignac</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-brive-la-gaillarde.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">19100</span>
+            </div>
+            <div class="spa-card-name">SPA de Brive-la-Gaillarde</div>
+            <div class="spa-card-loc">Brive-la-Gaillarde</div>
+            <div class="spa-card-tel">05 55 86 05 70</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-chatellerault.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">86100</span>
+            </div>
+            <div class="spa-card-name">SPA de Châtellerault</div>
+            <div class="spa-card-loc">Châtellerault</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-cognac-refuge-de-bonbonnet.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">16130</span>
+            </div>
+            <div class="spa-card-name">SPA de Cognac - Refuge de Bonbonnet</div>
+            <div class="spa-card-loc">Ars</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-creuse.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">23000</span>
+            </div>
+            <div class="spa-card-name">SPA de la Creuse</div>
+            <div class="spa-card-loc">Saint-Sulpice-le-Guérétois</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-rochelle.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">17140</span>
+            </div>
+            <div class="spa-card-name">SPA de La Rochelle</div>
+            <div class="spa-card-loc">Lagord</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-limoges-et-haute-vienne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">87270</span>
+            </div>
+            <div class="spa-card-name">SPA de Limoges et Haute-Vienne</div>
+            <div class="spa-card-loc">Couseix</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-perigueux.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">24430</span>
+            </div>
+            <div class="spa-card-name">SPA de Périgueux</div>
+            <div class="spa-card-loc">Marsac-sur-l'Isle</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-poitiers.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">86000</span>
+            </div>
+            <div class="spa-card-name">SPA de Poitiers</div>
+            <div class="spa-card-loc">Poitiers</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-saintes.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">17100</span>
+            </div>
+            <div class="spa-card-name">SPA de Saintes</div>
+            <div class="spa-card-loc">Saintes</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-lot-et-garonne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">47160</span>
+            </div>
+            <div class="spa-card-name">SPA du Lot-et-Garonne</div>
+            <div class="spa-card-loc">Caubeyres</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-refuge-de-langoumois.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">16600</span>
+            </div>
+            <div class="spa-card-name">SPA Refuge de l'Angoumois</div>
+            <div class="spa-card-loc">Mornac</div>
+            <div class="spa-card-tel">05 45 65 76 99</div>
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-occitanie">
+        <div class="region-header">
+          <span class="region-emoji">☀️</span>
+          <h2 class="region-name">Occitanie</h2>
+          <span class="region-count">21 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-de-golfech.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">82400</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Golfech</div>
+            <div class="spa-card-loc">Golfech</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-millau.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">12100</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Millau</div>
+            <div class="spa-card-loc">Millau</div>
+            <div class="spa-card-tel">05 65 61 26 27</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-mirepoix.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">09500</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Mirepoix</div>
+            <div class="spa-card-loc">Mirepoix</div>
+            <div class="spa-card-tel">05 61 68 89 77</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-perpignan.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">66000</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Perpignan</div>
+            <div class="spa-card-loc">Perpignan</div>
+            <div class="spa-card-tel">04 68 57 52 53</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-port-la-nouvelle.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">11210</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Port-la-Nouvelle</div>
+            <div class="spa-card-loc">Port-la-Nouvelle</div>
+            <div class="spa-card-tel">04 11 23 04 96</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-torreilles.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">66440</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Torreilles</div>
+            <div class="spa-card-loc">Torreilles</div>
+            <div class="spa-card-tel">04 68 28 20 36</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-vallerargues.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">30580</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Vallérargues</div>
+            <div class="spa-card-loc">Vallérargues</div>
+            <div class="spa-card-tel">04 66 72 93 20</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-des-hautes-pyrenees.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">65420</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA des Hautes-Pyrénées</div>
+            <div class="spa-card-loc">Ibos</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-du-garric.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">81450</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA du Garric</div>
+            <div class="spa-card-loc">Le Garric</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-bigorre.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">65000</span>
+            </div>
+            <div class="spa-card-name">SPA Bigorre</div>
+            <div class="spa-card-loc">Tarbes</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-dazereix.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">65380</span>
+            </div>
+            <div class="spa-card-name">SPA d'Azereix</div>
+            <div class="spa-card-loc">Azereix</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-beziers.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">34500</span>
+            </div>
+            <div class="spa-card-name">SPA de Béziers</div>
+            <div class="spa-card-loc">Béziers</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-carcassonne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">11000</span>
+            </div>
+            <div class="spa-card-name">SPA de Carcassonne</div>
+            <div class="spa-card-loc">Berriac</div>
+            <div class="spa-card-tel">04 68 25 35 45</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-lozere.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">48100</span>
+            </div>
+            <div class="spa-card-name">SPA de la Lozère</div>
+            <div class="spa-card-loc">Bourgs-sur-Colagne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-meze.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">34660</span>
+            </div>
+            <div class="spa-card-name">SPA de Mèze</div>
+            <div class="spa-card-loc">Cournonterral</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-montauban.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">82000</span>
+            </div>
+            <div class="spa-card-name">SPA de Montauban</div>
+            <div class="spa-card-loc">Montauban</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-montpellier.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">34750</span>
+            </div>
+            <div class="spa-card-name">SPA de Montpellier</div>
+            <div class="spa-card-loc">Villeneuve-lès-Maguelone</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-nimes-et-du-gard.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">30900</span>
+            </div>
+            <div class="spa-card-name">SPA de Nîmes et du Gard</div>
+            <div class="spa-card-loc">Nîmes</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-rodez.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">12850</span>
+            </div>
+            <div class="spa-card-name">SPA de Rodez</div>
+            <div class="spa-card-loc">Sainte-Radegonde</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-des-pyrenees-orientales.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">66000</span>
+            </div>
+            <div class="spa-card-name">SPA des Pyrénées-Orientales</div>
+            <div class="spa-card-loc">Perpignan</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-du-gers.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">32350</span>
+            </div>
+            <div class="spa-card-name">SPA du Gers</div>
+            <div class="spa-card-loc">Ordan-Larroque</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-pays-de-la-loire">
+        <div class="region-header">
+          <span class="region-emoji">🌿</span>
+          <h2 class="region-name">Pays de la Loire</h2>
+          <span class="region-count">9 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-dyvre-leveque.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">72530</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Yvré-l'Évêque</div>
+            <div class="spa-card-loc">Yvré-l'Évêque</div>
+            <div class="spa-card-tel">02 43 84 32 17</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-bouguenais.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">44340</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Bouguenais</div>
+            <div class="spa-card-loc">Bouguenais</div>
+            <div class="spa-card-tel">02 49 62 81 02</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-chateau-dolonne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">85180</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Château-d'Olonne</div>
+            <div class="spa-card-loc">Château-d'Olonne</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-cholet.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">49300</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Cholet</div>
+            <div class="spa-card-loc">Cholet</div>
+            <div class="spa-card-tel">02 41 71 99 99</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-la-roche-sur-yon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">85000</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de La Roche-sur-Yon</div>
+            <div class="spa-card-loc">La Roche-sur-Yon</div>
+            
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-pornic.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">44210</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Pornic</div>
+            <div class="spa-card-loc">Pornic</div>
+            <div class="spa-card-tel">02 40 21 75 92</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-mayenne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">53000</span>
+            </div>
+            <div class="spa-card-name">SPA de la Mayenne</div>
+            <div class="spa-card-loc">Laval</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-loire-atlantique.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">44470</span>
+            </div>
+            <div class="spa-card-name">SPA de Loire-Atlantique</div>
+            <div class="spa-card-loc">Carquefou</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-maine-et-loire.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">49000</span>
+            </div>
+            <div class="spa-card-name">SPA de Maine-et-Loire</div>
+            <div class="spa-card-loc">Angers</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-provence-alpes-cote-dazur">
+        <div class="region-header">
+          <span class="region-emoji">🌞</span>
+          <h2 class="region-name">Provence-Alpes-Côte d'Azur</h2>
+          <span class="region-count">14 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/aspa-association-secours-protection-animale.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">04100</span>
+            </div>
+            <div class="spa-card-name">ASPA - Association Secours Protection Animale</div>
+            <div class="spa-card-loc">Manosque</div>
+            <div class="spa-card-tel">04 92 87 82 51</div>
+          </a>
+          <a class="spa-card" href="spa/comite-daction-et-de-vigilance-spa.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">83500</span>
+            </div>
+            <div class="spa-card-name">Comité d'Action et de Vigilance SPA</div>
+            <div class="spa-card-loc">La Seyne-sur-Mer</div>
+            
+          </a>
+          <a class="spa-card" href="spa/complexe-animalier-daix-en-provence.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🏠 Refuge</span>
+              <span class="spa-dept">13290</span>
+            </div>
+            <div class="spa-card-name">Complexe Animalier d'Aix-en-Provence</div>
+            <div class="spa-card-loc">Aix-en-Provence</div>
+            <div class="spa-card-tel">04 42 69 03 47</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-daix-en-provence.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">13290</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA d'Aix-en-Provence</div>
+            <div class="spa-card-loc">Aix-en-Provence</div>
+            <div class="spa-card-tel">04 13 91 06 30</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-briancon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">05100</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Briançon</div>
+            <div class="spa-card-loc">Briançon</div>
+            <div class="spa-card-tel">04 92 21 15 29</div>
+          </a>
+          <a class="spa-card" href="spa/refuge-spa-de-flayosc.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">83780</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA de Flayosc</div>
+            <div class="spa-card-loc">Flayosc</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-cote-dazur.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">06140</span>
+            </div>
+            <div class="spa-card-name">SPA Côte d'Azur</div>
+            <div class="spa-card-loc">Vence</div>
+            <div class="spa-card-tel">04 93 24 08 45</div>
+          </a>
+          <a class="spa-card" href="spa/spa-darles.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">13520</span>
+            </div>
+            <div class="spa-card-name">SPA d'Arles</div>
+            <div class="spa-card-loc">Les-Baux-de-Provence</div>
+            <div class="spa-card-tel">04 90 54 60 86</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-grasse-refuge-de-lespoir.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">06250</span>
+            </div>
+            <div class="spa-card-name">SPA de Grasse - Refuge de l'Espoir</div>
+            <div class="spa-card-loc">Mougins</div>
+            <div class="spa-card-tel">04 93 65 44 11</div>
+          </a>
+          <a class="spa-card" href="spa/spa-de-lenclave-des-papes.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">84600</span>
+            </div>
+            <div class="spa-card-name">SPA de l'Enclave des Papes</div>
+            <div class="spa-card-loc">Grillon</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-menton.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">06380</span>
+            </div>
+            <div class="spa-card-name">SPA de Menton</div>
+            <div class="spa-card-loc">Sospel</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-salon-de-provence.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">13300</span>
+            </div>
+            <div class="spa-card-name">SPA de Salon-de-Provence</div>
+            <div class="spa-card-loc">Salon-de-Provence</div>
+            <div class="spa-card-tel">04 90 42 20 77</div>
+          </a>
+          <a class="spa-card" href="spa/spa-sud-alpine.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">05000</span>
+            </div>
+            <div class="spa-card-name">SPA Sud Alpine</div>
+            <div class="spa-card-loc">Gap</div>
+            <div class="spa-card-tel">04 92 51 42 44</div>
+          </a>
+          <a class="spa-card" href="spa/spa-vauclusienne.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">84800</span>
+            </div>
+            <div class="spa-card-name">SPA Vauclusienne</div>
+            <div class="spa-card-loc">L'Isle-sur-la-Sorgue</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-guadeloupe">
+        <div class="region-header">
+          <span class="region-emoji">🌴</span>
+          <h2 class="region-name">Guadeloupe</h2>
+          <span class="region-count">2 refuges</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/refuge-spa-du-papillon.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">97139</span>
+            </div>
+            <div class="spa-card-name">Refuge SPA du Papillon</div>
+            <div class="spa-card-loc">Les Abymes</div>
+            
+          </a>
+          <a class="spa-card" href="spa/spa-de-la-guadeloupe.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">97139</span>
+            </div>
+            <div class="spa-card-name">SPA de la Guadeloupe</div>
+            <div class="spa-card-loc">Les Abymes</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-la-reunion">
+        <div class="region-header">
+          <span class="region-emoji">🌋</span>
+          <h2 class="region-name">La Réunion</h2>
+          <span class="region-count">1 refuge</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/spa-de-la-reunion.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">97479</span>
+            </div>
+            <div class="spa-card-name">SPA de la Réunion</div>
+            <div class="spa-card-loc">Saint-Denis</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-martinique">
+        <div class="region-header">
+          <span class="region-emoji">🌺</span>
+          <h2 class="region-name">Martinique</h2>
+          <span class="region-count">1 refuge</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/spa-de-la-martinique.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🐾 SPA</span>
+              <span class="spa-dept">97228</span>
+            </div>
+            <div class="spa-card-name">SPA de la Martinique</div>
+            <div class="spa-card-loc">Sainte-Luce</div>
+            
+          </a>
+        </div>
+      </section>
+      <section class="region-section" id="region-polynesie-francaise">
+        <div class="region-header">
+          <span class="region-emoji">🐠</span>
+          <h2 class="region-name">Polynésie française</h2>
+          <span class="region-count">1 refuge</span>
+        </div>
+        <div class="region-grid">
+          <a class="spa-card" href="spa/spap-fare-animara-de-polynesie.html">
+            <div class="spa-card-head">
+              <span class="spa-type-badge">🤝 Association</span>
+              <span class="spa-dept">98713</span>
+            </div>
+            <div class="spa-card-name">SPAP Fare Animara de Polynésie</div>
+            <div class="spa-card-loc">Papeete</div>
+            
+          </a>
+        </div>
+      </section>
+</main>
+
+<script src="cookies.js"></script>
+<footer style="text-align:center;padding:8px 16px 14px;font-size:12px;color:#888;border-top:1px solid #eee;">
+  © 2025 YoupiZoo &nbsp;·&nbsp;
+  <a href="index.html" style="color:#5a9e1a;text-decoration:none;">Annonces</a> &nbsp;·&nbsp;
+  <a href="refuges.html" style="color:#7c3aed;text-decoration:none;">🏠 Refuges</a> &nbsp;·&nbsp;
+  <a href="apropos.html" style="color:#5a9e1a;text-decoration:none;">À propos</a> &nbsp;·&nbsp;
+  <a href="https://www.la-spa.fr/" target="_blank" rel="noopener noreferrer" style="color:#c2410c;text-decoration:none;">🐾 La SPA nationale</a>
+</footer>
+
+<script>
+(function() {
+  if (sessionStorage.getItem('eco_banner_dismissed') === '1') {
+    var b = document.getElementById('ecoBanner'); if (b) b.style.display = 'none';
+  }
+})();
+function dismissEcoBanner() {
+  var b = document.getElementById('ecoBanner'); if (b) b.style.display = 'none';
+  sessionStorage.setItem('eco_banner_dismissed', '1');
+}
+function filterCards() {
+  var q = document.getElementById('searchInput').value.toLowerCase().trim();
+  var cards = document.querySelectorAll('.spa-card');
+  var visible = 0;
+  cards.forEach(function(card) {
+    var text = card.textContent.toLowerCase();
+    if (!q || text.includes(q)) { card.classList.remove('hidden'); visible++; }
+    else { card.classList.add('hidden'); }
+  });
+  document.querySelectorAll('.region-section').forEach(function(sec) {
+    var anyVisible = sec.querySelectorAll('.spa-card:not(.hidden)').length > 0;
+    sec.style.display = anyVisible ? '' : 'none';
+  });
+  document.getElementById('visibleCount').textContent = visible;
+}
+</script>
+</body>
+</html>
